@@ -60,7 +60,7 @@ TBD
 # Timetable
 | Date            | Time          | Room    | Topic                                                                                     |
 |-----------------|---------------|---------|-------------------------------------------------------------------------------------------|
-| Tue 30 Sep 2025 | 14:00 - 16:00 | 128-129 | Introduction to the course. The UNIX shell. The build process.                            |
+| Tue 30 Sep 2025 | 14:00 - 16:00 | 128-129 | Introduction to the course. The UNIX shell. The build process. [[Markdown](lectures/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.pdf) |
 | Wed 01 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session.                                                                         |
 | Tue 07 Oct 2025 | 14:00 - 16:00 | 005     | Introduction to C++.                                                                      |
 | Wed 08 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session.                                                                         |
