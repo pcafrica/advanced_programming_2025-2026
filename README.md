@@ -45,9 +45,8 @@ Unless otherwise specified, all content here is licensed under a
 
 # Links and resources
 - [Course material](https://pcafrica.github.io/advanced_programming_2025-2026/).
-- [Google Classroom](https://classroom.google.com/c/NzExNzIzMTkxMTI5?cjc=n6fosq6).
-- [Live streaming (Zoom)](https://sissa-it.zoom.us/j/89255126282?pwd=LyTWBBewq8bhkX2IH2lj1npewyK0S5.1).
-- [Recordings](https://moodle2.units.it/course/section.php?id=146753).
+- [Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw?cjc=xjhuxupx).
+- [Live streaming (Microsoft Teams)](https://teams.microsoft.com/l/meetup-join/19%3aDI3W2_QczkFDOHK82oYajviLOfmVmVg0l2bM048BZVE1%40thread.tacv2/1758610111960?context=%7b%22Tid%22%3a%22a54b3635-128c-460f-b967-6ded8df82e75%22%2c%22Oid%22%3a%224a852969-d20c-4947-b429-079b06fe7a06%22%7d).
 
 ---
 
