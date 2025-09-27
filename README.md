@@ -59,27 +59,27 @@ TBD
 # Timetable
 | Date            | Time          | Room    | Topic                                                                                     |
 |-----------------|---------------|---------|-------------------------------------------------------------------------------------------|
-| Tue 30 Sep 2025 | 14:00 - 16:00 | 128-129 | Introduction to the course. The UNIX shell. The build process. [[Markdown](lectures/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.pdf) |
-| Wed 01 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. Exercise session. [[Markdown](exercises/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.pdf)]                                                                        |
-| Tue 07 Oct 2025 | 14:00 - 16:00 | 005     | Introduction to C++.                                                                      |
-| Wed 08 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session.                                                                         |
-| Tue 14 Oct 2025 | 14:00 - 16:00 | 005     | Object oriented programming. Classes and access control in C++. Operators.                |
-| Wed 15 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session.                                                                         |
-| Tue 21 Oct 2025 | 14:00 - 16:00 | 005     | Inheritance and polymorphism.                                                             |
-| Wed 22 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session.                                                                         |
-| Tue 28 Oct 2025 | 14:00 - 16:00 | 005     | Functions. Templates and generic programming.                                             |
-| Wed 29 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session.                                                                         |
-| Tue 04 Nov 2025 | 14:00 - 16:00 | 005     | The Standard Template Library.                                                            |
-| Wed 05 Nov 2025 | 11:00 - 13:00 | 005     | Smart pointers, move semantics, STL utilities.                                            |
-| Tue 11 Nov 2025 | 14:00 - 16:00 | 005     | Exercise session.                                                                         |
-| Wed 12 Nov 2025 | 11:00 - 13:00 | 005     | Libraries: principles, building, and use.                                                 |
-| Tue 18 Nov 2025 | 14:00 - 16:00 | 005     | Exercise session: Introduction to GNU Make.                                               |
-| Wed 19 Nov 2025 | 11:00 - 13:00 | 005     | Exercise session: Introduction to CMake.                                                  |
-| Tue 25 Nov 2025 | 14:00 - 16:00 | 128-129 | Optimization, debugging, profiling, testing. Exercise session.                            |
-| Wed 26 Nov 2025 | 11:00 - 13:00 | 128-129 | Introduction to Python.                                                                   |
+| Tue 30 Sep 2025 | 14:00 - 16:00 | 128-129 | Introduction to the course. The UNIX shell. The build process. [[Markdown](lectures/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.pdf)] |
+| Wed 01 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.pdf)] |
+| Tue 07 Oct 2025 | 14:00 - 16:00 | 005     | Introduction to C++. |
+| Wed 08 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
+| Tue 14 Oct 2025 | 14:00 - 16:00 | 005     | Object oriented programming. Classes and access control in C++. Operators. |
+| Wed 15 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
+| Tue 21 Oct 2025 | 14:00 - 16:00 | 005     | Inheritance and polymorphism. |
+| Wed 22 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
+| Tue 28 Oct 2025 | 14:00 - 16:00 | 005     | Functions. Templates and generic programming. |
+| Wed 29 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
+| Tue 04 Nov 2025 | 14:00 - 16:00 | 005     | The Standard Template Library. |
+| Wed 05 Nov 2025 | 11:00 - 13:00 | 005     | Smart pointers, move semantics, STL utilities. |
+| Tue 11 Nov 2025 | 14:00 - 16:00 | 005     | Exercise session. |
+| Wed 12 Nov 2025 | 11:00 - 13:00 | 005     | Libraries: principles, building, and use. |
+| Tue 18 Nov 2025 | 14:00 - 16:00 | 005     | Exercise session: Introduction to GNU Make. |
+| Wed 19 Nov 2025 | 11:00 - 13:00 | 005     | Exercise session: Introduction to CMake. |
+| Tue 25 Nov 2025 | 14:00 - 16:00 | 128-129 | Optimization, debugging, profiling, testing. Exercise session. |
+| Wed 26 Nov 2025 | 11:00 - 13:00 | 128-129 | Introduction to Python. |
 | Tue 02 Dec 2025 | 14:00 - 16:00 | 133     | Object-oriented programming. Classes, inheritance and polymorphism. Modules and packages. |
-| Wed 03 Dec 2025 | 11:00 - 13:00 | 004     | Exercise session.                                                                         |
-| Tue 09 Dec 2025 | 14:00 - 16:00 | 005     | Integrating C++ and Python codes.                                                         |
-| Wed 10 Dec 2025 | 11:00 - 13:00 | 005     | Exercise session.                                                                         |
-| Tue 16 Dec 2025 | 14:00 - 16:00 | 133     | Python for scientific computing.                                                          |
-| Wed 17 Dec 2025 | 11:00 - 13:00 | 004     | Exercise session.                                                                         |
+| Wed 03 Dec 2025 | 11:00 - 13:00 | 004     | Exercise session. |
+| Tue 09 Dec 2025 | 14:00 - 16:00 | 005     | Integrating C++ and Python codes. |
+| Wed 10 Dec 2025 | 11:00 - 13:00 | 005     | Exercise session. |
+| Tue 16 Dec 2025 | 14:00 - 16:00 | 133     | Python for scientific computing. |
+| Wed 17 Dec 2025 | 11:00 - 13:00 | 004     | Exercise session. |
