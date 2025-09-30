@@ -50,10 +50,10 @@ _class: titlepage
 
 # Course material
 - [GitHub](https://github.com/pcafrica/advanced_programming_2025-2026): timetable, lecture notes and slides, exercise sessions.
-- [Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw?cjc=xjhuxupx): homeworks, exams.
+- [Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw?cjc=xjhuxupx): homeworks, exams. **You are required to join. Please use your full name (no nicknames allowed)**.
 
 # Other resources
-- Books (see course syllabus on GitHub).
+- Books (see [course syllabus](https://github.com/pcafrica/advanced_programming_2025-2026/blob/main/syllabus.md)).
 - Internet (plenty of free or paid resources).
 
 ---
