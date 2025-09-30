@@ -867,7 +867,7 @@ from inside the cloned folder.
 _class: titlepage
 -->
 
-# <alert>:warning: Warning:</alert><br>Please get your laptop ready by tomorrow!
+# <alert>:warning: Warning</alert><br>Please get your laptop ready by tomorrow!
 
 ---
 
