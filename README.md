@@ -45,7 +45,7 @@ Unless otherwise specified, all content here is licensed under a
 
 # Links and resources
 - [Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw?cjc=xjhuxupx). **You are required to join. Please use your full name (no nicknames allowed)**.
-- [Live streaming (Microsoft Teams)](https://teams.microsoft.com/l/meetup-join/19%3aDI3W2_QczkFDOHK82oYajviLOfmVmVg0l2bM048BZVE1%40thread.tacv2/1758610111960?context=%7b%22Tid%22%3a%22a54b3635-128c-460f-b967-6ded8df82e75%22%2c%22Oid%22%3a%224a852969-d20c-4947-b429-079b06fe7a06%22%7d).
+- [Live streaming (Microsoft Teams)](https://teams.microsoft.com/l/meetup-join/19%3aDI3W2_QczkFDOHK82oYajviLOfmVmVg0l2bM048BZVE1%40thread.tacv2/1758610111960?context=%7b%22Tid%22%3a%22a54b3635-128c-460f-b967-6ded8df82e75%22%2c%22Oid%22%3a%224a852969-d20c-4947-b429-079b06fe7a06%22%7d) (team code: ycg0ze5).
 
 ---
 
