@@ -712,7 +712,7 @@ We can add operators between commands in order to chain them together.
 
 ---
 
-# Advanced commands
+# Advanced commands (1/3)
 - `tr` stands for **translate**. It supports a range of transformations including uppercase to lowercase, squeezing repeating characters, deleting specific characters, and basic find and replace. For instance:
      - `echo "Welcome to Advanced Programming!" | tr [a-z] [A-Z]` converts all characters to upper case.
      - `echo -e "A;B;c\n1,2;1,4;1,8" | tr "," "." | tr ";" ","` replaces commas with dots and semi-colons with commas.
@@ -720,7 +720,7 @@ We can add operators between commands in order to chain them together.
 
 ---
 
-# Advanced commands
+# Advanced commands (2/3)
 - `sed` stands for **stream editor** and it can perform lots of functions on file like searching, find and replace, insertion or deletion. We give just an hint of its true power
     - `echo "UNIX is great OS. UNIX is open source." | sed "s/UNIX/Linux/"` replaces the first occurrence of "UNIX" with "Linux".
     - `echo "UNIX is great OS. UNIX is open source." | sed "s/UNIX/Linux/2"` replaces the second occurrence of "UNIX" with "Linux".
@@ -730,7 +730,7 @@ We can add operators between commands in order to chain them together.
 
 ---
 
-# Advanced commands
+# Advanced commands (3/3)
 - `cut` is a command for cutting out the sections from each line of files and writing the result to standard output.
      - `cut -b 1-3,7- state.txt` cut bytes (`-b`) from 1 to 3 and from 7 to end of the line
      - `echo -e "A,B,C\n1.22,1.2,3\n5,6,7\n9.99999,0,0" | cut -d "," -f 1` get the first column of a CSV (`-d` specifies the column delimiter, `-f n` specifies to pick the $n$-th column from each line)
