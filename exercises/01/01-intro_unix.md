@@ -23,7 +23,7 @@ _class: titlepage
 
 ---
 
-# Exercise 1: basic Bash commands
+# Exercise 1: basic shell commands
 Perform the following tasks in your command-line terminal.
 
 1. Navigate to your home folder.
@@ -49,7 +49,7 @@ To download the dataset using `wget`, run the following command:
 wget https://raw.githubusercontent.com/logpai/loghub/master/HPC/HPC_2k.log_structured.csv
 ```
 
-After downloading the dataset, perform the following analyses using only Bash commands.
+After downloading the dataset, perform the following analyses using only shell commands.
 
 1. Find out how many unique node names are present in the dataset.
 2. Export the list from the previous point to a file named `nodes.log`
@@ -62,7 +62,7 @@ After downloading the dataset, perform the following analyses using only Bash co
 
 # Exercise 3: creating a backup script
 
-In this exercise, you'll create a Bash script that automates the process of creating a backup of a specified directory. The script should accomplish the following tasks:
+In this exercise, you'll create a shell script that automates the process of creating a backup of a specified directory. The script should accomplish the following tasks:
 
 1. Receive the directory to backup as an input argument.
 2. Create a timestamped backup folder inside a specified backup directory.
@@ -77,8 +77,8 @@ In this exercise, you'll create a Bash script that automates the process of crea
 
 # Exercise 3: creating a backup script. Instructions
 
-1. Create a new Bash script file named `backup.sh`.
-2. Inside the script, use basic Bash commands to implement the following steps:
+1. Create a new shell script file named `backup.sh`.
+2. Inside the script, use basic shell commands to implement the following steps:
    1. Prompt the user to enter the directory they want to back up.
    2. Create a timestamped backup folder (e.g., `backup_<timestamp>`) inside a specified backup directory (you can define this directory at the beginning of your script).
    3. Copy all files and directories from the user-specified directory to the backup folder.
