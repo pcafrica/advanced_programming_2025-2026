@@ -587,7 +587,7 @@ To get a little hang of the shell, let’s try a few simple commands:
 
 # Basic shell commands (2/2)
 
-- `cp` stands for **Copy** and it moves one or more files or directories from one place to another. We need to specify what we want to move, i.e., the source and where we want to move them, i.e., the destination.
+- `cp` stands for **Copy** and it copies one or more files or directories, keeping the originals unaltered. We need to specify what we want to copy, i.e., the source and where we want to copy them, i.e., the destination.
 - `mv` stands for **Move** and it moves one or more files or directories from one place to another. We need to specify what we want to move, i.e., the source and where we want to move them, i.e., the destination.
 - `touch` command is used to create new, empty files. It is also used to change the timestamps on existing files and directories.
 - `mkdir` stands for **Make directory** and is used to make a new directory or a folder.
