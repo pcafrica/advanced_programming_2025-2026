@@ -60,7 +60,7 @@ TBD
 |-----------------|---------------|---------|-------------------------------------------------------------------------------------------|
 | Tue 30 Sep 2025 | 14:00 - 16:00 | 128-129 | Introduction to the course. The UNIX shell. The build process. [[Markdown](lectures/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/01/01-intro_unix.pdf)] |
 | Wed 01 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.pdf)] |
-| Tue 07 Oct 2025 | 14:00 - 16:00 | 005     | Introduction to C++. |
+| Tue 07 Oct 2025 | 14:00 - 16:00 | 005     | Introduction to C++. [[Markdown](lectures/02/02-c++_intro.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/02/02-c++_intro.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/02/02-c++_intro.pdf)] |
 | Wed 08 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
 | Tue 14 Oct 2025 | 14:00 - 16:00 | 005     | Object oriented programming. Classes and access control in C++. Operators. |
 | Wed 15 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
