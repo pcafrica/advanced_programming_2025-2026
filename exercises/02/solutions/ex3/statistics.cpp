@@ -9,6 +9,7 @@ double calculate_mean(const std::vector<double> &numbers) {
   for (const double &num : numbers) {
     sum += num;
   }
+
   return sum / numbers.size();
 }
 
@@ -31,8 +32,8 @@ double calculate_median(const std::vector<double> &numbers) {
 // Function to calculate the standard deviation of a set of numbers.
 double calculate_standard_deviation(const std::vector<double> &numbers) {
   double mean = calculate_mean(numbers);
-  double variance = 0.0;
 
+  double variance = 0.0;
   for (const double &num : numbers) {
     variance += (num - mean) * (num - mean);
   }

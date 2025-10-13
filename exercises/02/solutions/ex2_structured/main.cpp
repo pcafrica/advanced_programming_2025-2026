@@ -1,7 +1,8 @@
+#include "find_max_min.hpp"
+
 #include <cstdlib> // For rand() and srand().
 #include <ctime>   // For time().
 #include <iostream>
-#include "find_max_min.hpp"
 
 int main() {
   unsigned int size;

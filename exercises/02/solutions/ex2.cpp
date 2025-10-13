@@ -22,13 +22,13 @@ void find_max_min(int *arr, unsigned int size, int &max_val, int &min_val) {
 }
 
 int main() {
-  int size;
+  unsigned int size;
 
   // Prompt the user for the size of the array.
   std::cout << "Enter the size of the array: ";
   std::cin >> size;
 
-  if (size <= 0) {
+  if (size == 0) {
     std::cout << "Invalid array size. Please enter a positive integer."
               << std::endl;
 
