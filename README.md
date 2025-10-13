@@ -62,7 +62,7 @@ TBD
 | Wed 01 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/01/01-intro_unix.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/01/01-intro_unix.pdf)] |
 | Tue 07 Oct 2025 | 14:00 - 16:00 | 005     | Introduction to C++. [[Markdown](lectures/02/02-c++_intro.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/02/02-c++_intro.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/02/02-c++_intro.pdf)] |
 | Wed 08 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/02/02-c++_intro.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/02/02-c++_intro.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/02/02-c++_intro.pdf)] |
-| Tue 14 Oct 2025 | 14:00 - 16:00 | 005     | Object oriented programming. Classes and access control in C++. Operators. |
+| Tue 14 Oct 2025 | 14:00 - 16:00 | 005     | Object oriented programming. Classes and access control in C++. Operators. [[Markdown](lectures/03/03-c++_classes.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/03/03-c++_classes.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/03/03-c++_classes.pdf)] |
 | Wed 15 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
 | Tue 21 Oct 2025 | 14:00 - 16:00 | 005     | Inheritance and polymorphism. |
 | Wed 22 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
