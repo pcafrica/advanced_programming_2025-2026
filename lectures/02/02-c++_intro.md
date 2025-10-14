@@ -130,7 +130,7 @@ float f = 3.14;
 x = 1.6;        // Legal, but truncated to the 'int' 1.
 f = "a string"; // Illegal.
 
-unsigned int y{3.0}; // Uniform initialization: illegal.
+unsigned int y{3.0}; // Uniform initialization (since C++11): illegal.
 ```
 
 ---
@@ -287,7 +287,7 @@ if (0) // false.
 ```cpp
 int x = 5; // Direct initialization.
 int y(10); // Constructor-style initialization.
-int z{15}; // Uniform initialization (preferred).
+int z{15}; // Uniform initialization (since C++11; preferred).
 ```
 
 - Aliases enable to create new types based on already defined others.

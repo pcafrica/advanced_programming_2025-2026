@@ -276,7 +276,7 @@ public:
 };
 
 MyClass obj;    // Direct initialization.
-MyClass obj2{}; // Uniform initialization (preferred).
+MyClass obj2{}; // Uniform initialization (since C++11; preferred).
 
 MyClass obj3();  // Illegal: the compiler believes we are declaring a function.
 ```
@@ -373,7 +373,7 @@ book3 = book1; // Copying using the copy assignment operator.
 # Default constructor and default initialization
 
 - If you don't provide any constructors for a class, C++ will automatically generate a default constructor. However, if you provide any custom constructors, the default constructor won't be generated unless you explicitly define it.
-- Default initialization of primitive types (e.g., `int`, `double`) sets them to zero, while non-primitive types (e.g., objects, strings) may have default constructors that initialize them to appropriate default values.
+- Default initialization of primitive types (e.g., `int`, `double`) sets them to zero, while non-primitive types (e.g., strings, vectors, ...) may have default constructors that initialize them to appropriate default values.
 
 ---
 
@@ -383,7 +383,7 @@ book3 = book1; // Copying using the copy assignment operator.
    ```cpp
    MyClass obj1;   // Calls the default constructor.
    MyClass obj2{}; // Calls the default constructor.
-   Student student{"Alice", 20}; // Calls the parameterized constructor.
+   Student student{"Alice", 20}; // Calls the parametrized constructor.
     ```
 
 2. **Copy initialization**: When you initialize one object with another, the copy constructor is called.
@@ -490,8 +490,8 @@ std::cout << "Result: " << result << std::endl;
 # Best practices (1/2)
 
 - **Function size**: Inlining is most effective for small functions. For larger functions, inlining can lead to code bloat and may not improve performance.
-- **Compiler's discretion**: The `inline` keyword is a ***suggestion*** to the compiler, and the compiler can choose whether or not to inline the function based on optimization settings and other factors.
-- **Header files**: If you define `inline` functions in header files, be cautious about including the same header in multiple source files. It can lead to multiple definitions if not managed properly. Using header guards (see Lecture 02) helps prevent this issue.
+- **Compiler's discretion**: The `inline` keyword is a *suggestion* to the compiler, and the compiler can choose whether or not to inline the function based on optimization settings and other factors.
+- **Header files**: When defining functions in header files, always mark them as `inline` (or use `constexpr` or templates) to avoid multiple definition errors during linking. Header guards (see Lecture 02) prevent multiple inclusions within a single translation unit, but they do not prevent multiple definitions across different source files.
 - **Balancing readability**: While inlining can improve performance, it should be used judiciously. Overusing inline for functions that don't provide significant performance benefits can lead to less readable code due to poor code organization.
 
 ---
@@ -508,7 +508,7 @@ std::cout << "Result: " << result << std::endl;
 
 # Where to define class member functions?
 
-In C++, member functions of a class can be defined either in-class (inline) or out of class. Each approach has its use cases and implications.
+In C++, member functions of a class can be defined either in-class (inline) or out-of-class. Each approach has its use cases and implications.
 
 # In-class (inline) definition (1/3)
 Member functions are defined within the class declaration itself, typically in the header file. This is common for short, simple functions that are typically one-liners or very concise.
@@ -556,7 +556,7 @@ int MyClass::add(int a, int b) // inline keyword is implicit here.
 
 ---
 
-# Out of class definition (1/2)
+# Out-of-class definition (1/2)
 
 Member functions are declared in the class declaration (in the header file) and defined separately in the source file (.cpp file). Typically used for functions with larger implementations or when you want to separate interface from implementation.
 
@@ -581,7 +581,7 @@ int MyClass::add(int a, int b) {
 
 ---
 
-# Out of class definition (2/2)
+# Out-of-class definition (2/2)
 
 ## Pros
 - Separation of interface from implementation for cleaner code organization.
@@ -596,7 +596,7 @@ int MyClass::add(int a, int b) {
 # Best practices
 
 1. Use in-class (`inline`) definitions for very short and simple functions (e.g., accessors, mutators) to potentially benefit from inlining.
-2. Use out of class definitions for larger or more complex functions to keep the header files clean and to separate interface from implementation.
+2. Use out-of-class definitions for larger or more complex functions to keep the header files clean and to separate interface from implementation.
 3. Consider code readability and maintainability when making a choice.
 
 In practice, a combination of both in-class and out-of-class definitions is often used, with the goal of keeping the code organized, maintainable, and efficient.
@@ -641,8 +641,8 @@ private:
 C++ provides access specifiers to control the visibility and accessibility of class members (variables and methods). These access specifiers enforce encapsulation and access control within the class.
 
 - `public`: Members declared as public are accessible from any part of the program. They form the class's public interface.
-- `private`: Members declared as private are not accessible from outside the class. They are used for internal implementation details.
 - `protected`: Members declared as protected are accessible within the class and by derived classes (in **inheritance** scenarios).
+- `private`: Members declared as private are not accessible from outside the class. They are used for internal implementation details.
 
 #### :warning: Inheritance will be covered in the next lecture!
 
