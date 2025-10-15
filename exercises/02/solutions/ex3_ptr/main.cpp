@@ -1,4 +1,5 @@
 #include "statistics.hpp"
+
 #include <algorithm>
 #include <iostream>
 #include <sstream>

@@ -18,5 +18,4 @@ double divide(const double &a, const double &b) {
 
   return a / b;
 }
-  
 } // namespace Calculator

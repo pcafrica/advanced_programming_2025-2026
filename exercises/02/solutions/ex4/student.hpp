@@ -1,5 +1,5 @@
-#ifndef STUDENT_HPP_
-#define STUDENT_HPP_
+#ifndef STUDENT_HPP__
+#define STUDENT_HPP__
 
 #include <string>
 
@@ -9,4 +9,4 @@ struct Student {
   double grade_average;
 };
 
-#endif // STUDENT_HPP_
+#endif // STUDENT_HPP__

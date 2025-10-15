@@ -1,5 +1,5 @@
-#ifndef STATISTICS_HPP_
-#define STATISTICS_HPP_
+#ifndef STATISTICS_HPP__
+#define STATISTICS_HPP__
 
 #include <vector>
 
@@ -10,4 +10,4 @@ double calculate_median(const std::vector<double> &numbers);
 double calculate_standard_deviation(const std::vector<double> &numbers);
 } // namespace stat
 
-#endif // STATISTICS_HPP_
+#endif // STATISTICS_HPP__
