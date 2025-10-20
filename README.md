@@ -46,7 +46,7 @@ Unless otherwise specified, all content here is licensed under a
 # Links and resources
 - [Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw?cjc=xjhuxupx). **You are required to join. Please use your full name (no nicknames allowed)**.
 - [Live streaming (Zoom)](https://sissa-it.zoom.us/j/88441969598?pwd=mzN8aPOmlfs6NnOXxmXcKnuEq0px22.1) (meeting ID: 884 4196 9598, passcode: 301029).
-- [Recordings (Moodle)](https://moodle2.units.it/course/view.php?id=16153)
+- [Recordings (Moodle)](https://moodle2.units.it/course/view.php?id=16153) (access key: *AdvProg2526*).
 
 ---
 
