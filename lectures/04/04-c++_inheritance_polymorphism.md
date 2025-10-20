@@ -46,7 +46,7 @@ Classes can have various relationships, including:
 
 1. **Association**: A loose relationship where classes are related, but one does not necessarily contain the other. For example, a `Student` class may be associated with a `Course` or a `Teacher` class. One class is associated with another by holding a reference or pointer to it. This is the simplest form of collaboration.
 
-2. **Aggregation**: A *"has-a"* relationship where one class contains another as a part, but the contained object can exist independently. For example, a `Car` class may aggregate `Wheel` classes. A class contains objects of other classes, but the contained objects can exist independently of the container class.
+2. **Aggregation**: A *"has-a"* relationship where one class contains another as a part, but the contained object can exist independently. For example, a `Car` class may aggregate an `ENgine` class. A class contains objects of other classes, but the contained objects can exist independently of the container class.
 
 ---
 
@@ -86,7 +86,8 @@ public:
     Student(const std::string& name) : student_name(name) {}
 
     void enroll_course(Course *course) {
-        // Append new element to the vector.
+        // Note: Student does not own the Course object.
+        // The Course must remain valid throughout the Student's lifetime.
         enrolled_courses.push_back(course);
     }
 
@@ -134,20 +135,21 @@ bob.list_enrolled_courses();
 **Aggregation** represents a relationship where one class (the whole) contains another class (the part), but the part can exist independently. It is represented by a *"has-a"* relationship.
 
 ```cpp
-class Wheel {
+class Engine {
 public:
-    void rotate() { /*...*/ }
+    void start() { /* ... */ }
 };
-
+    
 class Car {
 private:
-    Wheel wheels[4]; // Car contains Wheels, but Wheels can exist independently.
+    Engine *engine; // Car has-an Engine (aggregation via pointer).
+                    // Engine can exist independently of Car.
+
 public:
-    void drive() {
-        for (unsigned int i = 0; i < 4; ++i) {
-            wheels[i].rotate();
-        }
-    }
+    Car(Engine *e) : engine(e) {} // Car does not own the Engine.
+    void drive() { engine->start(); }
+    
+    // Engine not deleted in Car's destructor!
 };
 ```
 
@@ -165,7 +167,7 @@ class Room {
 class Apartment {
 private:
     Room living; // Composition: Apartment are composed by Room objects.
-    Room kitchen;
+    Room kitchen; // When Apartment is destroyed, so are the Rooms.
     Room bedroom;
 public:
     void clean() { living.clean(); kitchen.clean(); bedroom.clean(); }
@@ -187,9 +189,10 @@ public:
 class DiagonalView {
 public:
     DiagonalView(Matrix &mat) : mat(mat) {}
-    double & operator()(int i, int j) {
-        return (i == j) ? mat(i, i) : 0.0; // Ternary operator.
-    }
+
+    // Return by value (returning a reference to a temporary is undefined behavior).
+    double operator()(int i, int j) const { return (i == j) ? mat(i, i) : 0.0; }
+
 private:
     Matrix &mat;
 }
@@ -236,7 +239,8 @@ public:
 Circle circle; // Creating an object of the derived class.
 circle.f(); // Calls the f() method of the base class.
 circle.g(); // Calls the g() method of the derived class.
-circle.draw(); // Calls the draw() method of the derived class.
+circle.draw(); // Calls the draw() method of the derived class (hides base class version).
+circle.Shape::draw(); // Calls the draw() method of the base class.
 ```
 
 ---
@@ -400,6 +404,7 @@ public:
     void fun() {
         // If both B and C define f(), you can manually resolve the ambiguity.
         const double x = B::f();
+        const double y = C::f();
         // ...
     }
 };
@@ -425,7 +430,7 @@ Public inheritance is the mechanism through which we implement polymorphism, whi
 2. Methods declared `virtual` in `B` are overridden by `D` methods with the same signature.
 3. If `B *b = new D` is a pointer to the base class converted from a `D*`, calling a `virtual` method will, in fact, invoke the method defined in `D` (this applies to references as well).
 
-**Note:** Overridden virtual methods must have the same return type, with one exception: a method returning a pointer (reference) to a base class may be overridden by a method returning a pointer (reference) to a derived class.
+**Implementation detail**: The compiler implements dynamic binding using a virtual table (vtable). Each object with virtual functions contains a hidden pointer to its class's vtable. This adds a small memory and performance overhead.
 
 ---
 
@@ -501,21 +506,71 @@ f(s); // Legal! Polymorphism converts 'const Square &' to 'const Polygon &'.
 
 ---
 
-# Function overriding (3/4)
+# Function overriding (4/4)
 
 #### :warning: Polymorphism applies only when working with pointers or references.
 
 Passing by copy leads to compilation errors:
 
 ```cpp
-void f(Polygon p) {
+void f(Polygon p) { // Object slicing occurs here!
     const double a = p.area();
     // ...
 }
 
 Square s;
 f(s); // Illegal! A Square is not convertible into a Polygon.
+      // Even if it were, the Square would be "sliced" to a Polygon.
 ```
+
+---
+
+# Preventing object slicing
+    
+When working with polymorphic classes, you may want to prevent copying to avoid slicing:
+
+```cpp
+class Shape {
+public:
+    Shape() = default;
+
+    // Delete copy operations to prevent slicing.
+    Shape(const Shape&) = delete;
+    Shape& operator=(const Shape&) = delete;
+
+    virtual ~Shape() = default;
+    virtual double area() = 0;
+};
+    
+// Now this is impossible:
+// Shape s = Circle{}; // Error: copy constructor is deleted.
+```
+    
+**Note**: Polymorphic objects should typically be manipulated through pointers or references, not by value.
+    
+---
+
+# Covariant return types
+    
+A derived class can override a virtual function with a *covariant return type*: a pointer or reference to a derived class when the base returns a pointer or reference to a base class.
+
+```cpp
+class Base {
+public:
+    virtual Base* clone() const {
+        return new Base(*this);
+    }
+};
+    
+class Derived : public Base {
+public:
+    Derived* clone() const override { // Covariant return type: Derived* instead of Base*.
+        return new Derived(*this);
+    }
+};
+```
+    
+This maintains type safety while preserving polymorphic behavior.
 
 ---
 
@@ -555,7 +610,7 @@ Polygon *p = new Square();
 delete p;
 ```
 
-In the last line, one should call the `Square` destructor. If you forget to mark the destructor in Polygon as `virtual`, that of `Polygon` is called instead. If `Square` has added new data members, this can lead to a memory leak.
+In the last line, one should call the `Square` destructor. If you forget to mark the destructor in Polygon as `virtual`, that of `Polygon` is called instead. If `Square` has additional resources, this can lead to a memory leak.
 
 
 **Note**: If you add the flag `-Wnon-virtual-dtor` at compilation time, the compiler issues a warning if you have forgotten a virtual destructor.
@@ -563,6 +618,10 @@ In the last line, one should call the `Square` destructor. If you forget to mark
 ---
 
 # Is a virtual destructor in a derived class necessary?
+
+#### :warning: Yes!
+
+But...
 
 It is not necessary to have a virtual destructor in the derived class if:
 
@@ -588,7 +647,7 @@ The use of protected and private inheritance is quite special. Typically, you us
 
 The use of private polymorphism is less common.
 
-Remember that protected and private inheritance does not implement a strict *"is-a"* relationship.
+Remember that protected and private inheritance does not implement a strict *"is-a"* relationship. These techniques are mentioned here for completeness, but public inheritance is the standard for polymorphism.
 
 ---
 
@@ -754,11 +813,14 @@ public:
 Base base; Derived derived;
 std::cout << "Type of base: " << typeid(base).name() << std::endl;
 std::cout << "Type of derived: " << typeid(derived).name() << std::endl;
+// Note: The output format of name() is implementation-defined (may be mangled).
 ```
 
 ---
 
 # Type checking with `dynamic_cast`
+
+**Note**: `dynamic_cast` only works with polymorphic types (classes with at least one virtual function). The compiler needs RTTI, which is enabled by virtual functions.
 
 `dynamic_cast<D*>(B*)` tries to convert a `B*` to a `D*` (***downcasting***). If the condition fails, it returns the null pointer; otherwise, it returns the pointer to the derived class. This can be used to determine to which derived class a pointer to a base class refers.
 
@@ -770,9 +832,7 @@ double fun(const Shape &p) {
     if (ptr != nullptr) {
         // It is a square.
         ptr->get_side(); // This is not a member of the abstract Shape class.
-    } else {
-        // It is not a square.
-    }
+    } else { /* Not a square... */ }
 }
 ```
 
@@ -800,7 +860,7 @@ private:
 }
 ```
 
-:arrow_right: See (future) lecture on smart pointers.
+:arrow_right: In modern C++, smart pointers (covered later) handle ownership automatically.
 
 ---
 
@@ -814,7 +874,8 @@ Some guidelines about aggregation/composition with pointers vs. references.
 
 ## Pointer
 - Use (const) pointers if the aggregated object may change at runtime.
-- If you use a pointer, **always initialize the pointer to `nullptr`** and create a method to test whether it has been assigned to an object. Initializing pointers to `nullptr` is a good practice.
+- **Always initialize pointers to `nullptr`** and check before dereferencing.
+- **Remember**: raw pointers don't express ownership clearly (smart pointers solve this).
 
 ---
 
