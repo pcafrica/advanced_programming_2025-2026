@@ -58,5 +58,7 @@ section.titlepage {
 }
 
 section::after {
-  content: attr(data-marpit-pagination) ' / ' attr(data-marpit-pagination-total);
+    content: attr(data-marpit-pagination) ' / ' attr(data-marpit-pagination-total);
+    bottom: 0px;
+    right: 5px;
 }
