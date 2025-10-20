@@ -22,14 +22,16 @@ private:
 };
 
 int main() {
+  // Non-const array.
   Array a{{-2.3, 5, 1.2, 0.0, 7}};
 
-  const double x = a(2); // non-const version.
+  const double x = a(2); // Reading.
 
-  a(1) = a(2) = 3; // non-const version.
+  a(1) = a(2) = 3; // Writing.
 
-  std::cout << a(1) << std::endl << a(2) << std::endl; // non-const version.
+  std::cout << a(1) << std::endl << a(2) << std::endl; // Reading.
 
+  // Const array.
   const Array &a_const = a;
   std::cout << a_const(2) << std::endl; // const version.
 

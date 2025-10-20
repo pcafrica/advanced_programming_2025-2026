@@ -37,20 +37,33 @@ public:
   // Constructor.
   Array(const std::vector<double> &data) : data(data) {}
 
-  // Access operator for both reading and writing.
+  // (Non-const) accessor for both reading and writing.
   ArrayProxy operator()(const unsigned int idx) {
+    std::cout << "accessor (non-const)" << std::endl;
     return ArrayProxy(data[idx]);
+  }
+
+  // Const accessor for reading.
+  double operator()(const unsigned int idx) const {
+    std::cout << "accessor (const)" << std::endl;
+    return data[idx];
   }
 };
 
 int main() {
+  // Non-const array.
   Array a{{-2.3, 5, 1.2, 0.0, 7}};
 
-  const double x = a(2); // const version.
+  const double x = a(2); // Reading.
 
-  a(1) = a(2) = 3; // non-const version.
+  a(1) = a(2) = 3; // Writing.
 
-  std::cout << a(1) << std::endl << a(2) << std::endl; // const version.
+  std::cout << a(1) << std::endl << a(2) << std::endl; // Reading.
+
+  // Const array.
+  const Array &a_const = a;
+
+  std::cout << a_const(1) << std::endl << a_const(2) << std::endl; // Reading.
 
   return 0;
 }
