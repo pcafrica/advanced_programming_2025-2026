@@ -166,7 +166,7 @@ class Room {
 
 class Apartment {
 private:
-    Room living; // Composition: Apartment are composed by Room objects.
+    Room living;  // Composition: Apartment are composed by Room objects.
     Room kitchen; // When Apartment is destroyed, so are the Rooms.
     Room bedroom;
 
@@ -480,6 +480,7 @@ public:
 Base *ptr = new Derived{};
 ptr->display(); // Calls the display() method of the Derived class.
 // Without 'virtual', Base::display() would be invoked, instead.
+delete ptr;
 ```
 
 ---
