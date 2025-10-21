@@ -15,7 +15,7 @@ _class: titlepage
 ## Inheritance and polymorphism in C++.
 <br>
 
-#### Advanced Programming - SISSA, UniTS, 2024-2025
+#### Advanced Programming - SISSA, UniTS, 2025-2026
 
 ###### Pasquale Claudio Africa
 
