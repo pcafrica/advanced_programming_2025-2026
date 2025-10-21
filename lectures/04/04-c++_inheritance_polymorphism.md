@@ -46,7 +46,7 @@ Classes can have various relationships, including:
 
 1. **Association**: A loose relationship where classes are related, but one does not necessarily contain the other. For example, a `Student` class may be associated with a `Course` or a `Teacher` class. One class is associated with another by holding a reference or pointer to it. This is the simplest form of collaboration.
 
-2. **Aggregation**: A *"has-a"* relationship where one class contains another as a part, but the contained object can exist independently. For example, a `Car` class may aggregate an `ENgine` class. A class contains objects of other classes, but the contained objects can exist independently of the container class.
+2. **Aggregation**: A *"has-a"* relationship where one class contains another as a part, but the contained object can exist independently. For example, a `Car` class may aggregate an `Engine` class. A class contains objects of other classes, but the contained objects can exist independently of the container class.
 
 ---
 
@@ -169,6 +169,7 @@ private:
     Room living; // Composition: Apartment are composed by Room objects.
     Room kitchen; // When Apartment is destroyed, so are the Rooms.
     Room bedroom;
+
 public:
     void clean() { living.clean(); kitchen.clean(); bedroom.clean(); }
 };
@@ -183,7 +184,7 @@ A **view** (or **proxy**) is another type of aggregation that enables access to 
 ```cpp
 class Matrix {
 public:
-    double & operator()(int i, int j);
+    double & operator()(int i, int j) { /* ... */ }
 };
 
 class DiagonalView {
@@ -332,7 +333,7 @@ public:
 
 # Delegating constructor
 
-In the constructor of a derived class, you can call the constructor of the base class, which is useful if you need to pass arguments. If no arguments are passed, the default constructor of the base class is used (in this case, the base class must be default constructible).
+In the constructor of a derived class, you can call the constructor of the base class, which is useful if you need to pass arguments. If no arguments are passed, the default constructor of the base class is used (in that case, the base class must be default constructible).
 
 ```cpp
 class B {
@@ -362,10 +363,12 @@ It's important to note that constructors are not inherited by default, but they 
 class B {
 public:
     B(double x) : x(x) { /* ... */ }
-    // ...
+private:
+    double x;
 };
 
 class D : public B {
+public:
     using B::B; // Inherits B constructor.
 private:
     int my_i = 10;
@@ -392,6 +395,7 @@ DerivedClass::~DerivedClass() {
     // ~BaseClass() is automatically called here.
 }
 ```
+
 ---
 
 # Multiple inheritance
@@ -430,8 +434,6 @@ Public inheritance is the mechanism through which we implement polymorphism, whi
 2. Methods declared `virtual` in `B` are overridden by `D` methods with the same signature.
 3. If `B *b = new D` is a pointer to the base class converted from a `D*`, calling a `virtual` method will, in fact, invoke the method defined in `D` (this applies to references as well).
 
-**Implementation detail**: The compiler implements dynamic binding using a virtual table (vtable). Each object with virtual functions contains a hidden pointer to its class's vtable. This adds a small memory and performance overhead.
-
 ---
 
 # *"is-a"* relationship
@@ -454,6 +456,8 @@ In C++, you override a base class function in a derived class by using the same 
 
 **Dynamic binding** is the mechanism that determines at runtime which method to call based on the actual type of the object.
 
+**Implementation detail**: The compiler implements dynamic binding using a virtual table (*vtable*). Each object with virtual functions contains a hidden pointer to its class's vtable. This adds a small memory and performance overhead.
+
 ---
 
 # Function overriding (2/4)
@@ -473,7 +477,7 @@ public:
     }
 };
 
-Base *ptr = new Derived();
+Base *ptr = new Derived{};
 ptr->display(); // Calls the display() method of the Derived class.
 // Without 'virtual', Base::display() would be invoked, instead.
 ```
@@ -574,7 +578,7 @@ This maintains type safety while preserving polymorphic behavior.
 
 ---
 
-# A *factory* of polygons
+# A (simple) *factory* of polygons
 
 ```cpp
 unsigned int n_sides;
@@ -605,13 +609,12 @@ When applying polymorphism, the destructor of the base class **must** be defined
 The reason for this necessity can be illustrated with the following code:
 
 ```cpp
-Polygon *p = new Square();
+Polygon *p = new Square{...};
 // ...
 delete p;
 ```
 
-In the last line, one should call the `Square` destructor. If you forget to mark the destructor in Polygon as `virtual`, that of `Polygon` is called instead. If `Square` has additional resources, this can lead to a memory leak.
-
+In the last line, one should call the `Square` destructor. If you forget to mark the destructor in Polygon as `virtual`, only that of `Polygon` is called instead. If `Square` has additional resources, this can lead to a memory leak.
 
 **Note**: If you add the flag `-Wnon-virtual-dtor` at compilation time, the compiler issues a warning if you have forgotten a virtual destructor.
 
@@ -763,7 +766,7 @@ public:
     // ...
 };
 
-class C : B // Error: B is final.
+class C : public B // Error: B is final.
 {
     // ...
 };
@@ -775,12 +778,14 @@ class C : B // Error: B is final.
 
 ```cpp
 class A {
+public:
     virtual void f();
     void g();
     // ...
 };
 
 class B : A {
+public:
     void f() const override; // Error: Has a different signature from A::foo.
 
     void f() override; // OK: Base class contains a virtual function with the same signature.
