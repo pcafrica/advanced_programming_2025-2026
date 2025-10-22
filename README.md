@@ -52,7 +52,7 @@ Unless otherwise specified, all content here is licensed under a
 
 # Homeworks
 
-TBD
+- Homework 01 [[Markdown](homeworks/homework_01.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODE4MTkzMTkyNDgx/details)]
 
 ---
 
