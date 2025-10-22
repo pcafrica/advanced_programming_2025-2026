@@ -33,7 +33,7 @@ int main() {
 
   // Const array.
   const Array &a_const = a;
-  std::cout << a_const(2) << std::endl; // const version.
+  std::cout << a_const(1) << std::endl << a_const(2) << std::endl; // Reading.
 
   return 0;
 }
