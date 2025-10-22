@@ -66,7 +66,7 @@ TBD
 | Tue 14 Oct 2025 | 14:00 - 16:00 | 005     | Object oriented programming. Classes and access control in C++. Operators. [[Markdown](lectures/03/03-c++_classes.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/03/03-c++_classes.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/03/03-c++_classes.pdf)] |
 | Wed 15 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/03/03-c++_classes.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/03/03-c++_classes.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/03/03-c++_classes.pdf)] |
 | Tue 21 Oct 2025 | 14:00 - 16:00 | 005     | Inheritance and polymorphism. [[Markdown](lectures/04/04-c++_inheritance_polymorphism.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/04/04-c++_inheritance_polymorphism.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/04/04-c++_inheritance_polymorphism.pdf)] |
-| Wed 22 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
+| Wed 22 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/04/04-c++_inheritance_polymorphism.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/04/04-c++_inheritance_polymorphism.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/04/04-c++_inheritance_polymorphism.pdf)] |
 | Tue 28 Oct 2025 | 14:00 - 16:00 | 005     | Functions. Templates and generic programming. |
 | Wed 29 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. |
 | Tue 04 Nov 2025 | 14:00 - 16:00 | 005     | The Standard Template Library. |
