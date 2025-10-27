@@ -351,7 +351,7 @@ private:
 };
 ```
 
-In this example, an instance like `D d(4, 12.0)` sets `d.x` to `12.0` and `d.my_i` to `4`.
+In this example, an instance like `D d{4, 12.0}` sets `d.x` to `12.0` and `d.my_i` to `4`.
 
 ---
 
@@ -375,7 +375,7 @@ private:
 };
 ```
 
-In this example, when you create an instance like `D d(12.0)`, it calls the `B::B(double)` constructor, setting `d.x` to `12.0`, and `d.my_i` takes the default value of `10`.
+In this example, when you create an instance like `D d{12.0}`, it calls the `B::B(double)` constructor, setting `d.x` to `12.0`, and `d.my_i` takes the default value of `10`.
 
 ---
 
