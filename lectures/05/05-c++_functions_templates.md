@@ -83,7 +83,7 @@ A function is **identified** by:
 - The presence of the `const` qualifier (for methods).
 - The type of the enclosing class (for methods).
 
-Two functions with different identifiers are eventually treated as **different functions**, which is the key for **function overloading**.
+Two functions with different identifiers are always treated as **different functions**, which is the key for **function overloading**.
 
 **:warning: The return type is NOT part of the function identifier!**
 
@@ -106,8 +106,8 @@ In rare instances, a function returns a reference to an object passed by referen
 ```cpp
 std::ostream &operator<<(std::ostream &os, const MyClass &obj)
 {
-  // ...
-  return os; // Return the stream.
+    // ...
+    return os; // Return the stream.
 }
 ```
 
@@ -134,6 +134,9 @@ For instance:
 ```cpp
 a = cross_prod(c, d); // This sets ndim to 2.
 ```
+
+#### :warning: Default parameters must be specified from right to left.
+Once a parameter has a default value, all subsequent parameters must also have defaults.
 
 ---
 
@@ -173,7 +176,7 @@ _class: titlepage
 
 ---
 
-# Pointers to functions
+# Function pointers
 
 ```cpp
 double integrand(double x);
@@ -233,13 +236,13 @@ shapes.push_back(new Circle(2.5));
 // Define a member function pointer for the area function.
 double (Shape::*area_fun)() const = &Shape::area;
 
-for (const auto shape : shapes) {
+for (const auto* shape : shapes) {
     const double area = (shape->*area_fun)();
     std::cout << "Area: " << area << std::endl;
 }
 
 // Cleanup allocated objects.
-for (auto shape : shapes) {
+for (auto* shape : shapes) {
     delete shape;
 }
 ```
@@ -261,12 +264,12 @@ A **function object** or **functor** is a class object which overloads the **cal
 ```cpp
 class Cube {
 public:
-  double operator()(const double &x) const { return x * x * x; }
+    double operator()(const double &x) const { return x * x * x; }
 };
 
 Cube cube{}; // A function object.
 auto y = cube(3.4); // Calls Cube::operator()(3.4).
-auto z = Cube{}(8.0); // I create the functor on the fly.
+auto z = Cube{}(8.0); // Create the functor on the fly.
 ```
 
 If the call operator returns a `bool`, the function object is a **predicate**. If a call to the call operator does not change the data members of the object, you should declare `operator()` as `const` (as with any other method).
@@ -278,21 +281,22 @@ If the call operator returns a `bool`, the function object is a **predicate**. I
 **A characteristic of a functor is that it may have a state**, so it can interact with other objects and store additional information to be used to calculate the result.
 
 ```cpp
-class Calculator {
+class CountCalls {
 public:
-    int result = 0;
-
-    class Add {
-    public:
-        Calculator& calc;
-        Add(Calculator& c) : calc(c) {}
-        void operator()(int x, int y) { calc.result = x + y; }
-    };
+  int count = 0;
+  
+  void operator()() {
+    ++count;
+    std::cout << "Called " << count << " times." << std::endl;
+  }
 };
 
-Calculator calc;
-Calculator::Add add(calc);
-add(5, 3); // Result is stored in calc.result;
+CountCalls counter;
+counter(); counter(); counter();
+
+void stateless_function() {
+  std::cout << "I have no memory of previous calls!" << std::endl;
+}
 ```
 
 ---
@@ -364,7 +368,7 @@ Note that I did not need to specify the return type in this case, the compiler d
 The capture specification allows you to use variables in the enclosing scope inside the lambda, either by value (a local copy is made) or by reference.
 
 - `[]`: Captures nothing.
-- `[&]`: Captures all variables by reference.
+- `[&]`: Captures all variables by reference. (**NB**: captured references must outlive the lambda!)
 - `[=]`: Captures all variables by making a copy.
 - `[y]`: Captures only `y` by making a copy.
 - `[&y]`: Captures only `y` by reference.
@@ -512,6 +516,25 @@ _class: titlepage
 
 ---
 
+# Why generic programming?
+
+Consider writing a `max` function:
+```cpp
+int max(int a, int b) { return (a > b) ? a : b; }
+double max(double a, double b) { return (a > b) ? a : b; }
+std::string max(std::string a, std::string b) { return (a > b) ? a : b; }
+// ... and so on for every type!
+```
+
+**Problems:**
+- Code duplication.
+- Maintenance nightmare (fix bug in one, must fix in all).
+- Can't anticipate all types users might need.
+
+**Solution:** Templates let us write the logic once and let the compiler generate type-specific versions.
+
+---
+
 # What is generic programming?
 
 - Generic programming is a programming paradigm that aims to write code in a way that's independent of data types.
@@ -601,8 +624,9 @@ T add(T a, T b) {
 ```cpp
 const int result1 = add<int>(5, 3);
 const int result2 = add(5, 3); // T automatically deduced as int.
+const double result5 = add(3, 5.0); // Error: conflicting types for T.
 
-const double result3 = add<double>(2.5, 3.7);
+const double result3 = add<double>(2.5, 3.7); // Explicit template argument.
 const double result4 = add(2.5, 3.7); // T automatically deduced as double.
 ```
 
@@ -796,23 +820,23 @@ class Vector<std::string> {
 Partial specialization refines specialized behavior for specific subsets of template arguments.
 
 ```cpp
-// Generic template
 template <typename T, int N>
-class Array {
+class Array { // Generic template.
 private:
     T data[N];
 };
 
-// Partial specialization for arrays of size 1.
 template <typename T>
-class Array<T, 1> {
+class Array<T, 1> { // Partial specialization for arrays of size 1.
 private:
     T element; // No need to store an array for a single variable!
 };
 
-Array<int, 3> arr1;  // Uses the generic template for arrays of size 3
-Array<char, 1> arr2; // Uses the partially specialized template for arrays of size 1
+Array<int, 3> arr1;  // Uses the generic template for arrays of size 3.
+Array<char, 1> arr2; // Uses the partially specialized template for arrays of size 1.
 ```
+
+Function templates cannot be partially specialized, but class templates can. For functions, use overloading instead.
 
 ---
 
@@ -910,7 +934,7 @@ _class: titlepage
 
 2. **Separate** declarations (`module.hpp`) and definitions (`module.tpl.hpp`) when templates are long and complex. Then add `#include "module.tpl.hpp"` at the end of `module.hpp` (before closing its header guard).
 
-3. **Explicitly instantiation** for a specific list of types. Only in this case, definitions can go to a source file. But if you instantiate a template for other types not explicitly instantiated, the compiler will not have access to the definition, leading to linker errors.
+3. **Explicitly instantiation** for a specific list of types (e.g., when you know all needed types in advance). Only in this case, definitions can go to a source file. But if you instantiate a template for other types not explicitly instantiated, the compiler will not have access to the definition, leading to linker errors.
 
 ---
 
@@ -926,7 +950,7 @@ template class MyClass<int>;
 
 then the corresponding object file will contain the code corresponding to the template function `double func<T>(const T &)` with `T=double` and that of **all methods** of the template class `MyClass<T>` with `T=double` and `T=int`.
 
-This can be useful to save compile time when debugging template classes (since the code for all class methods is generated).
+This can be useful to save compile time when debugging template classes (since the code for all class methods is generated). However, attempts to use, e.g., `MyClass<char>` will cause linker error.
 
 ---
 
@@ -951,7 +975,25 @@ auto sum3 = add(1.0f, 2.0f); // float
 
 Type deduction with `auto` is particularly useful when you want to write more generic code that adapts to different data types without explicitly specifying them.
 
-## :warning: Don't overuse `auto`!
+---
+
+# Don't overuse `auto`!
+
+**Good uses of `auto`:**
+```cpp
+auto it = vec.begin(); // Iterator type is verbose.
+auto lambda = [](int x) { return x * 2; }; // Lambda type is unnameable.
+auto result = calculate_something(); // When type is obvious from context.
+```
+
+**Problematic uses of `auto`:**
+```cpp
+auto x = 5;         // Unclear if int, long, short, ...
+auto data = func(); // What type is returned? Need to check func().
+auto ptr = &obj;    // Pointer type not obvious.
+```
+
+**Guideline:** Use `auto` when it improves readability, not when it obscures intent.
 
 ---
 
@@ -970,7 +1012,7 @@ public:
 template <typename T>
 class Derived : Base<T> {
 public:
-    void foo() { my_fun(); ... } // Which 'myfun'?
+    void foo() { my_fun(); ... } // Which 'my_fun'?
 };
 ```
 
@@ -997,7 +1039,7 @@ public:
     void foo() { Base<T>::my_fun(); ... }
 }
 ```
-In this case, the compiler understands that `my_fun()` depends on the template parameter `T` and will resolve it only at the instance of the template class.
+In this case, the compiler understands that `my_fun()` depends on the template parameter `T` and will resolve it only at the instantiation of the template class.
 
 ---
 
@@ -1013,7 +1055,7 @@ private:
     C<T> a;
 };
 
-MyClass<double, std::vector> x; // 'a' is a std::vector<double>.
+MyClass<double, std::initializer_list> x; // 'a' is a std::initializer_list<double>.
 
 MyClass<int> x; // 'a' is a std::complex<int>.
 ```
@@ -1061,6 +1103,28 @@ constexpr int n = Fibonacci<10>::value; // Calculated at compile-time.
 
 ---
 
+# `constexpr` functions and compile-time computation
+
+Functions declared `constexpr` can be evaluated at compile-time when given constant expressions:
+```cpp
+constexpr int factorial(int n) {
+    return (n <= 1) ? 1 : n * factorial(n - 1);
+}
+
+constexpr int x = factorial(5); // Computed at compile-time!
+int arr[factorial(4)];          // Array size must be compile-time constant.
+
+int runtime_value = get_input();
+int y = factorial(runtime_value); // Evaluated at runtime if needed.
+```
+
+**Benefits:**
+- Zero runtime cost for compile-time evaluations
+- Can be used where constants are required
+- More efficient than template metaprogramming for simple cases
+
+---
+
 # Example: type traits with SFINAE
 
 ```cpp
@@ -1073,7 +1137,7 @@ public:
     template <typename U>
     static std::false_type test(...);
 
-    static constexpr bool value = decltype(test<T>(0))::value;
+    static constexpr bool value = decltype(test<T>(nullptr))::value;
 };
 
 class MyType {
@@ -1129,13 +1193,13 @@ template <typename Derived>
 class Shape {
 public:
     double area() {
-        return static_cast<Derived*>(this)->area();
+        return static_cast<Derived*>(this)->area_impl();
     }
 };
 
 class Circle : public Shape<Circle> {
 public:
-    double area() {
+    double area_impl() {
         // Compute area of a circle.
     }
 };
