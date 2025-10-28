@@ -29,19 +29,20 @@ _class: titlepage
 <div>
 
 #### 1. Advanced topics on functions
-   - Function pointers
-   - Functors (function objects)
-   - Lambda functions
-   - Function wrappers (`std::function`)
+- Function pointers
+- Functors (function objects)
+- Lambda functions
+- Function wrappers (`std::function`)
+
 </div>
 <div>
 
 #### 2. Generic programming and templates
-   - Generic programming
-   - Function templates
-   - Class templates
-   - Notes on code organization
-   - Advanced template techniques and concepts
+- Generic programming
+- Function templates
+- Class templates
+- Notes on code organization
+- Advanced template techniques and concepts
 
 </div>
 </div>
@@ -58,7 +59,7 @@ _class: titlepage
 
 # Functions in C++
 
-In C++, functions are categorized as free functions or member functions (methods) of a class. Subcategories exist for normal functions and template functions, including automatic return functions.
+In C++, functions can be categorized as free functions or member functions (methods) of a class. Subcategories exist for normal functions and template functions, including automatic return functions.
 
 For a free, non-template function, the typical declaration syntax is as follows:
 
@@ -135,12 +136,12 @@ For instance:
 a = cross_prod(c, d); // This sets ndim to 2.
 ```
 
-#### :warning: Default parameters must be specified from right to left.
+## :warning: Default parameters must be specified from right to left.
 Once a parameter has a default value, all subsequent parameters must also have defaults.
 
 ---
 
-# A recall of function overloading
+# Function overloading: a recap
 
 ```cpp
 int fun(int i);
@@ -195,7 +196,7 @@ I = integrate(0, 3.1415, my_sin);
 
 The name of the function is interpreted as a pointer to that function. However, you may precede it by `&`: `f_ptr f = &integrand`.
 
-We will see in a while a safer and more general alternative to function pointers, the function wrapper `std::function` of the STL.
+Later we will see a safer and more general alternative to function pointers, the function wrapper `std::function` of the STL.
 
 ---
 
@@ -317,7 +318,7 @@ std::transform(in.begin(), in.end(),    // Source.
 const double prod = std::accumulate(in.begin(), in.end(), 1.0, std::multiplies<int>());
 ```
 
-Now `out = {-1, -2, -3, -4, -5}.`.
+Now `out = {-1, -2, -3, -4, -5}`.
 
 `std::negate<type>` is a **unary functor** provided by the standard library.
 
@@ -359,7 +360,7 @@ auto f = [] (double x) { return 3 * x; }; // f is a lambda function.
 auto y = f(9.0); // y is equal to 27.0.
 ```
 
-Note that I did not need to specify the return type in this case, the compiler deduces it as `decltype(3 * x)`, which returns `double`.
+Note that there's no need to specify the return type in this case, as the compiler deduces it as `decltype(3 * x)`, which returns `double`.
 
 You can even *capture* local values to be used inside the labda as well:
 ```cpp
@@ -550,12 +551,21 @@ std::string max(std::string a, std::string b) { return (a > b) ? a : b; }
 - It focuses on creating reusable and versatile code by using templates or type abstractions.
 - The goal is to develop algorithms and data structures that work with different data types.
 
+---
+
 # Why use generic programming?
 
 - **Reusability:** Write code once, use it with multiple data types.
 - **Type safety:** Ensures that type-related errors are caught at compile-time.
 - **Performance:** Optimized code for specific data types without code duplication.
 - **Expressiveness:** Code that's concise and easier to read and maintain.
+
+# Cons of generic programming
+
+- **Complexity:** Generic code may be more complex due to abstraction.
+- **Compile-time overhead:** Template instantiation can lead to longer compile times.
+- **Debugging:** Template error messages can be challenging to decipher.
+
 
 ---
 
@@ -565,7 +575,7 @@ std::string max(std::string a, std::string b) { return (a > b) ? a : b; }
 - **Class templates:** Create versatile, type-safe data structures.
 - **STL (Standard Template Library):** Offers a collection of generic data structures and algorithms (covered later).
 
-# Use cases of generic programming
+# Use cases
 
 1. **Containers:** Generic data structures like vectors, stacks, and queues.
 2. **Algorithms:** Generic sorting, searching, and transformation algorithms.
@@ -758,21 +768,6 @@ This has two important implications:
 1. Actual compilation occurs **only** when the template is instantiated (i.e., when it is actually used in your code). Only then can the compiler deduce the template arguments and have the necessary information to produce the machine code.
 
 2. Thus, some compilation errors may only appear when the template is used!
-
----
-
-# Pros of generic programming
-
-- **Code reusability:** Reduced need to write similar code for different data types.
-- **Type safety:** Compile-time checks to ensure type correctness.
-- **Efficiency:** Optimized code for specific data types.
-- **Readability:** Cleaner and more expressive code.
-
-# Cons of generic programming
-
-- **Complexity:** Generic code may be more complex due to abstraction.
-- **Compile-time overhead:** Template instantiation can lead to longer compile times.
-- **Debugging:** Template error messages can be challenging to decipher.
 
 ---
 
@@ -1062,7 +1057,7 @@ template <typename T>
 class Derived : Base<T> {
 public:
     void foo() { this->my_fun(); ... }
-}
+};
 ```
 or the fully-qualified name:
 ```cpp
@@ -1070,7 +1065,7 @@ template <typename T>
 class Derived : Base<T> {
 public:
     void foo() { Base<T>::my_fun(); ... }
-}
+};
 ```
 
 In this case, the compiler understands that `my_fun()` depends on the template parameter `T` and will resolve it only at the instantiation of the template class.
@@ -1094,7 +1089,7 @@ MyClass<double, std::unique_ptr> x; // 'a' is a std::unique_ptr<double>.
 MyClass<int> x; // 'a' is a std::complex<int>.
 ```
 
-This is the feature tha allows to write expressions like `std::vector<std::complex<double>>`.
+This is the feature that allows us to write expressions like `std::vector<std::complex<double>>`.
 
 ---
 
@@ -1106,7 +1101,7 @@ This is the feature tha allows to write expressions like `std::vector<std::compl
 
 # SFINAE (Substitution Failure Is Not An Error)
 
-- SFINAE is a C++ rule that allows you to enable or disable function templates based on the validity of their substitutions.
+- SFINAE is a C++ rule that allows us to enable or disable function templates based on the validity of their substitutions.
 - Used for type traits and selective function overloading.
 
 ---
