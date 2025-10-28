@@ -18,12 +18,13 @@ public:
   }
 };
 
-// Function that compares two strings according to a policy.
+// Function to compare two strings according to a policy.
 //
 // The policy is provided as a template parameter. We assume that
 // it is default-constructible and has a call operator that takes two chars
 // and returns true if and only if they are considered equivalent.
-template <class Policy> bool equal(const std::string &a, const std::string &b) {
+template <class Policy>
+bool compare(const std::string &a, const std::string &b) {
   if (a.size() != b.size()) {
     return false;
   }
@@ -39,8 +40,7 @@ template <class Policy> bool equal(const std::string &a, const std::string &b) {
   return true;
 }
 
-// Functor class to compare strings according to a policy,
-// stored as class member.
+// Functor to compare strings according to a policy stored as class member.
 template <class Policy> class CompareString {
 public:
   CompareString() : compare{} {}

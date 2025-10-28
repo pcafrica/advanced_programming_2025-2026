@@ -355,7 +355,7 @@ _class: titlepage
 We have a very powerful syntax to create short (and inlined) functions quickly: the lambda expressions (also called lambda functions or simply lambdas). They are similar to Matlab anonymous functions, like `f = @(x) x^2` or Python's `f = lambda x: x**2`.
 
 ```cpp
-auto f = [] (double x) { return 3 * x; }; // f is a lambda function.
+auto f = [](double x) { return 3 * x; }; // f is a lambda function.
 
 auto y = f(9.0); // y is equal to 27.0.
 ```
@@ -367,7 +367,7 @@ You can even *capture* local values to be used inside the labda as well:
 std::vector<int> nums = {1, 5, 8, 12, 3, 7};
 int threshold = 6; // Local variable we want to use inside the lambda.
 
-int count = std::count_if(nums.begin(), nums.end(), [threshold] (int x) { return (x > threshold); });
+int count = std::count_if(nums.begin(), nums.end(), [threshold](int x) { return (x > threshold); });
 ```
 
 ---
@@ -395,7 +395,7 @@ With `[this]`, we get the `this` pointer to the calling object:
 class MyClass {
 public:
     double compute(const double &a) {
-        auto prod = [this, &a] (double val) { x *= (val * a); };
+        auto prod = [this, &a](double val) { x *= (val * a); };
         std::for_each(v.begin(), v.end(), prod);
         
     }
@@ -456,7 +456,7 @@ private:
     double radius;
 };
 
-auto compute_area = [] (const Shape& s) { return s.area(); };
+auto compute_area = [](const Shape& s) { return s.area(); };
 // 'auto' here resolves to std::function<double(const Shape&)>.
 
 Circle circle(5.0);
@@ -482,7 +482,7 @@ std::vector<std::function<int(int, int)>> tasks;
 tasks.push_back(func); // Wraps a function.
 F2 func2{};
 tasks.push_back(func2); // Wraps a functor.
-tasks.push_back([] (int x, int y){ return x * y; }); // Wraps a lambda function.
+tasks.push_back([](int x, int y){ return x * y; }); // Wraps a lambda function.
 
 for (auto t : tasks)
     std::cout << t(3, 4) << endl;
@@ -1010,7 +1010,7 @@ Type deduction with `auto` is particularly useful when you want to write more ge
 **Good uses of `auto`:**
 ```cpp
 auto it = vec.begin(); // Iterator type is verbose.
-auto lambda = [] (int x) { return x * 2; }; // Lambda type is unnameable.
+auto lambda = [](int x) { return x * 2; }; // Lambda type is unnameable.
 auto result = calculate_something(); // When type is obvious from context.
 ```
 

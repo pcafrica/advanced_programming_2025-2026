@@ -71,7 +71,7 @@ The iterations continue until the difference between two consecutive estimates, 
 3. Templatize the solver to be able to deal with more general functions, such as complex-valued functions.
    Use the program to solve $f(x) = x^2 + 1 = 0$, starting from $x^{(0)} = 0.5 + 0.5i$.
 
-4. How would organize the project files? Is it better to keep everything in header files, or splitting declarations and definitions in header and source files by providing explicit instantiations? Try both alternatives.
+4. How would you organize the project files? Is it better to keep everything in header files, or splitting declarations and definitions in header and source files by providing explicit instantiations? Try both alternatives.
 
 ---
 

@@ -12,13 +12,13 @@ int main() {
   // Case sensitive comparison.
   std::cout << "Case sensitive comparison:" << std::endl;
   std::cout << "\"" << name1 << "\" is equal to \"" << name2
-            << "\": " << equal<CaseCompare>(name1, name2) << std::endl
+            << "\": " << compare<CaseCompare>(name1, name2) << std::endl
             << std::endl;
 
   // Case insensitive comparison.
   std::cout << "Case insensitive comparison:" << std::endl;
   std::cout << "\"" << name1 << "\" is equal to \"" << name2
-            << "\": " << equal<NoCaseCompare>(name1, name2) << std::endl;
+            << "\": " << compare<NoCaseCompare>(name1, name2) << std::endl;
 
   // ----------
 
