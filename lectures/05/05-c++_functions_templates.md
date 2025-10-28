@@ -327,15 +327,15 @@ Now `out = {-1, -2, -3, -4, -5}.`.
 
 # Some predefined functors in the STL
 
-| Functor                                                      | Description                        |
-|--------------------------------------------------------------|------------------------------------|
-| `plus<T>`, `minus<T>`                                        | Addition/Subtraction (Binary)      |
-| `multiplies<T>`, `divides<T>`                                | Multiplication/Division (Binary)   |
-| `modulus<T>`                                                 | Modulus (Unary)                    |
-| `negate<T>`                                                  | Negative (Unary)                   |
-| `equal_to<T>`, `not_equal_to<T>`                             | (Non-)Equality Comparison (Binary) |
-| `greater<T>`, `less<T>`, `greater_equal<T>`, `less_equal<T>` | Comparison (Binary)                |
-| `logical_and<T>`, `logical_or<T>`, `logical_not<T>`          | Logical AND/OR/NOT (Binary)        |
+| Functor                                             | Description                        |
+|-----------------------------------------------------|------------------------------------|
+| `plus<T>`, `minus<T>`                               | Addition/Subtraction (Binary)      |
+| `multiplies<T>`, `divides<T>`                       | Multiplication/Division (Binary)   |
+| `modulus<T>`                                        | Modulus (Unary)                    |
+| `negate<T>`                                         | Negative (Unary)                   |
+| `equal_to<T>`, `not_equal_to<T>`                    | (Non-)Equality Comparison (Binary) |
+| `greater<T>`, `less<T>`, ...                        | Comparison (Binary)                |
+| `logical_and<T>`, `logical_or<T>`, `logical_not<T>` | Logical AND/OR/NOT (Binary)        |
 
 For a full list, have a look at [this web page](https://en.cppreference.com/w/cpp/header/functional.html).
 
@@ -366,7 +366,7 @@ You can even *capture* local values to be used inside the labda as well:
 std::vector<int> nums = {1, 5, 8, 12, 3, 7};
 int threshold = 6; // Local variable we want to use inside the lambda.
 
-int count = count_if(nums.begin(), nums.end(), [threshold](int x) { return (x > threshold); });
+int count = std::count_if(nums.begin(), nums.end(), [threshold] (int x) { return (x > threshold); });
 ```
 
 ---
@@ -393,17 +393,18 @@ With `[this]`, we get the `this` pointer to the calling object:
 ```cpp
 class MyClass {
 public:
-    void compute(double a) {
-        auto prod = [this, &a]() { x *= a; };
+    double compute(const double &a) {
+        auto prod = [this, &a] (double val) { x *= (val * a); };
         std::for_each(v.begin(), v.end(), prod);
+        
     }
 private:
     double x = 1.0;
-    std::vector<double> v;
+    std::vector<double> v = {1.0, 2.0, 3.0};
 };
 
 MyClass c;
-double res = c.compute(2.0);
+c.compute(2.0);
 ```
 
 Here, `compute(...)` uses the lambda `prod` that **changes** the member `x`. To be more explicit, you can write `this->x *= a;`.
@@ -454,7 +455,7 @@ private:
     double radius;
 };
 
-auto compute_area = [](const Shape& s) { return s.area(); };
+auto compute_area = [] (const Shape& s) { return s.area(); };
 // 'auto' here resolves to std::function<double(const Shape&)>.
 
 Circle circle(5.0);
@@ -480,7 +481,7 @@ std::vector<std::function<int(int, int)>> tasks;
 tasks.push_back(func); // Wraps a function.
 F2 func2{};
 tasks.push_back(func2); // Wraps a functor.
-tasks.push_back([](int x, int y){ return x * y; }); // Wraps a lambda function.
+tasks.push_back([] (int x, int y){ return x * y; }); // Wraps a lambda function.
 
 for (auto t : tasks)
     std::cout << t(3, 4) << endl;
@@ -1014,7 +1015,7 @@ Type deduction with `auto` is particularly useful when you want to write more ge
 **Good uses of `auto`:**
 ```cpp
 auto it = vec.begin(); // Iterator type is verbose.
-auto lambda = [](int x) { return x * 2; }; // Lambda type is unnameable.
+auto lambda = [] (int x) { return x * 2; }; // Lambda type is unnameable.
 auto result = calculate_something(); // When type is obvious from context.
 ```
 
