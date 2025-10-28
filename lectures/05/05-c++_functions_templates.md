@@ -327,17 +327,17 @@ Now `out = {-1, -2, -3, -4, -5}.`.
 
 # Some predefined functors in the STL
 
-| Functor           | Description                      |
-|-------------------|----------------------------------|
-| `plus<T>`, `minus<T>` | Addition/Subtraction (Binary) |
-| `multiplies<T>`, `divides<T>` | Multiplication/Division (Binary) |
-| `modulus<T>`      | Modulus (Unary)                  |
-| `negate<T>`       | Negative (Unary)                 |
-| `equal_to<T>`, `not_equal_to<T>` | (Non-)Equality Comparison (Binary) |
-| `greater`, `less`, `greater_equal`, `less_equal` | Comparison (Binary) |
-| `logical_and<T>`, `logical_or<T>`, `logical_not<T>` | Logical AND/OR/NOT (Binary) |
+| Functor                                                      | Description                        |
+|--------------------------------------------------------------|------------------------------------|
+| `plus<T>`, `minus<T>`                                        | Addition/Subtraction (Binary)      |
+| `multiplies<T>`, `divides<T>`                                | Multiplication/Division (Binary)   |
+| `modulus<T>`                                                 | Modulus (Unary)                    |
+| `negate<T>`                                                  | Negative (Unary)                   |
+| `equal_to<T>`, `not_equal_to<T>`                             | (Non-)Equality Comparison (Binary) |
+| `greater<T>`, `less<T>`, `greater_equal<T>`, `less_equal<T>` | Comparison (Binary)                |
+| `logical_and<T>`, `logical_or<T>`, `logical_not<T>`          | Logical AND/OR/NOT (Binary)        |
 
-For a full list, have a look at [this web page](https://cplusplus.com/reference/functional/).
+For a full list, have a look at [this web page](https://en.cppreference.com/w/cpp/header/functional.html).
 
 ---
 
@@ -361,6 +361,14 @@ auto y = f(9.0); // y is equal to 27.0.
 
 Note that I did not need to specify the return type in this case, the compiler deduces it as `decltype(3 * x)`, which returns `double`.
 
+You can even *capture* local values to be used inside the labda as well:
+```cpp
+std::vector<int> nums = {1, 5, 8, 12, 3, 7};
+int threshold = 6; // Local variable we want to use inside the lambda.
+
+int count = count_if(nums.begin(), nums.end(), [threshold](int x) { return (x > threshold); });
+```
+
 ---
 
 # Capture specification
@@ -369,8 +377,8 @@ The capture specification allows you to use variables in the enclosing scope ins
 
 - `[]`: Captures nothing.
 - `[&]`: Captures all variables by reference. (**NB**: captured references must outlive the lambda!)
-- `[=]`: Captures all variables by making a copy.
-- `[y]`: Captures only `y` by making a copy.
+- `[=]`: Captures all variables by creating a copy.
+- `[y]`: Captures only `y` by creating a copy.
 - `[&y]`: Captures only `y` by reference.
 - `[=, &x]`: Captures any referenced variable by making a copy, but capture variable `x` by reference.
 - `[this]`: Captures the `this` pointer of the enclosing class object.
@@ -395,10 +403,10 @@ private:
 };
 
 MyClass c;
-double res = c.compute();
+double res = c.compute(2.0);
 ```
 
-Here, `compute()` uses the lambda `prod` that **changes** the member `x`. To be more explicit, you can write `this->x *= a;`.
+Here, `compute(...)` uses the lambda `prod` that **changes** the member `x`. To be more explicit, you can write `this->x *= a;`.
 
 ---
 
@@ -455,7 +463,7 @@ std::cout << "Circle area: " << compute_area(circle) << std::endl;
 
 ---
 
-# A vector of functions
+# A vector of callable objects
 
 `std::function` can wrap any kind of **callable** object.
 
@@ -539,7 +547,7 @@ std::string max(std::string a, std::string b) { return (a > b) ? a : b; }
 
 - Generic programming is a programming paradigm that aims to write code in a way that's independent of data types.
 - It focuses on creating reusable and versatile code by using templates or type abstractions.
-- The goal is to develop algorithms and data structures that work with various data types.
+- The goal is to develop algorithms and data structures that work with different data types.
 
 # Why use generic programming?
 
@@ -552,9 +560,9 @@ std::string max(std::string a, std::string b) { return (a > b) ? a : b; }
 
 # Examples of generic programming
 
-- **STL (Standard Template Library):** Offers a collection of generic data structures and algorithms.
 - **Function templates:** Write functions that work with various data types.
 - **Class templates:** Create versatile, type-safe data structures.
+- **STL (Standard Template Library):** Offers a collection of generic data structures and algorithms (covered later).
 
 # Use cases of generic programming
 
@@ -600,7 +608,7 @@ You could end up with multiple overloads of the same function: they all have the
 - Function templates are defined using the `template` keyword, followed by type parameters enclosed in angle brackets.
 
 ```cpp
-template <typename T>
+template <typename T> // Equivalent to: 'template <class T>'.
 bool less_than(T x1, T x2) {
     return (x1 < x2);
 }
@@ -648,8 +656,11 @@ const int result1 = multiply_and_add(5, 2.5, 3);
 // Uses double for both 'T' and 'U'.
 const double result2 = multiply_and_add(2.5, 3.7, 1.2);
 
+// Uses int for the first parameter, double for the second.
+const float result3 = multiply_and_add<int>(2, 3, 1);
+
 // Uses float for the first parameter, int for the second.
-const float result3 = multiply_and_add<float, int>(2.5, 3, 1.0);
+const float result4 = multiply_and_add<float, int>(2.5, 3, 1.0);
 ```
 
 ---
@@ -697,21 +708,28 @@ T vector_sum(const std::vector<T>& vec) {
 
 ---
 
-# Important facts about templates
+# On the use of `typename` to clarify dependent types
 
-Templates serve as models for generating functions (or classes) once the template parameters are associated with actual types or values at the instance of the template.
+Inside a template, if you refer to a type that depends on a template parameter, you must prefix it with `typename` so the compiler knows it's a type, not a static member or variable.
 
-This has two important implications:
+```cpp
+template <typename T>
+struct Wrapper {
+    using InnerVectorType = std::vector<T>; // Defines a nested type.
+};
 
-1. Actual compilation occurs **only** when the template is instantiated (i.e., when it is actually used in your code). Only then can the compiler deduce the template arguments and have the necessary information to produce the machine code.
+template <typename T>
+void func() {
+    // T::InnerVectorType depends on T, so we must use 'typename'.
+    typename T::InnerVectorType x{};
+}
 
-2. Thus, some compilation errors may only appear when the template is used!
+func<Wrapper<int>>(); // 'InnerVectorType' is 'std::vector<int>'.
+```
 
 ---
 
 # Constant values as template parameters
-You can give defaults to the rightmost parameters (this applies also).
-
 A template parameter may also be an **integral** value.
 
 ```cpp
@@ -727,6 +745,18 @@ constexpr int result2 = multiply<2, 7>(); // Calculates 2 * 7 at compile-time.
 Only integral types can be used (e.g., integers, enumerations, pointers, ...).
 
 `constexpr` can be applied to variables, functions, and constructors, to ensure that they are evaluated at **compile time**.
+
+---
+
+# Important facts about templates
+
+Templates serve as models for generating functions (or classes) once the template parameters are associated with actual types or values at the instance of the template.
+
+This has two important implications:
+
+1. Actual compilation occurs **only** when the template is instantiated (i.e., when it is actually used in your code). Only then can the compiler deduce the template arguments and have the necessary information to produce the machine code.
+
+2. Thus, some compilation errors may only appear when the template is used!
 
 ---
 
@@ -930,9 +960,11 @@ _class: titlepage
 
 # Possible file organizations with templates
 
+There are **three** possible code organization layouts.
+
 1. Leave everything in a **header file**. However, if the functions/methods are long, it may be worthwhile, for the sake of clarity, to separate definitions from declarations. You can put declarations at the beginning of the file and only short definitions. Then, at the end of the file, add the long definitions for readability.
 
-2. **Separate** declarations (`module.hpp`) and definitions (`module.tpl.hpp`) when templates are long and complex. Then add `#include "module.tpl.hpp"` at the end of `module.hpp` (before closing its header guard).
+2. **Separate** declarations (`module.hpp`) from definitions (`module.tpl.hpp`) when templates are long and complex. `module.tpl.hpp` is still another header file. Then add `#include "module.tpl.hpp"` at the end of `module.hpp` (before closing its header guard).
 
 3. **Explicitly instantiation** for a specific list of types (e.g., when you know all needed types in advance). Only in this case, definitions can go to a source file. But if you instantiate a template for other types not explicitly instantiated, the compiler will not have access to the definition, leading to linker errors.
 
@@ -968,9 +1000,9 @@ _class: titlepage
 - The `auto` keyword simplifies code and improves readability.
 
 ```cpp
-auto sum1 = add(5, 3);       // int
-auto sum2 = add(2.5, 3.7);   // double
-auto sum3 = add(1.0f, 2.0f); // float
+auto sum1 = add(5, 3);       // int.
+auto sum2 = add(2.5, 3.7);   // double.
+auto sum3 = add(1.0f, 2.0f); // float.
 ```
 
 Type deduction with `auto` is particularly useful when you want to write more generic code that adapts to different data types without explicitly specifying them.
@@ -1039,6 +1071,7 @@ public:
     void foo() { Base<T>::my_fun(); ... }
 }
 ```
+
 In this case, the compiler understands that `my_fun()` depends on the template parameter `T` and will resolve it only at the instantiation of the template class.
 
 ---
@@ -1049,18 +1082,18 @@ In this case, the compiler understands that `my_fun()` depends on the template p
 - Used for defining higher-order templates that accept template classes.
 
 ```cpp
-template <typename T, template <typename> class C = std::complex>
+template <typename T, template <typename> typename C = std::complex>
 class MyClass {
 private:
     C<T> a;
 };
 
-MyClass<double, std::initializer_list> x; // 'a' is a std::initializer_list<double>.
+MyClass<double, std::unique_ptr> x; // 'a' is a std::unique_ptr<double>.
 
 MyClass<int> x; // 'a' is a std::complex<int>.
 ```
 
-This feature allows to write expressions like `std::vector<std::complex<double>>`.
+This is the feature tha allows to write expressions like `std::vector<std::complex<double>>`.
 
 ---
 
@@ -1199,12 +1232,11 @@ public:
 
 class Circle : public Shape<Circle> {
 public:
-    double area_impl() {
-        // Compute area of a circle.
-    }
+    double area_impl() { /* ... */ }
 };
 
-Circle c; c.area();
+Circle c;
+c.area();
 ```
 
 CRTP allows the `Shape` class to know the interface of its derived class at compile time, enabling **static** (compile-time) **polymorphism** and avoiding runtime overhead.
@@ -1229,6 +1261,39 @@ void process_type(T value) {
 ```
 
 ## :warning: `if constexpr` available since C++17. It evaluates conditions at compile-time.
+
+---
+
+# Example: policy-based design
+
+```cpp
+// Define two policies for logging.
+class ConsolePolicy {
+public:
+    static void log(const std::string& msg) { std::cout << msg << '\n'; }
+};
+
+class SilentPolicy {
+public:
+    static void log(const std::string&) {} // Do nothing.
+};
+
+// Generic class using a policy.
+template <typename LogPolicy>
+class Processor {
+public:
+    void run() {
+        LogPolicy::log("Running task...");
+        // ...
+    }
+};
+
+Processor<ConsolePolicy> a; // Logs to console.
+Processor<SilentPolicy> b;  // No output.
+
+a.run();
+b.run();
+```
 
 ---
 
