@@ -633,10 +633,10 @@ T add(T a, T b) {
 ```cpp
 const int result1 = add<int>(5, 3);
 const int result2 = add(5, 3); // T automatically deduced as int.
-const double result5 = add(3, 5.0); // Error: conflicting types for T.
+const double result3 = add(3, 5.0); // Error: conflicting types for T.
 
-const double result3 = add<double>(2.5, 3.7); // Explicit template argument.
-const double result4 = add(2.5, 3.7); // T automatically deduced as double.
+const double result4 = add<double>(2.5, 3.7); // Explicit template argument.
+const double result5 = add(2.5, 3.7); // T automatically deduced as double.
 ```
 
 ---
@@ -647,7 +647,7 @@ You can give defaults to the rightmost parameters.
 
 ```cpp
 template <typename T, typename U = double>
-multiply_and_add(T a, U b, T c) {
+T multiply_and_add(T a, U b, T c) {
     return a * b + c;
 }
 
@@ -695,7 +695,7 @@ For instance, this function can concatenate a vector of strings.
 template <typename T>
 T vector_sum(const std::vector<T>& vec) {
     // Initialize sum using T's default constructor
-    // (e.g., 0 for numbers, empty for strings.
+    // (e.g., 0 for numbers, empty for strings).
 
     T sum{};
 
