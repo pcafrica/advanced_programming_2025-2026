@@ -28,7 +28,7 @@ All homework assignments must be submitted by the specified deadline. Late submi
 You have the option to work in **groups of up to 3 members**. If you choose to work in a group, the submission should clearly list **all** group members, their email addresses and a short list of individual contributions. Each group should submit **one** assignment collectively.
 
 ## Format
-Submit your assignments on the  platform. Attach a single .tar or .zip archive named "AssignmentX_Surname(s).xyz".
+Submit your assignments on the Google Classroom platform. Attach a single .tar or .zip archive named "AssignmentX_Surname(s).xyz".
 
 **Note:** **Do not** upload or include generated files such as executables, object files, or libraries. **Only** submit the source code and provide clear instructions for compilation or, preferably, include a **build script**.
 
