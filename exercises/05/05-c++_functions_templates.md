@@ -25,7 +25,7 @@ _class: titlepage
 
 # Exercise 1: lambda functions
 
-Starting from the `hints/ex1.cpp` source file, create a C++ program that calculates the total cost of a given a list of products.
+Starting from the `hints/ex1.cpp` source file, create a C++ program that calculates the total cost of a given list of products.
 
 1. Use `std::accumulate` to calculate the total cost of the products, passing a custom lambda function.
 
