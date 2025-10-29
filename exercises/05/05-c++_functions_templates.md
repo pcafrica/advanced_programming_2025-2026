@@ -33,7 +33,7 @@ Starting from the `hints/ex1.cpp` source file, create a C++ program that calcula
 
 ---
 
-# Exercise 2: function pointers, functors, and lambda functions
+# Exercise 2: function pointers, functors, lambdas
 
 Starting from the `hints/ex2.cpp` source file, develop a library management system with search capabilities using lambdas and functors.
 
