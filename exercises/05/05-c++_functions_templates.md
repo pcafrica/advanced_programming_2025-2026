@@ -29,7 +29,7 @@ Starting from the `hints/ex1.cpp` source file, create a C++ program that calcula
 
 1. Use `std::accumulate` to calculate the total cost of the products, passing a custom lambda function.
 
-2. Display the results after each step to check for correctness.
+2. Display the results after each step (partial sums) and the total cost to check for correctness.
 
 ---
 
