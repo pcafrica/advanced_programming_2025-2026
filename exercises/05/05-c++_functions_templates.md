@@ -58,7 +58,7 @@ Starting with an initial guess for the root(s) of the function, denoted as $x^{(
 $$x^{(k+1)} = x^{(k)} - \frac{f(x^{(k)})}{f'(x^{(k)})},$$
 where $f'(x)$ is the derivative of $f(x)$.
 
-The iterations continue until the difference between two consecutive estimates, $\|x^{(k+1)} - x^{(k)}\|$ is smaller than a predefined tolerance. If the condition is not met within a maximum number of iterations, the algorithm failed to reach converge and the solver returns `NaN`.
+The iterations continue until the difference between two consecutive estimates, $\left|x^{(k+1)} - x^{(k)}\right|$ is smaller than a predefined tolerance. If the condition is not met within a maximum number of iterations, the algorithm failed to reach converge and the solver returns `NaN`.
 
 ---
 
