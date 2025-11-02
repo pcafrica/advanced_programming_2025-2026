@@ -91,16 +91,15 @@ public:
     }
 private:
     Polygon *polygon; // Polymorphic object.
-}
+}; // Added semicolon
 
-Polygon *create_polygon(std::string t) {
-    switch (t) {
-        case "Triangle":
-            return new Triangle{...};
-        case "Square":
-            return new Square{...};
-        default:
-            return nullptr;
+Polygon* create_polygon(const std::string& t) {
+    if (t == "Triangle") {
+        return new Triangle{...};
+    } else if (t == "Square") {
+        return new Square{...};
+    } else {
+        return nullptr;
     }
 }
 ```
@@ -123,21 +122,20 @@ a.set_polygon(create_polygon("Triangle"));
 ```cpp
 class MyClass {
 public:
-    set_polygon(std::unique_ptr<Polygon> p) {
+    void set_polygon(std::unique_ptr<Polygon> p) {
         polygon = std::move(p);
     }
 private:
     std::unique_ptr<Polygon> polygon;
-}
+}; // Added semicolon
 
-std::unique_ptr<Polygon> create_polygon(std::string t) {
-    switch (t) {
-        case "Triangle":
-            return std::make_unique<Triangle>(...); // 'make_unique' available since C++14.
-        case "Square":
-            return std::make_unique<Square>(...);
-        default:
-            return nullptr;
+std::unique_ptr<Polygon> create_polygon(const std::string& t) {
+    if (t == "Triangle") {
+        return std::make_unique<Triangle>(...); // 'make_unique' available since C++14.
+    } else if (t == "Square") {
+        return std::make_unique<Square>(...);
+    } else {
+        return nullptr;
     }
 }
 ```
@@ -151,7 +149,7 @@ MyClass a;
 a.set_polygon(create_polygon("Triangle"));
 ```
 
-#### :warning: This version with `std::unique_ptr` is RAII-compliant, improving resource management.
+#### :white_check_mark: This version with `std::unique_ptr` is RAII-compliant, improving resource management.
 
 ---
 
@@ -168,9 +166,9 @@ The default constructor produces an empty (null) unique pointer, and you can che
 # Main methods and utilities of `std::unique_ptr`
 
 - `std::swap(ptr1, ptr2)`: Swaps ownership.
-- `ptr1 = std::move(ptr2)`: By definition, **unique** pointers cannot be copied, but their ownership can be transferred using the `std::move` utility. Moves resources from `ptr2` to `ptr1`. The previous resource of `ptr1` is deleted, and`ptr2` remains empty.
+- `ptr1 = std::move(ptr2)`: By definition, **unique** pointers cannot be copied, but their ownership can be transferred using the `std::move` utility. Moves resources from `ptr2` to `ptr1`. The previous resource of `ptr1` is deleted, and `ptr2` remains empty.
 - `ptr.reset()`: Deletes the resource, making `ptr` empty.
-- `ptr1.reset(ptr2)`: Equivalent to `ptr1 = std::move(ptr2)`.
+- `ptr1.reset(ptr2.release())`: Transfers ownership from `ptr2` to `ptr1` (alternative to std::move).
 - `ptr.get()`: Returns a standard pointer to the handled resource.
 - `ptr.release()`: Returns a standard pointer, releasing the resource without deleting it. `ptr` becomes empty.
 
@@ -180,11 +178,11 @@ The default constructor produces an empty (null) unique pointer, and you can che
 
 # Shared pointers
 
-For instance you have several objects that **refer** to a resource (e.g., a matrix, a shape, ...) that is build dynamically (and maybe is a polymorphic object). You want to keep track of all the references in such a way that when (and only when) the last one gets destroyed the resource is also destroyed.
+For instance, you have several objects that **refer** to a resource (e.g., a matrix, a shape, ...) that is built dynamically (and maybe is a polymorphic object). You want to keep track of all the references in such a way that when (and only when) the last one gets destroyed the resource is also destroyed.
 
 To this purpose you need a `std::shared_ptr<T>`. It implements the semantic of *clean it up when the resource is no longer used*.
 
-While `std::unique_ptr` do not cause any computational overhead (they are just a light wrapper around an ordinary pointer), shared pointers do, so use them only if it is really necessary.
+While `std::unique_ptr` does not cause any computational overhead (it is just a light wrapper around an ordinary pointer), shared pointers incur overhead due to reference counting (typically requiring two allocations: one for the object and one for the control block). Use them only when shared ownership is truly necessary.
 
 ---
 
@@ -232,7 +230,7 @@ solver.solve();
 
 It implements the `*` and `->` dereferencing operators as well, so it can be used as a normal pointer. Moreover, it provides copy constructors and assignment operators.
 
-The default constructor produces an empty (null) unique pointer, and you can check if a `std::shared_ptr` is empty by testing `if (ptr)` or using it in a boolean context.
+The default constructor produces an empty (null) shared pointer, and you can check if a `std::shared_ptr` is empty by testing `if (ptr)` or using it in a boolean context.
 
 We can swap, move, get, and release a `std::shared_ptr` just as we do with `std::unique_ptr`.
 
@@ -270,16 +268,40 @@ std::cout << "Use count: " << shared_ptr.use_count() << std::endl;
 The `std::weak_ptr` is a smart pointer that holds a non-owning (*weak*) reference to an object managed by a `std::shared_ptr`. It must be converted to `std::shared_ptr` to access the referenced object.
 
 ```cpp
-std::shared_ptr<int> ptr = std::make_shared(10);
+std::shared_ptr<int> ptr = std::make_shared<int>(10);
 std::weak_ptr<int> weak1 = ptr; // Get pointer to data without taking ownership.
 
-ptr = std::make_shared(5); // Delete managed object, acquires new pointer. weak1 expires.
+ptr = std::make_shared<int>(5); // Delete managed object, acquires new pointer. weak1 expires.
 std::weak_ptr<int> weak2 = ptr; // Get pointer to new data without taking ownership.
 
-auto tmp1 = weak1.lock()  // tmp1 is nullptr, as weak1 is expired!
-auto tmp2 = weak2.lock()) // tmp2 is a shared_ptr to new data (5).
+auto tmp1 = weak1.lock();  // tmp1 is nullptr, as weak1 is expired!
+auto tmp2 = weak2.lock();  // tmp2 is a shared_ptr to new data (5).
 std::cout << "weak2 value is " << *tmp2 << std::endl;
 ```
+
+---
+
+# Cyclic references and `std::weak_ptr`
+
+When using `std::shared_ptr`, be aware of cyclic reference problems:
+
+```cpp
+struct Node {
+    std::shared_ptr<Node> next;
+    std::shared_ptr<Node> prev; // ⚠️ Creates cycles! Memory leak.
+};
+```
+
+**Solution:** Use `std::weak_ptr` to break cycles:
+
+```cpp
+struct Node {
+    std::shared_ptr<Node> next;
+    std::weak_ptr<Node> prev; // ✓ Breaks the cycle.
+};
+```
+
+Use `weak_ptr.lock()` to obtain a temporary `shared_ptr` when you need to access the object.
 
 ---
 
@@ -299,6 +321,31 @@ for (std::reference_wrapper<int> ref : ref_vector) {
     ref.get() += 5;
 }
 ```
+---
+
+# Smart pointers: common pitfalls
+
+**Don't mix raw and smart pointers:**
+```cpp
+auto ptr = std::make_unique<int>(42);
+int* raw = ptr.get();
+delete raw; // ❌ Double deletion! Undefined behavior.
+```
+
+**Don't create multiple `shared_ptr` from the same raw pointer:**
+```cpp
+int* raw = new int(42);
+std::shared_ptr<int> ptr1(raw);
+std::shared_ptr<int> ptr2(raw); // ❌ Double deletion!
+// Instead: use make_shared or share ownership from existing shared_ptr
+```
+
+**Always prefer `make_unique`/`make_shared`:**
+```cpp
+auto ptr = std::make_unique<MyClass>(args);      // ✓ Recommended
+std::unique_ptr<MyClass> ptr(new MyClass(args)); // ❌ Avoid
+```
+
 ---
 
 <!--
@@ -584,7 +631,7 @@ Let's go back to `Matrix`. Assume that `Matrix` stores the data as a pointer to 
 ```cpp
 Matrix(const Matrix & rhs) : nr(rhs.nr), nc(rhs.nc), data(new double[nr * nc]) {
     // Make a deep copy.
-    for (i = 0; i < rhs.nr * rhs.nc; ++i)
+    for (size_t i = 0; i < rhs.nr * rhs.nc; ++i)
         data[i] = rhs.data[i];
 }
 
@@ -594,8 +641,9 @@ Matrix & operator=(const Matrix & rhs) {
     // Get a new data buffer.
     data = new double[rhs.nr * rhs.nc];
     // Make a deep copy.
-    for the i = 0; i < rhs.nr * rhs.nc; ++i)
+    for (size_t i = 0; i < rhs.nr * rhs.nc; ++i)
         data[i] = rhs.data[i];
+    return *this;
 }
 ```
 
@@ -615,9 +663,11 @@ Matrix(Matrix&& rhs) : nr(rhs.nr), nc(rhs.nc), data(rhs.data) {
 Matrix & operator=(Matrix&& rhs) {
     delete[] this->data; // Release the resource.
     data = rhs.data; // Shallow copy.
-    // Fix rhs so it is a valid empty matrix.
-    rhs.data = nullptr;
+    nr = rhs.nr;
+    nc = rhs.nc;
+    rhs.data = nullptr; // Fix rhs so it is a valid empty matrix.
     rhs.nr = rhs.nc = 0;
+    return *this;
 }
 ```
 
@@ -634,7 +684,7 @@ Matrix a;
 a = foo(); // A move assignment is called.
 ```
 
-We can say that a class implements move semantics when the move operators are defined, even if they are automatically by the compiler.
+We can say that a class implements move semantics when the move operators are defined, even if they are synthesized automatically by the compiler.
 
 ---
 
@@ -708,7 +758,7 @@ public:
   // ...
 private:
   Matrix my_m;
-}
+};
 ```
 
 Now, `my_m{std::move(m)}` calls the **move constructor**, and `m` is moved into `my_m`.
@@ -719,7 +769,7 @@ Now, `my_m{std::move(m)}` calls the **move constructor**, and `m` is moved into 
 
 **All standard containers support move semantic**, and **all standard algorithms** are written so that if the contained type implements move semantics, the creation of unnecessary temporaries can be avoided. All containers also have a `swap()` method that performs swaps intelligently.
 
-Smart pointers supports move (but `std::unique_ptr` disallows copy).
+Smart pointers support move (but `std::unique_ptr` disallows copy).
 
 For instance, `std::sort()` (which does a lot of swaps) is much more efficient on dynamically sized objects if move semantics are implemented.
 
@@ -796,7 +846,7 @@ public:
 };
 ```
 
-If the condition is met, the error message is printed to the standard error and compilation will fail.
+If the condition is not met, the error message is printed to the standard error and compilation will fail.
 
 ---
 
@@ -888,7 +938,6 @@ public:
     const char * what() const noexcept override {
         return "Insufficient Funds: Cannot complete the withdrawal.";
     }
-};
 
     double get_balance() const { return balance; }
 
@@ -934,7 +983,7 @@ private:
 # Example: custom exception handling in C++ (3/3)
 
 ```cpp
-Bank_account account(1000.0);
+BankAccount account(1000.0);
 
 try {
     account.withdraw(1500.0);
@@ -1149,9 +1198,9 @@ std::default_random_engine rd2{1566770}; // With a user-provided seed.
 
 The `random_device` provides non-deterministic random numbers based on hardware data. However, it is slower than other engines and is often used to generate the seed for another random engine. Here's how to use it:
 
-```
+```cpp
 std::random_device rd;
-std::default_random_engine rd3{rd()}; // With a random generated seed.
+std::default_random_engine rd3{rd()}; // With a randomly generated seed.
 ```
 
 ---
@@ -1164,7 +1213,6 @@ std::default_random_engine rd3{rd()}; // With a random generated seed.
 - `std::geometric_distribution`, `std::bernoulli_distribution`
 - `std::discrete_distribution`
 - `std::piecewise_constant_distribution`, `std::piecewise_linear_distribution`
-- You can create custom distributions by subclassing the `std::random_distribution` class and providing your own probability distribution function.
 
 ---
 
@@ -1321,11 +1369,39 @@ if (std::filesystem::exists(big_file_path)) {
   std::filesystem::path tmp_path{"/tmp"};
   
   if (std::filesystem::space(tmp_path).available > big_file_size) {
-    std::filesystem::create_directory(tmp_path.append("example"));
-    std::filesystem::copy_file(big_file_path, tmp_path.append("new_file"));
+    std::filesystem::path example_dir = tmp_path / "example";
+    std::filesystem::create_directory(example_dir);
+    std::filesystem::copy_file(big_file_path, example_dir / "new_file");
   }
 }
 ```
+
+---
+
+# Best practices (1/2)
+
+**Smart sointers:**
+- Prefer `std::unique_ptr` by default for single ownership
+- Use `std::shared_ptr` only when shared ownership is truly needed
+- Always use `std::make_unique`/`std::make_shared` for construction
+- **Avoid** raw `new`/`delete` in modern C++
+- Use `std::weak_ptr` to break cycles in shared pointer graphs
+
+**Move semantics:**
+- Implement move constructors/assignment for resource-owning classes
+- Use `std::move` to explicitly transfer ownership
+- Return by value and trust RVO/NRVO (Return Value Optimization)
+- Remember: named variables are always lvalues, even rvalue references
+
+---
+
+# Best practices (2/2)
+
+**STL utilities:**
+- Use `std::chrono::steady_clock` for timing measurements
+- Seed random engines properly for security-critical applications
+- Leverage `<filesystem>` for portable file operations
+- Prefer standard exceptions over custom error codes
 
 ---
 
