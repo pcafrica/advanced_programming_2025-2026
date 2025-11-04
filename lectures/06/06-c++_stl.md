@@ -79,7 +79,7 @@ All Boost libraries are open-source and can be installed individually or as a wh
 # An overview of the STL (2/2)
 
 - **Numerics**: `complex<T>`, numeric limits, random numbers and distributions, and basic mathematical operators.
-- **Support for generic programming**: Type traits, `declval`, and `as_const`.
+- **Support for generic programming**: Type traits, `decltype`, `declval`, and `as_const`.
 - **Support for reference and move semantics**: Reference wrappers, `move()`, and `forward<T>`.
 - **Support for multithreading and concurrency**: Threads, mutexes, locks, and parallel algorithms.
 - **Support for internationalization**: `locale` and `wide_char`.
@@ -646,7 +646,7 @@ for (size_t i = 0; i < vec.size(); ++i) {
 int sum = std::accumulate(vec.begin(), vec.end(), 0);
 ```
 
-:fire: **Benefits**: More readable, less error-prone, potentially optimized, supports parallel execution (C++17+).
+:fire: **Benefits**: More readable, less error-prone, potentially optimized, supports parallel execution (C++17).
 
 ---
 
@@ -662,7 +662,7 @@ std::vector<int> vec(1'000'000);
 std::iota(vec.begin(), vec.end(), 0);
 
 // Sequential execution.
-std::sort(vec.begin(), vec.end());
+std::sort(std::execution::seq, vec.begin(), vec.end()); // Same as: std::sort(vec.begin(), vec.end()).
 
 // Parallel execution.
 std::sort(std::execution::par, vec.begin(), vec.end());
@@ -701,15 +701,15 @@ For this course, prioritize mastering these algorithms:
 
 2. **Copying large containers**: Use references or move semantics
    ```cpp
-   void process(std::vector<int> v);        // ❌ Copies entire vector
-   void process(const std::vector<int>& v); // ✅ No copy
+   void process(std::vector<int> v);        // ❌ Copies entire vector.
+   void process(const std::vector<int>& v); // ✅ No copy.
    ```
 
 3. **Using `[]` on maps**: Creates element if key doesn't exist
    ```cpp
    std::map<int, std::string> m;
-   std::cout << m[1]; // ⚠️ Creates entry with key 1
-   // Use m.at(1) or m.find(1) for safer access
+   std::cout << m[1]; // ⚠️ Creates entry with key 1.
+   // Use m.at(1) or m.find(1) for safer access.
    ```
 
 ---
@@ -718,7 +718,7 @@ For this course, prioritize mastering these algorithms:
 
 4. **Forgetting to erase after remove**
    ```cpp
-   vec.remove(vec.begin(), vec.end(), 5); // ❌ Doesn't actually remove
+   vec.remove(vec.begin(), vec.end(), 5); // ❌ Doesn't actually remove.
    vec.erase(std::remove(vec.begin(), vec.end(), 5), vec.end()); // ✅
    ```
 
@@ -726,13 +726,13 @@ For this course, prioritize mastering these algorithms:
    ```cpp
    std::vector<int> v1 = {1, 2, 3};
    std::vector<int> v2 = {1, 2, 3};
-   if (v1.begin() == v2.begin()) { /* ⚠️ Undefined behavior */ }
+   if (v1.begin() == v2.begin()) { /* ⚠️ Undefined behavior! */ }
    ```
 
 6. **Not checking return values**
    ```cpp
    auto it = map.find(key);
-   std::cout << it->second; // ⚠️ Check if it != map.end() first!
+   std::cout << it->second; // ⚠️ Check 'if (it != map.end())' first!
    ```
 
 ---
@@ -747,14 +747,14 @@ _class: titlepage
 
 # Essential vs advanced features
 
-## Essential (Must Master):
+## Essential (must master):
 - Containers: `vector`, `map`, `set`, `array`
 - Iterators: basic usage and iteration patterns
 - Algorithms: `sort`, `find`, `transform`, `copy`, `accumulate`
 - Range-based for loops
 - Smart pointers: `unique_ptr`, `shared_ptr`
 
-## Advanced (Time Permitting):
+## Advanced:
 - `forward_list`, `deque`
 - Custom allocators
 - Parallel algorithms
@@ -766,11 +766,11 @@ _class: titlepage
 # Useful references
 
 - [cppreference.com](https://en.cppreference.com) - Comprehensive C++ reference
-- [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
-- [Evolution since C++11](https://github.com/AnthonyCalandra/modern-cpp-features)
-- [Learn modern C++](https://github.com/kybuivan/learn-programming-languages/tree/main/cpp)
-- [Compiler Explorer](https://godbolt.org/) - Test and analyze C++ code online
+- [Hacking C++](https://hackingcpp.com/) - Many visual cheat sheets
 - [ISO C++](https://isocpp.org/) - Official C++ standards site
+- [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) - As the name says
+- [C++20/17/14/11](https://github.com/AnthonyCalandra/modern-cpp-features) - List of modern features for each standard version, with examples
+- [Compiler Explorer](https://godbolt.org/) - Test and analyze C++ code online
 
 ---
 
@@ -883,7 +883,7 @@ for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it) {
 
 ```cpp
 std::vector<int> vec = {1, 2, 3, 4, 5};
-for (int value : vec) { // Or: for (const auto value : vec)
+for (int value : vec) { // Or: for (const auto &value : vec)
     std::cout << value << " ";
 }
 ```
@@ -948,11 +948,11 @@ for (int n : nums) {
         evens.push_back(n * 2);
     }
 }
-
-// After: STL algorithms (your turn!)
-// Hint: Use std::copy_if with std::back_inserter and std::transform
-// Or use std::ranges::copy_if with std::views::filter and std::views::transform (C++20)
 ```
+
+## Hint
+Use `std::copy_if` with `std::back_inserter` and `std::transform`.
+Or, if you have a C++20-ready compiler, use `std::ranges::copy_if` with `std::views::filter` and `std::views::transform`.
 
 ---
 
