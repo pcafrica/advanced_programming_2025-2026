@@ -123,7 +123,7 @@ a.set_polygon(create_polygon("Triangle"));
 class MyClass {
 public:
     void set_polygon(std::unique_ptr<Polygon> p) {
-        polygon = std::move(p);
+        polygon = std::move(p); // Transfer ownership (move semantics explained later).
     }
 private:
     std::unique_ptr<Polygon> polygon;
