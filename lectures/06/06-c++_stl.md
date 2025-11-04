@@ -126,11 +126,11 @@ Containers can be categorized based on how data is stored and handled internally
 # Example: `std::vector`
 
 ```cpp
-std::vector<int> v{2,4,5}; // 2, 4, 5.
-v.push_back(6);            // 2, 4, 5, 6.
-v.pop_back();              // 2, 4, 5.
-v[1] = 3;                  // 2, 3, 5.
-std::cout << v[2];         // Prints: 5
+std::vector<int> v{2,4,5};      // 2, 4, 5.
+v.push_back(6);                 // 2, 4, 5, 6.
+v.pop_back();                   // 2, 4, 5.
+v[1] = 3;                       // 2, 3, 5.
+std::cout << v[2] << std::endl; // Prints: 5
 for (int x : v)
     std::cout << x << ' '; // Prints: 2 3 5
 std::cout << std::endl;
@@ -181,7 +181,7 @@ std::array<int, 3> b{7,8,9};
 #### :warning: In a set, the terms "value" and "key" are used interchangeably since they are equivalent.
 
 #### Quick examples:
-- **Map**: `std::map<int, std::string> ages = {{25, "Alice"}, {30, "Bob"}};`
+- **Map**: `std::map<std::string, int> ages = {{"Alice", 25}, {"Bob", 30}};`
 - **Set**: `std::set<int> unique_nums = {1, 2, 3, 2};` stores only `{1, 2, 3}`
 
 ---
@@ -248,6 +248,8 @@ if (numbers.find(5) != numbers.end()) {
     std::cout << "5 is in the set" << std::endl;
 }
 
+std::cout << numbers.count(3) << std::endl; // Either 1 or 0.
+
 // Iterate over elements (sorted).
 for (int num : numbers) {
     std::cout << num << " ";
@@ -279,13 +281,13 @@ for (const auto& [name, score] : scores) {
 
 # Performance comparison
 
-| Operation | `vector` | `list` | `deque` | `map` | `unordered_map` |
-|-----------|----------|--------|---------|-------|-----------------|
-| Random access | $O(1)$ | $O(n)$ | $O(1)$ | $O(\log n)$ | $O(1)$ avg |
-| Insert/delete at end | $O(1)$ | $O(1)$ | $O(1)$ | $O(\log n)$ | $O(1)$ avg |
-| Insert/delete at beginning | $O(n)$ | $O(1)$ | $O(1)$ | $O(\log n)$ | $O(1)$ avg |
-| Insert/delete in middle | $O(n)$ | $O(1)$ | $O(n)$ | $O(\log n)$ | $O(1)$ avg |
-| Search | $O(n)$ | $O(n)$ | $O(n)$ | $O(\log n)$ | $O(1)$ avg |
+| Operation                  | `vector` | `list` | `deque` | `map`       | `unordered_map` |
+|----------------------------|----------|--------|---------|-------------|-----------------|
+| Random access              | $O(1)$   | $O(n)$ | $O(1)$  | $O(\log n)$ | $O(1)$ avg      |
+| Insert/delete at end       | $O(1)$   | $O(1)$ | $O(1)$  | $O(\log n)$ | $O(1)$ avg      |
+| Insert/delete at beginning | $O(n)$   | $O(1)$ | $O(1)$  | $O(\log n)$ | $O(1)$ avg      |
+| Insert/delete in middle    | $O(n)$   | $O(1)$ | $O(n)$  | $O(\log n)$ | $O(1)$ avg      |
+| Search                     | $O(n)$   | $O(n)$ | $O(n)$  | $O(\log n)$ | $O(1)$ avg      |
 
 :bulb: **Note**: `list` and `map` have higher per-element memory overhead due to pointers/nodes.
 
@@ -345,7 +347,7 @@ while (!pq.empty()) {
 
 ---
 
-# Special containers
+# Special containers (1/3)
 
 - **`std::pair<T1, T2>`**: Stores two heterogeneous values.
   ```cpp
@@ -360,6 +362,7 @@ while (!pq.empty()) {
   ```
 
 - **`std::optional<T>`** (C++17): May or may not contain a value.
+  Useful for dealing with datasets with missing data.
   ```cpp
   std::optional<int> opt = 42;
   if (opt.has_value()) std::cout << *opt << std::endl;
@@ -367,19 +370,42 @@ while (!pq.empty()) {
 
 ---
 
-# Special containers (continued)
+# Special containers (2/3)
 
 - **`std::variant<T1, T2, ...>`** (C++17): Type-safe union.
   ```cpp
   std::variant<int, double, std::string> v = 42;
   v = 3.14;
   v = "hello";
+  
+  // Check which type is currently held.
+  if (std::holds_alternative<std::string>(v)) {
+    std::cout << "Holds string: " << std::get<std::string>(v) << std::endl;
+  }
+  
+  // Use std::visit to handle all possible types.
+  std::visit([](const auto &arg) {
+    std::cout << "Value: " << arg << std::endl;
+  }, v);
   ```
+
+---
+
+# Special containers (3/3)
 
 - **`std::any`** (C++17): Can hold any type.
   ```cpp
   std::any a = 42;
   a = std::string("hello");
+  
+  // Check type and extract value safely.
+  if (a.has_value()) {
+    if (a.type() == typeid(std::string)) {
+      std::cout << std::any_cast<std::string>(a) << std::endl; 
+   }
+  }
+  
+  // Direct cast (throws exception if wrong type).
   std::cout << std::any_cast<std::string>(a) << std::endl;
   ```
 
