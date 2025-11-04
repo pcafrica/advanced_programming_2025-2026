@@ -377,412 +377,343 @@ _class: titlepage
 
 ---
 
-# The problem: swap may be costly
+# Why do we need move semantics?
 
-Let's consider this function that swaps the arguments:
+Consider returning a large object from a function:
 
 ```cpp
-void swap(Matrix& a, Matrix& b) {
-    Matrix tmp{a}; // Make a copy of a.
-    a = b;         // Copy assign b to a.
-    b = tmp;       // Copy assign tmp to b.
+std::vector<int> create_large_vector() {
+    std::vector<int> result(1'000'000);
+    // ... fill with data ...
+    return result;  // ⚠️ Does this copy 1 million integers?
+}
+
+std::vector<int> v = create_large_vector();
+```
+
+**Question:** Is this efficient or wasteful?
+
+**The problem:** In pre-C++11, this would potentially make expensive copies of temporary objects that are about to be destroyed anyway.
+
+**The solution:** Move semantics allows us to *steal* resources from temporaries instead of copying them!
+
+---
+
+# A concrete example: the costly swap
+
+Let's see a real performance problem:
+
+```cpp
+void swap(std::vector<int>& a, std::vector<int>& b) {
+    std::vector<int> tmp = a;  // Copy all of a (expensive!)
+    a = b;                     // Copy all of b (expensive!)
+    b = tmp;                   // Copy all of tmp (expensive!)
+}
+
+std::vector<int> vec1(1'000'000); // 1 million elements
+std::vector<int> vec2(1'000'000); // 1 million elements
+swap(vec1, vec2); // Three allocations + copy 3 million integers! 😱
+```
+
+**Insight:** We're copying millions of integers just to swap two vectors, when we could simply swap the internal pointers!
+
+---
+
+# The solution: "moving" instead of copying
+
+What if we could just swap the pointers inside the vectors?
+
+```cpp
+void swap(std::vector<int>& a, std::vector<int>& b) {
+    // Conceptually: just swap internal pointers.
+    // No copying of elements needed!
 }
 ```
 
-If `a` and `b` are of big size, this function is very inefficient.
+**This is what move semantics enables!**
 
-- **Memory inefficient**: we have to store `tmp`.
-- **Computationally inefficient**: copy operations imply copying all matrix elements.
-    
-In this code, an unintended copy of the matrix occurs during the swap operation.
-We need to find a way to prevent these unnecessary copies.
-    
----
-
-# A better swap (before C++11)
-
-Let's assume that `Matrix` stores dynamic data for its elements as a `double* data` (maybe it is better to use a standard vector, but it is not relevant here). Before the introduction of move semantics, I could have solved the problem by writing a special method or a **friend** function. For instance:
-
+Modern C++11 swap with move semantics:
 ```cpp
-void swap_with_move(Matrix& a, Matrix& b) {
-    // Swap number of rows and columns.
-
-    double* tmp = a.data; // Save the pointer.
-    a.data = b.data;      // Copy the pointer.
-    b.data = tmp;         // Copy the saved pointer.
-}
+std::vector<int> tmp = std::move(a);  // "Steal" a's data.
+a = std::move(b);                     // "Steal" b's data.
+b = std::move(tmp);                   // "Steal" tmp's data.
+// Result: O(1) instead of O(n) - just pointer swaps, no element copies!
 ```
 
-This way I just swap the pointers, saving memory and operations, but **only for this specific situation**. It is not generalizable: I cannot write a function template `swap_with_move<T>` because I need to know how data is stored in `T`, for each case.
+**Key idea:** When we know an object is about to die (temporary), we can safely "steal" its resources instead of copying them.
 
 ---
 
-# Questions to be addressed
+# When can we safely "move" an object?
 
-To implement move semantics, three questions have to be addressed:
+**The fundamental question:** How does the compiler know when it's safe to steal resources instead of copying?
 
-1. How can we identify objects that can be safely *moved* instead of copied, so that the compiler may perform the move automatically, whenever possible?
-2. How can I actually implement the move in a uniform and general way?
-3. How can I specify that I want to *move*, instead of copying?
+**Answer:** We need to distinguish between:
+- **Objects we still need** → must copy
+- **Objects we don't need anymore** → can move (steal resources)
 
-Let's give the answer one question at a time. For the first one, we need to introduce value categories.
-
----
-
-# Categories of values
-
-In C++, a value is characterized by its *type* and its *category*, which expresses how the value can be used.
-
-In C++, we have 4 categories for values: *glvalue*, *prvalue*, *xvalue*, and *lvalue*. Moreover, they can be const or non-const.
-
-To simplify matters (without losing important information), we will only use 2 categories: *lvalue* (which also includes glvalue) and *rvalue* (which includes prvalue and xvalue).
+This is where **value categories** come in: `lvalue` vs `rvalue`
 
 ---
 
-# lvalues and rvalues in C
+# Value categories: **lvalue** (locator value)
 
-The original definition of lvalues and rvalues from the earliest days of C is as follows:
+- Has a name and a memory address
+- Lives beyond a single expression
+- Examples: variables, function parameters
 
-> An **lvalue** is an expression that may appear on the left and on the right-hand side of an assignment.
-
-> An **rvalue** is an expression that *can only appear on the right hand side of an assignment*.
-
-## Example
 ```cpp
-double fun(); // A function returning a double.
-
-3.14 = a; // Wrong: a literal expression is an rvalue!
-fun() = 5; // Wrong: returning an object generates an rvalue!
+int x = 10;        // x is an lvalue
+std::string name = "Alice";  // name is an lvalue
 ```
 
 ---
 
-# lvalues and rvalues in C++
+# Value categories: **rvalue** (*right value* or temporary):
 
-User-defined types, `const`, and operator overloading make the definition of rvalues/lvalues rather complicated in C++. We avoid the formal definition contained in the standard (very technical). We give a simple definition, correct in most cases:
-
-> An **lvalue** is an expression that refers to a memory location and allows us to take its address via the `&` operator.
-
-> An **rvalue** is an expression that is not an lvalue.
-
-For this reason, lvalue is nowadays interpreted as *locator-value* and no more left-value. It is still true that *a (non-const) rvalue can only be at the right-hand side of an assignment*.
-
----
-
-# Examples of lvalues
-
-The value held in a variable (i.e., a value with a name) is *always* an lvalue. Even if it is `const` or a `constexpr`, since we can take its address.
+- Doesn't have a name (temporary)
+- About to be destroyed
+- Examples: literals, function return values, temporary objects
 
 ```cpp
-double a;
-int const b = 10;
-double* pa = &a; // Address of a.
-int const* pb = &b; // Address of b.
+42                 // rvalue (literal).
+x + 10             // rvalue (temporary result).
+std::string("hi")  // rvalue (temporary object).
+create_vector()    // rvalue (return value).
 ```
 
-If a function returns an *lvalue* reference (`&`), the returned value is an lvalue.
+**Key insight:** rvalues are safe to move from because they're about to disappear anyway!
+
+---
+
+# Quick test: lvalue or rvalue?
 
 ```cpp
-double& f(double & x) { x *= 3; return x; }
+int x = 10;
+int y = 20;
 
-double y = 8.0;
-f(y) = 3.0;
-double* px = &(f(y)); // Address of y.
+x              // lvalue (has a name, we might use it again).
+42             // rvalue (temporary literal).
+x + y          // rvalue (temporary result).
+std::min(x, y) // rvalue (temporary return value).
+&x             // OK: can take address of lvalue.
+&42            // ERROR: can't take address of rvalue.
 ```
 
+**Rule of thumb:** If you can take its address with `&`, it's an lvalue!
+
 ---
 
-# Examples of rvalues
+# Rvalue references: The key to move semantics
 
-The value returned by a function is an rvalue.
+**The challenge:** We need a way to overload functions based on whether an argument is temporary (movable) or not.
+
+**Solution:** C++11 introduced **rvalue references** (`T &&`)
 
 ```cpp
-double fun(double x) { ... }
+void process(std::string & s);   // #1: Called for lvalues.
+void process(std::string && s);  // #2: Called for rvalues (temporaries).
+
+std::string name = "Alice";
+process(name);               // Calls #1 (lvalue).
+process("Bob");              // Calls #2 (rvalue - temporary).
+process(std::string("Eve")); // Calls #2 (rvalue - temporary).
 ```
 
-Here, `&fun` is a pointer to the function, *not* to the returned value. I cannot take the address of the returned value; it's a temporary object.
+**Key property:** `T&&` binds **only** to rvalues (temporaries we can safely steal from)!
 
-Non-string literals are rvalues.
+---
+
+# Implementing move: the copy constructor
 
 ```cpp
-double* ptr = &(10.5); // Error (taking the address of a temporary doesn't make sense).
-```
-
-Compilers are free not to store them in memory, so no address may be taken (and it does not make sense to take it).
-
-Strings, however, are lvalues.
-
----
-
-# How can we identify objects that can be safely *moved* instead of copied?
-
-*Non-const rvalues are eligible for "automatic moving".* Indeed, if we cannot take the address, it means that they exist only to be stored somewhere.
-
-So we have the answer to the first question: *rvalues are movable*. In particular, values returned by a function are movable.
-
----
-
-# How can I actually implement the move in a uniform and general way?
-
-To answer the second question, let's look at how *references* bind according to the category of the bound values.
-
-We consider ordinary references first, from now on called *lvalue references*. A non-const lvalue reference *cannot bind to rvalues*, while both lvalues and rvalues can be bound to const lvalue references.
-
----
-
-# Reference binding
-
-```cpp
-double & pi = 3.14; // Wrong: A literal expression is an rvalue.
-double const & another_pi = 3.14; // Ok!
-
-int foo(); // Return an rvalue.
-int & foo(int & a); // Return a reference, thus an lvalue.
-int goo(const int & a); // Returns an rvalue.
-
-auto p = foo(); // Ok: p is an int.
-int & c = foo(p); // Ok: the function returns an lvalue here!
-int & d = foo(3); // NO! 3 is an rvalue and cannot be bound to an (lvalue) reference.
-auto & x = goo(foo()); // NO! as above.
-const int & a = goo(foo()); // Ok, an rvalue binds to a const lvalue reference.
-```
-
----
-
-# Reference binding in overloaded functions
-
-The interplay between reference types and binding is clear (and important) when looking at function overloading.
-
-```cpp
-void foo(int & a);
-void foo(const int & a);
-void goo(const int & a);
-void zoo(int & a);
-
-int g;
-const int b = 10;
-
-foo(5); // Calls foo(const int &)
-foo(g); // Calls foo(int &)
-goo(g); // Calls goo(const int &);
-foo(b); // Calls foo(const int &)
-goo(b); // Calls goo(const int &);
-zoo(b); // Error: a const lvalue can bind only to a const lvalue reference.
-```
-
----
-
-# Conclusion on lvalue reference binding
-
-- A non-const lvalue reference can bind only, and preferably, to non-const lvalues.
-- A const lvalue reference binds both to lvalues and rvalues, const and non-const alike.
-
-Here, "preferably" means that it will be chosen in case there is a choice.
-
-This is **before** C++11. In fact, it is still true if we just use lvalue references.
-
-The consequence is that with just lvalue references, we cannot distinguish lvalues from rvalues.
-
----
-
-# Relation with moving
-
-Let's examine the following code
-
-```cpp
-Matrix foo(); // A function returning a large object.
-
-Matrix a;
-a = foo();
-```
-
-The return value of `foo` could be moved into `a` safely! (Indeed, the Return Value Optimization already does that for constructors).
-
-It would be beneficial to have an *adornment* that acts like a reference, while ensuring that **it binds exclusively to rvalues and preferably to rvalues**. This way, we can overload the assignment operator as follows:
-
-```cpp
-Matrix & operator=(const Matrix & a); // Ordinary copy.
-Matrix & operator=(Matrix "new adornment" a); // Move!
-```
-
----
-
-# rvalue reference
-
-Indeed, C++11 has introduced a new kind of adornment, called **rvalue reference**, indicated by `&&`.
-
-It **exclusively and preferably binds to rvalues**. Preferably means that, if given the choice, an rvalue binds to an rvalue reference.
-
-An important thing to remember is that **rvalue references bind rvalues and only rvalues**.
-
----
-
-# Categories of values
-
-We resume some rules:
-
-- If a function returns a value, that value is considered an **rvalue**.
-- If a function returns an lvalue reference (const or non-const), that value is considered an lvalue.
-- If a function returns an rvalue reference, that value is an rvalue.
-- A (named) variable is **always an lvalue**.
-
-This is fundamental for move semantics.
-
----
-
-# How is move semantics implemented?
-
-We are now able to answer the second question. The key is **the move constructor and the move assignment operators**.
-
-This is the standard signature of move operations for a class named `Matrix`:
-
-```cpp
-Matrix(Matrix&&); // Move constructor.
-Matrix & operator=(Matrix&&); // Move assignment operator.
-```
-
-Remember that unless you have defined some other constructors or the copy assignment, the compiler provides a synthetic move constructor and move assignment operator automatically, which apply the corresponding moving operation on the non-static data members of the class.
-
----
-
-# Move semantics for `Matrix` (1/2)
-
-Let's go back to `Matrix`. Assume that `Matrix` stores the data as a pointer to `double`. A possible copy-constructor and copy-assignment take the form:
-
-```cpp
-Matrix(const Matrix & rhs) : nr(rhs.nr), nc(rhs.nc), data(new double[nr * nc]) {
-    // Make a deep copy.
-    for (size_t i = 0; i < rhs.nr * rhs.nc; ++i)
-        data[i] = rhs.data[i];
-}
-
-Matrix & operator=(const Matrix & rhs) {
-    // Release current resource.
-    delete[] this->data;
-    // Get a new data buffer.
-    data = new double[rhs.nr * rhs.nc];
-    // Make a deep copy.
-    for (size_t i = 0; i < rhs.nr * rhs.nc; ++i)
-        data[i] = rhs.data[i];
-    return *this;
-}
-```
-
----
-
-# Move semantics for `Matrix` (2/2)
-
-The corresponding move operator could be:
-
-```cpp
-Matrix(Matrix&& rhs) : nr(rhs.nr), nc(rhs.nc), data(rhs.data) {
-    // Fix rhs so it is a valid empty matrix.
-    rhs.data = nullptr;
-    rhs.nr = rhs.nc = 0;
-}
-
-Matrix & operator=(Matrix&& rhs) {
-    delete[] this->data; // Release the resource.
-    data = rhs.data; // Shallow copy.
-    nr = rhs.nr;
-    nc = rhs.nc;
-    rhs.data = nullptr; // Fix rhs so it is a valid empty matrix.
-    rhs.nr = rhs.nc = 0;
-    return *this;
-}
-```
-
-I just grab the resource and leave an empty matrix! **It is important to ensure that the moved object can be deleted correctly!**
-
----
-
-# The consequence
-
-```cpp
-Matrix foo();
-// ...
-Matrix a;
-a = foo(); // A move assignment is called.
-```
-
-We can say that a class implements move semantics when the move operators are defined, even if they are synthesized automatically by the compiler.
-
----
-
-# Move semantics and perfect forwarding
-
-Now, let's address the third question: **How can I explicitly instruct the compiler to perform a move instead of a copy operation when move semantics are implemented (possibly with the synthesized move operators)?** This question can be divided into two parts:
-
-**Move**: How to explicitly tell the compiler to replace a copying operation with a move if move semantics are implemented (perhaps with the synthesized move operators).
-
-**Perfect forwarding**: How to write function templates that accept arbitrary arguments and forward them to other functions in a way that the target functions receive the values with the same category they were passed to the forwarding function. *This topic will not be covered in this course but you can find a good explanation [here](https://levelup.gitconnected.com/perfect-forwarding-647e1caaf879).*
-
----
-
-# Forcing a move: `std::move`
-
-Well, first of all, `std::move` doesn't move anything. They have chosen a wrong name; they should have called it `std::movable` instead. But we have to live with it.
-
-`std::move(expr)` unconditionally casts `expr` to an rvalue. So it makes it available to be moved.
-
-You use it to indicate to the compiler that you want something to be moved, even if it is an lvalue. It is actually moved if move semantics has been implemented for that type. If not, it will be copied.
-
----
-
-# A new (generic) version of `swap`
-
-Now we are able to write our `swap`, and in a generic way!
-
-```cpp
-template<class T> 
-void swap(T& a, T& b) { 
-  T tmp{std::move(a)}; // Move constructor.
-  a = std::move(b);    // Move assignment operator.
-  b = std::move(tmp);  // Move assignment operator.
-} 
-// Or, even simpler:
-std::swap(a, b);
-```
-
-:warning: If your class stores its dynamic and potentially large data in standard containers, you just need the synthetic move operators (which means that you have move semantics for free!). Another good reason to use standard containers.
-
-:warning: If type `T` implements move semantic, the swap is made using the move operators, and, if implemented correctly, with less memory requirement. If not, we have the usual copy.
-
----
-
-# Once more: variables are *always* lvalues
-
-**Named variables are always lvalues**! Even if they are declared as rvalue references. In fact, you can take their address!
-
-In particular, **function parameters (of any function, including constructors) are lvalues**, even if their type is an rvalue reference.
-
-Inside the scope of this function:
-
-```cpp
-void f(Matrix&& m) {
-  // ...
-}
-```
-
-`m` is an **lvalue**.
-
----
-
-# The solution
-
-You have to force the move:
-
-```cpp
-class Foo {
-public:
-  Foo(Matrix&& m) : my_m{std::move(m)} {}
-  // ...
+class Matrix {
 private:
-  Matrix my_m;
+    size_t rows, cols;
+    double* data;
+    
+public:
+    // Copy constructor (deep copy - expensive).
+    Matrix(const Matrix& other) 
+        : rows(other.rows), cols(other.cols), 
+          data(new double[rows * cols]) {
+        std::copy(other.data, other.data + rows*cols, data); // Copy all elements.
+    }
+```
+
+**Copy**: Allocate new memory + copy all data 🐢
+
+---
+
+# Implementing move: the move constructor
+
+Now we can implement efficient *moving* by providing a **move constructor**:
+
+```cpp
+class Matrix {
+private:
+    size_t rows, cols;
+    double* data;
+
+public:
+    // Move constructor (steal resources - cheap!).
+    Matrix(Matrix&& other)
+        : rows(other.rows), cols(other.cols), 
+          data(other.data) { // Steal the pointer!
+        other.data = nullptr; // Leave source in valid state.
+        other.rows = other.cols = 0;
+    }
 };
 ```
 
-Now, `my_m{std::move(m)}` calls the **move constructor**, and `m` is moved into `my_m`.
+**Move**: Just copy a pointer 🚀
+
+---
+
+# Move assignment operator
+
+Similarly, we need a **move assignment operator**:
+
+```cpp
+class Matrix {
+public:
+    /* ... */
+    
+    // Move assignment (steal resources).
+    Matrix& operator=(Matrix&& other) {
+        if (this != &other) {
+            delete[] data;     // Clean up old data.
+            rows = other.rows;
+            cols = other.cols;
+            data = other.data; // Steal the pointer.
+            other.data = nullptr; // Leave source valid.
+            other.rows = other.cols = 0;
+        }
+        return *this;
+    }
+};
+```
+
+---
+
+# When does moving happen automatically?
+
+The compiler automatically calls move operations in these situations:
+
+```cpp
+Matrix create_matrix() {
+    Matrix m(100, 100);
+    // ... fill with data ...
+    return m; // Automatic move (m is about to be destroyed).
+}
+
+Matrix a = create_matrix(); // Move constructor called.
+
+Matrix b(200, 200);
+b = create_matrix(); // Move assignment called.
+
+std::vector<Matrix> vec;
+vec.push_back(create_matrix()); // Move constructor called.
+```
+
+**No need for `std::move` here** - the compiler knows these are temporaries!
+
+---
+
+# Forcing a move with `std::move`
+
+What if we want to move from an lvalue (named variable)?
+
+```cpp
+Matrix a(100, 100);
+Matrix b = a; // Copy (a is an lvalue, we might use it again).
+```
+
+**Use `std::move` to indicate *"I'm done with this object"*:**
+
+```cpp
+Matrix a(100, 100);
+Matrix b = std::move(a); // Move! (explicitly saying: I don't need 'a' anymore).
+// ⚠️ 'a' is now in a valid but unspecified state (typically empty).
+```
+
+**Important:** `std::move` doesn't actually move anything - it just casts an lvalue to an rvalue!
+
+```cpp
+// std::move is roughly equivalent to:
+static_cast<Matrix&&>(a)
+```
+
+---
+
+# Practical example: the efficient swap
+
+Now we can write an efficient, generic swap:
+
+```cpp
+template<typename T>
+void swap(T& a, T& b) {
+    T tmp = std::move(a); // Move construct tmp from a.
+    a = std::move(b);     // Move assign b to a.
+    b = std::move(tmp);   // Move assign tmp to b.
+}
+```
+
+**Performance comparison for `std::vector<int>(1'000'000))`:**
+- Old (copy-based): ~30ms + allocate 12MB temporary memory
+- New (move-based): ~0.00001ms + no extra allocation!
+
+**The standard library already provides this:** `std::swap(a, b)`
+
+---
+
+# A crucial detail: named rvalue references are lvalues!
+
+**Rule:** A **named** variable is always an lvalue, even if its type is an rvalue reference!
+
+```cpp
+void process(Matrix&& m) { // m has type Matrix&&
+    // Inside this function, m is an 'lvalue'!
+    // (it has a name, you can take &m).
+    
+    Matrix other = m; // ❌ Calls copy constructor (m is lvalue).
+    Matrix other = std::move(m);  // ✅ Calls move constructor.
+}
+```
+
+**Why?** You might use `m` multiple times in the function - moving from it implicitly would be dangerous:
+```cpp
+void process(Matrix&& m) {
+    use(m);  // First use.
+    use(m);  // Second use - would fail if m was already moved!
+}
+```
+
+---
+
+# Move semantics: summary (1/2)
+
+**The problem:** Copying large objects (especially temporaries) is wasteful.
+
+**The solution:** Move semantics - "steal" resources from objects we don't need anymore.
+
+**Key concepts:**
+- **lvalue** = has a name, might be used again → must copy
+- **rvalue** = temporary, about to die → can move
+- **`T&&`** = rvalue reference, binds only to temporaries
+- **Move constructor/assignment** = steal resources instead of copying
+- **`std::move(x)`** = cast lvalue to rvalue (says *"I'm done with x"*)
+
+---
+
+# Move semantics: summary (2/2)
+
+**When moves happen automatically:**
+- Returning local variables from functions
+- Passing temporaries to functions
+- RVO (Return Value Optimization) - even better than moving!
+
+**Remember:** After `std::move(x)`, don't use `x` again (except to assign/destroy it)!
 
 ---
 
@@ -795,6 +726,25 @@ Smart pointers support move (but `std::unique_ptr` disallows copy).
 For instance, `std::sort()` (which does a lot of swaps) is much more efficient on dynamically sized objects if move semantics are implemented.
 
 Move semantics also make a few (but not all) template metaprogramming techniques now used in some libraries, like [Eigen](https://eigen.tuxfamily.org/), to avoid unnecessary large size temporaries.
+
+---
+
+# Revisiting `std::unique_ptr` and move semantics
+
+Remember the `set_polygon` example from earlier?
+
+```cpp
+void set_polygon(std::unique_ptr<Polygon> p) {
+    polygon = std::move(p); // Now we understand why std::move is needed!
+}
+```
+
+- The parameter `p` is passed by value, creating a new `unique_ptr` that takes ownership
+- Inside the function, `p` is a **named variable**, hence an **lvalue**
+- To transfer ownership to the member `polygon`, we need `std::move(p)` to cast it to an rvalue
+- Without `std::move`, the code wouldn't compile because `unique_ptr` doesn't have a copy assignment operator
+
+This is a common pattern when transferring ownership of unique pointers!
 
 ---
 
@@ -837,7 +787,7 @@ Matrix cholesky(const Matrix& m);
 double calculate(double operand1, double operand2) {
     assert(operand2 != 0 && "Operand2 cannot be zero.");
 
-    const double result = // ...
+    const double result = /* ... */;
 
     assert(result >= 0 && "Negative result!");
 
@@ -904,7 +854,7 @@ The `try` block contains the code that might **`throw`** an exception, while the
 # Example
 
 ```cpp
-int divide(int dividend, int divisor) {
+int safe_divide(int dividend, int divisor) {
     if (divisor == 0) {
         throw std::runtime_error("Division by zero is not allowed.");
     }
@@ -912,7 +862,7 @@ int divide(int dividend, int divisor) {
 }
 
 try {
-    const int result = divide(10, 0); // Attempt to divide by zero.
+    const int result = safe_divide(10, 0); // Attempt to divide by zero.
     std::cout << "Result: " << result << std::endl;
 } catch (const std::exception& e) {
     std::cerr << "Exception caught: " << e.what() << std::endl;
@@ -987,6 +937,7 @@ public:
         if (amount > balance) {
             throw InsufficientFundsException(balance, amount);
         }
+
         balance -= amount;
     }
 
@@ -1026,7 +977,7 @@ try {
 
 In situations where an algorithm's failure is one of its expected outcomes (e.g., the failure of convergence in an iterative method), returning a **status** rather than throwing an exception may be more suitable. Instead of terminating the program, a status variable is used to indicate the outcome, which can be checked by the caller. See also [`std::terminate`](https://en.cppreference.com/w/cpp/error/terminate), [`std::abort`](https://en.cppreference.com/w/cpp/utility/program/abort), and, [`std::exit`](https://en.cppreference.com/w/cpp/utility/program/exit).
 
-Exception handling is increasingly important in code that must be integrated into a broader workflow or graphical interface. However, it's worth noting that the `try-catch` mechanism introduces some inefficiencies since it checks for exceptions every time a function is called. High-performance code often minimizes the use of exception handling.
+Exception handling is increasingly important in code that must be integrated into a broader workflow or graphical interface. However, it's worth noting that the `try-catch` mechanism introduces overhead only when exceptions are actually thrown. Modern implementations have zero-cost when no exception occurs. High-performance code often minimizes the use of exception handling.
 
 In practical contexts where exception handling is necessary, the `noexcept` declaration can help optimize efficiency by indicating functions and methods that do not throw exceptions.
 
@@ -1038,7 +989,7 @@ It's important to note that **floating point exceptions** (FPE) are a special ty
 
 This unique behavior distinguishes floating point exceptions from traditional exceptions.
 
-There are ways, not covered in this course, to properly handle FPEs.
+FPEs can be controlled using the `<cfenv>` header (`feenableexcept`, etc.). See [here](https://en.cppreference.com/w/cpp/numeric/fenv.html) for details.
 
 ---
 
@@ -1062,7 +1013,7 @@ _class: titlepage
 
 Input/Output (I/O) streams in C++ provide a convenient way to perform input and output operations, allowing you to work with various data sources and destinations, such as files, standard input/output, strings, and more. C++ I/O streams are part of the Standard Library (STL) and are based on the concept of streams. The key components of C++ I/O streams are `iostream`, `ifstream`, `ofstream`, and `stringstream`.
 
-- **`iostream`**: The base class for input and output streams. It is derived from `istream` (for input) and `ostream` (for output). It is used for interacting with the standard input and output streams.
+- **`iostream`**: A typedef for input and output streams. The actual base classes are `istream` (for input) and `ostream` (for output). It is used for interacting with the standard input and output streams.
   ```cpp
   int number;
   std::cout << "Enter a number: ";
@@ -1076,14 +1027,14 @@ Input/Output (I/O) streams in C++ provide a convenient way to perform input and 
 
 The `std::ios_base` namespace defines the following options to deal with files.
 
-| Option   | Description                                                |
-|----------|------------------------------------------------------------|
-| `in`     | File open for reading: the internal stream buffer supports input operations.  |
-| `out`    | File open for writing: the internal stream buffer supports output operations. |
-| `binary` | Operations are performed in binary mode rather than text. |
-| `ate`    | The output position starts **at** the **e**nd of the file. |
+| Option   | Description                                                                                |
+|----------|--------------------------------------------------------------------------------------------|
+| `in`     | File open for reading: the internal stream buffer supports input operations.               |
+| `out`    | File open for writing: the internal stream buffer supports output operations.              |
+| `binary` | Operations are performed in binary mode rather than text.                                  |
+| `ate`    | The output position starts **at** the **e**nd of the file.                                 |
 | `app`    | All output operations happen at the end of the file, `app`ending to its existing contents. |
-| `trunc`  | Any contents that existed in the file before it is open are truncated/discarded. |
+| `trunc`  | Any contents that existed in the file before it is open are truncated/discarded.           |
 
 ---
 
@@ -1091,7 +1042,9 @@ The `std::ios_base` namespace defines the following options to deal with files.
 
 **`std::ifstream`**: This class is used for reading data from files. You can open a file for input and read data from it.
   ```cpp
-  std::ifstream file("example.txt", open_mode);
+  #include <fstream>
+
+  std::ifstream file("example.txt", std::ios::in);
   
   if (file.is_open()) {
       std::string line;
@@ -1110,7 +1063,9 @@ The `std::ios_base` namespace defines the following options to deal with files.
 
 **`std::ofstream`**: This class is used for writing data to files. You can open a file for output and write data to it.
   ```cpp
-  std::ofstream file("output.txt", open_mode);
+  #include <fstream>
+
+  std::ofstream file("output.txt", std::ios::out);
 
   if (file.is_open()) {
       file << "Hello, World!" << std::endl;
@@ -1126,6 +1081,8 @@ The `std::ios_base` namespace defines the following options to deal with files.
 
 **`std::stringstream`**: This class allows you to work with strings as if they were input and output streams. You can use stringstream for parsing and formatting strings.
   ```cpp
+  #include <sstream>
+
   // Using std::stringstream to format data into a string.
   std::stringstream ss;
   const int num = 42;
@@ -1150,6 +1107,8 @@ The `std::ios_base` namespace defines the following options to deal with files.
 **Formatting**: I/O streams provide various formatting options to control the appearance of output. For instance, `std::setw`, `std::setprecision`, `std::setfill`, etc., from the `<iomanip>` header, allow setting field width, precision, and fill characters in the output.
 
 ```cpp
+#include <iomanip>
+
 const double pi = 3.14159265359;
 std::cout << "Default: " << pi << std::endl;
 std::cout << "Fixed with 2 decimal places: " << std::fixed << std::setprecision(2) << pi << std::endl;
@@ -1252,7 +1211,7 @@ for (unsigned int n = 0; n < 10; ++n)
 std::cout << std::endl;
 ```
 
-Here, `uniform_int_distribution` provides an integer uniform distribution in the range (1, 6).
+Here, `uniform_int_distribution` provides an integer uniform distribution in the range $[1, 6]$ (both endpoints inclusive).
 
 ---
 
@@ -1321,7 +1280,7 @@ C++ provides three common clocks:
 
 - **`std::chrono::system_clock`**: Represents the system-wide real-time clock. It's suitable for measuring absolute time (can change if the user changes the time on the host machine).
 - **`std::chrono::steady_clock`**: Represents a steady clock that never goes backward. It's suitable for measuring time intervals and performance measurements.
-- **`std::chrono::high_resolution_clock`**: Represents a high-resolution clock with the smallest possible tick duration. It's often used for precise timing.
+- **`std::chrono::high_resolution_clock`**: May provide the highest resolution available, but is often just an alias for `steady_clock`. Prefer `steady_clock` for portability.
 
 ---
 
@@ -1337,7 +1296,7 @@ my_function();
 auto end = std::chrono::high_resolution_clock::now();
 
 auto duration =
-    std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+  std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
 std::cout << "Time taken by function: "
           << duration.count() << " microseconds" << std::endl;
@@ -1369,6 +1328,37 @@ std::cout << "Average time taken by function: "
 
 ---
 
+# `std::chrono` duration literals (since C++14)
+
+```cpp
+#include <chrono>
+using namespace std::chrono_literals;
+
+// Old way (C++11):
+auto duration1 = std::chrono::milliseconds(100);
+auto duration2 = std::chrono::seconds(2);
+auto duration3 = std::chrono::minutes(5);
+
+// New way (C++14):
+auto duration1 = 100ms;
+auto duration2 = 2s;
+auto duration3 = 5min;
+
+auto total = 1h + 30min + 45s;
+
+// Timing with literals:
+auto start = std::chrono::high_resolution_clock::now();
+my_function();
+auto end = std::chrono::high_resolution_clock::now();
+
+auto duration = end - start;
+if (duration > 100ms) {
+    std::cout << "Function took more than 100ms!" << std::endl;
+}
+```
+
+---
+
 <!--
 _class: titlepage
 -->
@@ -1377,23 +1367,27 @@ _class: titlepage
 
 ---
 
-# Filesystem
+# Filesystem (since C++17)
 
-Since C++17, a full set of utilities to manipulate files, directories, etc. in a filesystem is available.
+A full set of utilities to manipulate files, directories, etc. in a filesystem became available.
 
 ```cpp
-const auto big_file_path{"big/file/to/copy"};
+const auto path{"big/file/to/copy"};
 
-if (std::filesystem::exists(big_file_path)) {
-  const auto big_file_size{std::filesystem::file_size(big_file_path)};
-
-  std::filesystem::path tmp_path{"/tmp"};
+try {
+  if (std::filesystem::exists(path)) {
+    const auto file_size{std::filesystem::file_size(path)};
   
-  if (std::filesystem::space(tmp_path).available > big_file_size) {
-    std::filesystem::path example_dir = tmp_path / "example";
-    std::filesystem::create_directory(example_dir);
-    std::filesystem::copy_file(big_file_path, example_dir / "new_file");
+    std::filesystem::path tmp_path{"/tmp"};
+    
+    if (std::filesystem::space(tmp_path).available > file_size) {
+      std::filesystem::path new_dir = tmp_path / "example";
+      std::filesystem::create_directory(new_dir);
+      std::filesystem::copy_file(path, new_dir / "new_file");
+    }
   }
+} catch (const std::filesystem::filesystem_error& e) {
+  std::cerr << "Filesystem error: " << e.what() << std::endl;
 }
 ```
 
@@ -1405,7 +1399,7 @@ if (std::filesystem::exists(big_file_path)) {
 - Prefer `std::unique_ptr` by default for single ownership
 - Use `std::shared_ptr` only when shared ownership is truly needed
 - Always use `std::make_unique`/`std::make_shared` for construction
-- **Avoid** raw `new`/`delete` in modern C++
+- ❌ **Avoid** raw `new`/`delete` in modern C++
 - Use `std::weak_ptr` to break cycles in shared pointer graphs
 
 **Move semantics:**
@@ -1419,10 +1413,11 @@ if (std::filesystem::exists(big_file_path)) {
 # Best practices (2/2)
 
 **STL utilities:**
-- Use `std::chrono::steady_clock` for timing measurements
-- Seed random engines properly for security-critical applications
-- Leverage `<filesystem>` for portable file operations
 - Prefer standard exceptions over custom error codes
+- Use I/O streams for reading from/writing to files and manipulating formatted strings
+- Seed random engines properly for security-critical applications
+- Use `std::chrono::steady_clock` for timing measurements
+- Leverage `<filesystem>` for portable file operations
 
 ---
 
