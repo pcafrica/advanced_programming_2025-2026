@@ -25,7 +25,7 @@ _class: titlepage
 
 # Outline
 
-1. Smart pointers
+1. Smart pointers and reference wrappers
 2. Move semantics
 3. Exceptions
 4. STL utilities
@@ -40,7 +40,7 @@ _class: titlepage
 _class: titlepage
 -->
 
-# Smart pointers
+# Smart pointers and reference wrappers
 
 ---
 
@@ -159,7 +159,7 @@ A `std::unique_ptr<T>` serves as a unique owner of the object of type `T` it ref
 
 It implements the `*` and `->` dereferencing operators, so it can be used as a normal pointer. However, it can be initialized to a pointer only through the constructor.
 
-The default constructor produces an empty (null) unique pointer, and you can check if a `std::unique_ptr` is empty by testing `if (ptr)` or using it in a boolean context.
+The default constructor produces an empty (null) unique pointer, and you can check if a `std::unique_ptr` is empty by testing it in boolean conditions such as `if (ptr)`.
 
 ---
 
@@ -168,7 +168,7 @@ The default constructor produces an empty (null) unique pointer, and you can che
 - `std::swap(ptr1, ptr2)`: Swaps ownership.
 - `ptr1 = std::move(ptr2)`: By definition, **unique** pointers cannot be copied, but their ownership can be transferred using the `std::move` utility. Moves resources from `ptr2` to `ptr1`. The previous resource of `ptr1` is deleted, and `ptr2` remains empty.
 - `ptr.reset()`: Deletes the resource, making `ptr` empty.
-- `ptr1.reset(ptr2.release())`: Transfers ownership from `ptr2` to `ptr1` (alternative to std::move).
+- `ptr1.reset(ptr2.release())`: Transfers ownership from `ptr2` to `ptr1` (alternative to `std::move`).
 - `ptr.get()`: Returns a standard pointer to the handled resource.
 - `ptr.release()`: Returns a standard pointer, releasing the resource without deleting it. `ptr` becomes empty.
 
@@ -230,7 +230,7 @@ solver.solve();
 
 It implements the `*` and `->` dereferencing operators as well, so it can be used as a normal pointer. Moreover, it provides copy constructors and assignment operators.
 
-The default constructor produces an empty (null) shared pointer, and you can check if a `std::shared_ptr` is empty by testing `if (ptr)` or using it in a boolean context.
+The default constructor produces an empty (null) shared pointer, and you can check if a `std::shared_ptr` is empty by testing it in boolean conditions such as `if (ptr)`.
 
 We can swap, move, get, and release a `std::shared_ptr` just as we do with `std::unique_ptr`.
 
@@ -263,7 +263,51 @@ std::cout << "Use count: " << shared_ptr.use_count() << std::endl;
 
 ---
 
-# `std::weak_ptr`
+# Cyclic references and `std::weak_ptr`
+
+When using `std::shared_ptr`, be aware of cyclic reference problems:
+
+```cpp
+struct Node {
+    std::shared_ptr<Node> next;
+    std::shared_ptr<Node> prev; // ⚠️ Creates cycles! Memory leak.
+};
+
+auto node1 = std::make_shared<Node>();
+auto node2 = std::make_shared<Node>();
+node1->next = node2;  // node2's refcount = 2
+node2->prev = node1;  // node1's refcount = 2
+```
+
+## What goes wrong:
+- When `node1` and `node2` go out of scope, their refcounts only decrease to 1
+- They keep each other alive! Neither can be destroyed → memory leak
+- The cycle: `node1` owns `node2`, and `node2` owns `node1`
+
+---
+
+# The solution: `std::weak_ptr`
+
+**Key insight**: Not all references need to be *owning* references!
+
+```cpp
+struct Node {
+    std::shared_ptr<Node> next;  // Owns the next node.
+    std::weak_ptr<Node> prev;    // Observes prev node (doesn't own it).
+};
+```
+
+## What is `std::weak_ptr`?
+
+- A non-owning smart pointer that does not increase reference count
+- Can observe an object managed by `shared_ptr` without keeping it alive
+- Must be converted to `shared_ptr` (via `weak_ptr::lock()`) before accessing the object
+
+**Result**: The cycle is broken! When `node1` goes out of scope, its refcount becomes 0 and it's properly destroyed.
+
+---
+
+# Weak pointers
 
 The `std::weak_ptr` is a smart pointer that holds a non-owning (*weak*) reference to an object managed by a `std::shared_ptr`. It must be converted to `std::shared_ptr` to access the referenced object.
 
@@ -279,48 +323,6 @@ auto tmp2 = weak2.lock();  // tmp2 is a shared_ptr to new data (5).
 std::cout << "weak2 value is " << *tmp2 << std::endl;
 ```
 
----
-
-# Cyclic references and `std::weak_ptr`
-
-When using `std::shared_ptr`, be aware of cyclic reference problems:
-
-```cpp
-struct Node {
-    std::shared_ptr<Node> next;
-    std::shared_ptr<Node> prev; // ⚠️ Creates cycles! Memory leak.
-};
-```
-
-**Solution:** Use `std::weak_ptr` to break cycles:
-
-```cpp
-struct Node {
-    std::shared_ptr<Node> next;
-    std::weak_ptr<Node> prev; // ✅ Breaks the cycle.
-};
-```
-
-Use `weak_ptr.lock()` to obtain a temporary `shared_ptr` when you need to access the object.
-
----
-
-# Reference wrappers
-
-References create aliases to existing objects and must be initialized. It's crucial to be cautious with references to temporary objects. A const reference prolongs the life of a temporary object.
-
-Standard containers can hold only "first-class" objects, but not references. However, you can use `std::reference_wrapper` from the `<functional>` header to store objects with reference-like semantics in a container.
-
-```cpp
-int a = 10, b = 20, c = 30;
-
-std::vector<std::reference_wrapper<int>> ref_vector = {a, b, c};
-
-// Modify the original values through the reference wrappers.
-for (std::reference_wrapper<int> ref : ref_vector) {
-    ref.get() += 5;
-}
-```
 ---
 
 # Smart pointers: common pitfalls
@@ -344,6 +346,25 @@ std::shared_ptr<int> ptr2(raw); // ❌ Double deletion!
 ```cpp
 auto ptr = std::make_unique<MyClass>(args);      // ✅ Recommended
 std::unique_ptr<MyClass> ptr(new MyClass(args)); // ❌ Avoid
+```
+
+---
+
+# Reference wrappers
+
+References create aliases to existing objects and must be initialized. It's crucial to be cautious with references to temporary objects. A const reference prolongs the life of a temporary object.
+
+Standard containers can hold only "first-class" objects, but not references. However, you can use `std::reference_wrapper` from the `<functional>` header to store objects with reference-like semantics in a container.
+
+```cpp
+int a = 10, b = 20, c = 30;
+
+std::vector<std::reference_wrapper<int>> ref_vector = {a, b, c};
+
+// Modify the original values through the reference wrappers.
+for (std::reference_wrapper<int> ref : ref_vector) {
+    ref.get() += 5;
+}
 ```
 
 ---
