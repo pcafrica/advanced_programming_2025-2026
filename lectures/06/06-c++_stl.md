@@ -382,7 +382,12 @@ while (!pq.empty()) {
   if (std::holds_alternative<std::string>(v)) {
     std::cout << "Holds string: " << std::get<std::string>(v) << std::endl;
   }
-  
+
+  // Safe access using std::get_if (returns nullptr if wrong type).
+  if (auto* ptr = std::get_if<double>(&value)) {
+    std::cout << "Double: " << *ptr << std::endl;
+  }
+
   // Use std::visit to handle all possible types.
   std::visit([](const auto &arg) {
     std::cout << "Value: " << arg << std::endl;
