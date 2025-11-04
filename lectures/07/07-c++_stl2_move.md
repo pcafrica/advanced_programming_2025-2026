@@ -91,7 +91,7 @@ public:
     }
 private:
     Polygon *polygon; // Polymorphic object.
-}; // Added semicolon
+};
 
 Polygon* create_polygon(const std::string& t) {
     if (t == "Triangle") {
@@ -127,7 +127,7 @@ public:
     }
 private:
     std::unique_ptr<Polygon> polygon;
-}; // Added semicolon
+};
 
 std::unique_ptr<Polygon> create_polygon(const std::string& t) {
     if (t == "Triangle") {
@@ -297,7 +297,7 @@ struct Node {
 ```cpp
 struct Node {
     std::shared_ptr<Node> next;
-    std::weak_ptr<Node> prev; // ✓ Breaks the cycle.
+    std::weak_ptr<Node> prev; // ✅ Breaks the cycle.
 };
 ```
 
@@ -342,7 +342,7 @@ std::shared_ptr<int> ptr2(raw); // ❌ Double deletion!
 
 **Always prefer `make_unique`/`make_shared`:**
 ```cpp
-auto ptr = std::make_unique<MyClass>(args);      // ✓ Recommended
+auto ptr = std::make_unique<MyClass>(args);      // ✅ Recommended
 std::unique_ptr<MyClass> ptr(new MyClass(args)); // ❌ Avoid
 ```
 
@@ -577,11 +577,11 @@ a = foo();
 
 The return value of `foo` could be moved into `a` safely! (Indeed, the Return Value Optimization already does that for constructors).
 
-It would be beneficial to have an "adornment" that acts like a reference, while ensuring that **it binds exclusively to rvalues and preferably to rvalues**. This way, we can overload the assignment operator as follows:
+It would be beneficial to have an *adornment* that acts like a reference, while ensuring that **it binds exclusively to rvalues and preferably to rvalues**. This way, we can overload the assignment operator as follows:
 
 ```cpp
 Matrix & operator=(const Matrix & a); // Ordinary copy.
-Matrix & operator=(Matrix "new adorn" a); // Move!
+Matrix & operator=(Matrix "new adornment" a); // Move!
 ```
 
 ---
@@ -1380,7 +1380,7 @@ if (std::filesystem::exists(big_file_path)) {
 
 # Best practices (1/2)
 
-**Smart sointers:**
+**Smart pointers:**
 - Prefer `std::unique_ptr` by default for single ownership
 - Use `std::shared_ptr` only when shared ownership is truly needed
 - Always use `std::make_unique`/`std::make_shared` for construction
@@ -1413,7 +1413,7 @@ The more outdated and cumbersome features that make programming more complex and
 
 It's advisable to start incorporating the new features that genuinely assist you in writing cleaner, simpler code. Most of the features illustrated here move in that direction.
 
-But always remember: the most important aspect of your code is whether it accomplishes the right task. An elegant code that yields incorrect results is of no use.
+But **always remember**: the most important aspect of your code is whether it accomplishes the right task. An elegant code that yields incorrect results is of no use.
 
 ---
 
