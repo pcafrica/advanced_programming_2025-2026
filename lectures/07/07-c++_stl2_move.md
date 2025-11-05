@@ -599,6 +599,14 @@ public:
 
 ---
 
+# Constructors and destructor synthetically generated
+
+![w:650px](../03/images/03_compiler_implicit.png)
+
+[Source](https://howardhinnant.github.io/classdecl.html)
+
+---
+
 # When does moving happen automatically?
 
 The compiler automatically calls move operations in these situations:

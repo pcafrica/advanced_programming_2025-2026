@@ -455,11 +455,11 @@ public:
 
 ---
 
-# Constructors and destructor<br>implicitly declared by the compilers
+# Constructors and destructor synthetically generated
 
 ![w:650px](images/03_compiler_implicit.png)
 
-Source: https://howardhinnant.github.io/classdecl.html
+[Source](https://howardhinnant.github.io/classdecl.html)
 
 ---
 
