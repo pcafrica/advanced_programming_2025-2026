@@ -75,7 +75,7 @@ In modern C++, we use different types of pointers:
 - **Owning pointers (Smart pointers):** They control the lifespan of the resource they point to. There are three kinds:
   - `std::unique_ptr`: With unique ownership of the resource. The owned resource is destroyed when the pointer goes out of scope.
   - `std::shared_ptr`: With shared ownership of a resource. The resource is destroyed when the **last** pointer owning it is destroyed.
-  - `std::weak_ptr<T>`: A non-owning pointer to a shared resource, reserved for special use cases.
+  - `std::weak_ptr`: A non-owning pointer to a shared resource, reserved for special use cases.
 
 Smart pointers implement the RAII concept. For simply addressing a resource, possibly polymorphically, use ordinary pointers.
 
@@ -168,9 +168,9 @@ The default constructor produces an empty (null) unique pointer, and you can che
 - `std::swap(ptr1, ptr2)`: Swaps ownership.
 - `ptr1 = std::move(ptr2)`: By definition, **unique** pointers cannot be copied, but their ownership can be transferred using the `std::move` utility. Moves resources from `ptr2` to `ptr1`. The previous resource of `ptr1` is deleted, and `ptr2` remains empty.
 - `ptr.reset()`: Deletes the resource, making `ptr` empty.
+- `ptr.release()`: Returns a standard pointer, releasing the resource without deleting it. `ptr` becomes empty.
 - `ptr1.reset(ptr2.release())`: Transfers ownership from `ptr2` to `ptr1` (alternative to `std::move`).
 - `ptr.get()`: Returns a standard pointer to the handled resource.
-- `ptr.release()`: Returns a standard pointer, releasing the resource without deleting it. `ptr` becomes empty.
 
 `std::unique_ptr` instances can be stored in standard containers, such as vectors.
 
@@ -178,7 +178,7 @@ The default constructor produces an empty (null) unique pointer, and you can che
 
 # Shared pointers
 
-For instance, you have several objects that **refer** to a resource (e.g., a matrix, a shape, ...) that is built dynamically (and maybe is a polymorphic object). You want to keep track of all the references in such a way that when (and only when) the last one gets destroyed the resource is also destroyed.
+For instance, assume having several objects that **refer** to a resource (e.g., a matrix, a shape, ...) that is built dynamically (and maybe polymorphically). You want to keep track of all the references in such a way that when (and only when) the last one gets destroyed the resource is also destroyed.
 
 To this purpose you need a `std::shared_ptr<T>`. It implements the semantic of *clean it up when the resource is no longer used*.
 
@@ -268,13 +268,14 @@ std::cout << "Use count: " << shared_ptr.use_count() << std::endl;
 When using `std::shared_ptr`, be aware of cyclic reference problems:
 
 ```cpp
-struct Node {
+class Node {
+public:
     std::shared_ptr<Node> next;
     std::shared_ptr<Node> prev; // ⚠️ Creates cycles! Memory leak.
 };
 
-auto node1 = std::make_shared<Node>();
-auto node2 = std::make_shared<Node>();
+auto node1 = std::make_shared<Node>{};
+auto node2 = std::make_shared<Node>{};
 node1->next = node2;  // node2's refcount = 2
 node2->prev = node1;  // node1's refcount = 2
 ```
@@ -291,7 +292,8 @@ node2->prev = node1;  // node1's refcount = 2
 **Key insight**: Not all references need to be *owning* references!
 
 ```cpp
-struct Node {
+class Node {
+public:
     std::shared_ptr<Node> next;  // Owns the next node.
     std::weak_ptr<Node> prev;    // Observes prev node (doesn't own it).
 };
@@ -339,13 +341,13 @@ delete raw; // ❌ Double deletion! Undefined behavior.
 int* raw = new int(42);
 std::shared_ptr<int> ptr1(raw);
 std::shared_ptr<int> ptr2(raw); // ❌ Double deletion!
-// Instead: use make_shared or share ownership from existing shared_ptr
+// Instead: use make_shared or share ownership from existing shared_ptr.
 ```
 
 **Always prefer `make_unique`/`make_shared`:**
 ```cpp
-auto ptr = std::make_unique<MyClass>(args);      // ✅ Recommended
-std::unique_ptr<MyClass> ptr(new MyClass(args)); // ❌ Avoid
+auto ptr = std::make_unique<MyClass>(args);      // ✅ Recommended.
+std::unique_ptr<MyClass> ptr(new MyClass(args)); // ❌ Avoid.
 ```
 
 ---
@@ -354,7 +356,7 @@ std::unique_ptr<MyClass> ptr(new MyClass(args)); // ❌ Avoid
 
 References create aliases to existing objects and must be initialized. It's crucial to be cautious with references to temporary objects. A const reference prolongs the life of a temporary object.
 
-Standard containers can hold only "first-class" objects, but not references. However, you can use `std::reference_wrapper` from the `<functional>` header to store objects with reference-like semantics in a container.
+Standard containers can hold only *first-class* objects, but not references. However, you can use `std::reference_wrapper` from the `<functional>` header to store objects with reference-like semantics in a container. Moreover, `std::reference_wrapper` can be assigned **after construction**!
 
 ```cpp
 int a = 10, b = 20, c = 30;
@@ -405,13 +407,13 @@ Let's see a real performance problem:
 
 ```cpp
 void swap(std::vector<int>& a, std::vector<int>& b) {
-    std::vector<int> tmp = a;  // Copy all of a (expensive!)
-    a = b;                     // Copy all of b (expensive!)
-    b = tmp;                   // Copy all of tmp (expensive!)
+    std::vector<int> tmp = a; // Copy all of a (expensive!)
+    a = b;                    // Copy all of b (expensive!)
+    b = tmp;                  // Copy all of tmp (expensive!)
 }
 
-std::vector<int> vec1(1'000'000); // 1 million elements
-std::vector<int> vec2(1'000'000); // 1 million elements
+std::vector<int> vec1(1'000'000); // 1 million elements.
+std::vector<int> vec2(1'000'000); // 1 million elements.
 swap(vec1, vec2); // Three allocations + copy 3 million integers! 😱
 ```
 
@@ -419,7 +421,7 @@ swap(vec1, vec2); // Three allocations + copy 3 million integers! 😱
 
 ---
 
-# The solution: "moving" instead of copying
+# The solution: *moving* instead of copying
 
 What if we could just swap the pointers inside the vectors?
 
@@ -440,11 +442,11 @@ b = std::move(tmp);                   // "Steal" tmp's data.
 // Result: O(1) instead of O(n) - just pointer swaps, no element copies!
 ```
 
-**Key idea:** When we know an object is about to die (temporary), we can safely "steal" its resources instead of copying them.
+**Key idea:** When we know an object is about to die (temporary), we can safely *steal* its resources instead of copying them.
 
 ---
 
-# When can we safely "move" an object?
+# When can we safely *move* an object?
 
 **The fundamental question:** How does the compiler know when it's safe to steal resources instead of copying?
 
@@ -463,8 +465,8 @@ This is where **value categories** come in: `lvalue` vs `rvalue`
 - Examples: variables, function parameters
 
 ```cpp
-int x = 10;        // x is an lvalue
-std::string name = "Alice";  // name is an lvalue
+int x = 10;                 // x is an lvalue.
+std::string name = "Alice"; // name is an lvalue.
 ```
 
 ---
@@ -504,15 +506,15 @@ std::min(x, y) // rvalue (temporary return value).
 
 ---
 
-# Rvalue references: The key to move semantics
+# Rvalue references: the key to move semantics
 
 **The challenge:** We need a way to overload functions based on whether an argument is temporary (movable) or not.
 
 **Solution:** C++11 introduced **rvalue references** (`T &&`)
 
 ```cpp
-void process(std::string & s);   // #1: Called for lvalues.
-void process(std::string && s);  // #2: Called for rvalues (temporaries).
+void process(std::string& s);   // #1: Called for lvalues.
+void process(std::string&& s);  // #2: Called for rvalues (temporaries).
 
 std::string name = "Alice";
 process(name);               // Calls #1 (lvalue).
@@ -539,6 +541,7 @@ public:
           data(new double[rows * cols]) {
         std::copy(other.data, other.data + rows*cols, data); // Copy all elements.
     }
+};
 ```
 
 **Copy**: Allocate new memory + copy all data 🐢
@@ -633,7 +636,7 @@ Matrix b = a; // Copy (a is an lvalue, we might use it again).
 
 ```cpp
 Matrix a(100, 100);
-Matrix b = std::move(a); // Move! (explicitly saying: I don't need 'a' anymore).
+Matrix b = std::move(a); // Move! (Explicitly saying: I don't need 'a' anymore).
 // ⚠️ 'a' is now in a valid but unspecified state (typically empty).
 ```
 
@@ -660,7 +663,7 @@ void swap(T& a, T& b) {
 ```
 
 **Performance comparison for `std::vector<int>(1'000'000))`:**
-- Old (copy-based): ~30ms + allocate 12MB temporary memory
+- Old (copy-based): ~30ms + allocate 12MB temporary memory!
 - New (move-based): ~0.00001ms + no extra allocation!
 
 **The standard library already provides this:** `std::swap(a, b)`
@@ -673,10 +676,9 @@ void swap(T& a, T& b) {
 
 ```cpp
 void process(Matrix&& m) { // m has type Matrix&&
-    // Inside this function, m is an 'lvalue'!
-    // (it has a name, you can take &m).
+    // Inside this function, m is an 'lvalue' (it has a name, you can take &m).
     
-    Matrix other = m; // ❌ Calls copy constructor (m is lvalue).
+    Matrix other = m;             // ❌ Calls copy constructor (m is lvalue).
     Matrix other = std::move(m);  // ✅ Calls move constructor.
 }
 ```
@@ -684,8 +686,8 @@ void process(Matrix&& m) { // m has type Matrix&&
 **Why?** You might use `m` multiple times in the function - moving from it implicitly would be dangerous:
 ```cpp
 void process(Matrix&& m) {
-    use(m);  // First use.
-    use(m);  // Second use - would fail if m was already moved!
+    use(m); // First use.
+    use(m); // Second use - would fail if m was already moved!
 }
 ```
 
@@ -695,7 +697,7 @@ void process(Matrix&& m) {
 
 **The problem:** Copying large objects (especially temporaries) is wasteful.
 
-**The solution:** Move semantics - "steal" resources from objects we don't need anymore.
+**The solution:** Move semantics - *steal* resources from objects we don't need anymore.
 
 **Key concepts:**
 - **lvalue** = has a name, might be used again → must copy
@@ -713,7 +715,7 @@ void process(Matrix&& m) {
 - Passing temporaries to functions
 - RVO (Return Value Optimization) - even better than moving!
 
-**Remember:** After `std::move(x)`, don't use `x` again (except to assign/destroy it)!
+**Remember:** After `std::move(x)`, don't use `x` again - except to (re)assign/destroy it!
 
 ---
 
@@ -776,7 +778,7 @@ Matrix cholesky(const Matrix& m);
 
 - This function has a **precondition** that requires the input matrix `m` to be symmetric positive definite.
 - The **postcondition** is that the output matrix is a lower triangular matrix representing the Cholesky factorization of `m`.
-- An invariant of a symmetric matrix `m` is that `m(i,j) = m(j,i)` for all matrix elements.
+- An **invariant** of a symmetric matrix `m` is that `m(i,j) = m(j,i)` for all matrix elements.
 
 ---
 
@@ -817,7 +819,7 @@ public:
 };
 ```
 
-If the condition is not met, the error message is printed to the standard error and compilation will fail.
+If the condition is not met, the error message is printed to the error stream and compilation will fail.
 
 ---
 
@@ -873,7 +875,7 @@ try {
 
 # Standard exceptions
 
-The Standard Library in C++ provides predefined **exception classes** for common exceptions. They are accessible through the `<exception>` header. These classes derive from `std::exception`, which defines a method `what()` to return an exception message.
+The Standard Library in C++ provides predefined **exception classes** for common exceptions. They are accessible through the `<exception>` header. These classes derive from `std::exception`, which defines a *virtual* method `what()` to return an exception message.
 
 ```cpp
 virtual char const * what() const noexcept;
@@ -907,7 +909,7 @@ public:
         : balance(balance), withdrawal_amount(withdrawal_amount) {}
 
     const char * what() const noexcept override {
-        return "Insufficient Funds: Cannot complete the withdrawal.";
+        return "Insufficient funds: Cannot complete the withdrawal.";
     }
 
     double get_balance() const { return balance; }
@@ -941,10 +943,6 @@ public:
         balance -= amount;
     }
 
-    double get_balance() const {
-        return balance;
-    }
-
 private:
     double balance;
 };
@@ -958,8 +956,7 @@ private:
 BankAccount account(1000.0);
 
 try {
-    account.withdraw(1500.0);
-    // Or: account.withdraw(-500.0);
+    account.withdraw(1500.0); // Or: account.withdraw(-500.0);
 } catch (const InsufficientFundsException& e) {
     std::cerr << "Exception caught: " << e.what() << std::endl;
     std::cerr << "Balance: " << e.get_balance()
@@ -975,11 +972,14 @@ try {
 
 # Old-style error control
 
-In situations where an algorithm's failure is one of its expected outcomes (e.g., the failure of convergence in an iterative method), returning a **status** rather than throwing an exception may be more suitable. Instead of terminating the program, a status variable is used to indicate the outcome, which can be checked by the caller. See also [`std::terminate`](https://en.cppreference.com/w/cpp/error/terminate), [`std::abort`](https://en.cppreference.com/w/cpp/utility/program/abort), and, [`std::exit`](https://en.cppreference.com/w/cpp/utility/program/exit).
+In situations where an algorithm's failure is one of its expected outcomes (e.g., the failure of convergence in an iterative method), returning a **status** rather than throwing an exception may be more suitable. Instead of terminating the program, a status variable is used to indicate the outcome, which can be checked by the caller. See also:
+- [`std::exit`](https://en.cppreference.com/w/cpp/utility/program/exit) (normal program termination).
+- [`std::abort`](https://en.cppreference.com/w/cpp/utility/program/abort) (abnormal program termination)
+- [`std::terminate`](https://en.cppreference.com/w/cpp/error/terminate) (terminate with unhandled exception, with a customizable handler)
 
-Exception handling is increasingly important in code that must be integrated into a broader workflow or graphical interface. However, it's worth noting that the `try-catch` mechanism introduces overhead only when exceptions are actually thrown. Modern implementations have zero-cost when no exception occurs. High-performance code often minimizes the use of exception handling.
+However, it's worth noting that the `try-catch` mechanism introduces overhead only when exceptions are actually thrown. Modern implementations have zero-cost when no exception occurs. High-performance code often minimizes the use of exception handling.
 
-In practical contexts where exception handling is necessary, the `noexcept` declaration can help optimize efficiency by indicating functions and methods that do not throw exceptions.
+In practical contexts where exception handling is necessary, the `noexcept` operator can help optimize efficiency by indicating functions and methods that do not throw exceptions.
 
 ---
 
@@ -1027,14 +1027,14 @@ Input/Output (I/O) streams in C++ provide a convenient way to perform input and 
 
 The `std::ios_base` namespace defines the following options to deal with files.
 
-| Option   | Description                                                                                |
-|----------|--------------------------------------------------------------------------------------------|
-| `in`     | File open for reading: the internal stream buffer supports input operations.               |
-| `out`    | File open for writing: the internal stream buffer supports output operations.              |
-| `binary` | Operations are performed in binary mode rather than text.                                  |
-| `ate`    | The output position starts **at** the **e**nd of the file.                                 |
-| `app`    | All output operations happen at the end of the file, `app`ending to its existing contents. |
-| `trunc`  | Any contents that existed in the file before it is open are truncated/discarded.           |
+| Option   | Description                                                                                    |
+|----------|------------------------------------------------------------------------------------------------|
+| `in`     | File open for reading: the internal stream buffer supports input operations.                   |
+| `out`    | File open for writing: the internal stream buffer supports output operations.                  |
+| `binary` | Operations are performed in binary mode rather than text.                                      |
+| `ate`    | The output position starts **at** the **e**nd of the file, even in case of concurrent writing. |
+| `app`    | All output operations happen at the end of the file, `app`ending to its existing contents.     |
+| `trunc`  | Any contents that existed in the file before it is open are truncated/discarded.               |
 
 ---
 
@@ -1079,7 +1079,7 @@ The `std::ios_base` namespace defines the following options to deal with files.
 
 # `std::stringstream`
 
-**`std::stringstream`**: This class allows you to work with strings as if they were input and output streams. You can use stringstream for parsing and formatting strings.
+**`std::stringstream`**: This class allows you to manipulate strings as if they were input and output streams. You can use it for parsing and formatting strings.
   ```cpp
   #include <sstream>
 
@@ -1089,7 +1089,6 @@ The `std::ios_base` namespace defines the following options to deal with files.
   const double pi = 3.14159265359;
     
   ss << "The answer is: " << num << ", and Pi is approximately " << pi;
-
   std::cout << ss.str() << std::endl;
 
   // Parsing data from a string using std::stringstream.
@@ -1113,7 +1112,7 @@ const double pi = 3.14159265359;
 std::cout << "Default: " << pi << std::endl;
 std::cout << "Fixed with 2 decimal places: " << std::fixed << std::setprecision(2) << pi << std::endl;
 std::cout << "Scientific notation: " << std::scientific << pi << std::endl;
-std::cout.setprecision(6);
+std::cout << std::defaultfloat << std::setprecision(6);
 std::cout << "Width 10 with left alignment: " << std::left << std::setw(10) << pi << ";" << std::endl;
 std::cout << "Width 10 with right alignment: " << std::right << std::setw(10) << std::setfill('*') << pi << std::endl;
 ```
@@ -1122,9 +1121,9 @@ std::cout << "Width 10 with right alignment: " << std::right << std::setw(10) <<
 ```bash
 Default: 3.14159
 Fixed with 2 decimal places: 3.14
-Scientific notation: 3.141593e+00
-Width 10 with left alignment: 3.14e+00  ; 
-Width 10 with right alignment: **3.14e+00
+Scientific notation: 3.14e+00
+Width 10 with left alignment: 3.14159   ;
+Width 10 with right alignment: ***3.14159
 ```
 
 ---
@@ -1196,7 +1195,7 @@ std::default_random_engine rd3{rd()}; // With a randomly generated seed.
 
 ---
 
-# Distributions
+# Example: distributions
 
 Distributions are template classes that implement a call operator `()` to transform a random sequence into a specific distribution. You need to pass a random engine to the distribution to generate numbers according to the desired distribution. For example:
 
