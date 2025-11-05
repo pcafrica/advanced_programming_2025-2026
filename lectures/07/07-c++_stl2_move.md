@@ -1177,6 +1177,8 @@ For simplicity, the library provides predefined engines, such as `std::default_r
 You can generate an object of the chosen class either with the default constructor or by providing a seed (an unsigned integer). If you use the same seed, the sequence of pseudo-random numbers will be the same every time you execute the program.
 
 ```cpp
+#include <random>
+
 std::default_random_engine rd1;          // With a default-provided seed.
 std::default_random_engine rd2{1566770}; // With a user-provided seed.
 ```
