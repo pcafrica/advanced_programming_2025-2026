@@ -471,7 +471,7 @@ std::string name = "Alice"; // name is an lvalue.
 
 ---
 
-# Value categories: **rvalue** (*right value* or temporary):
+# Value categories: **rvalue** (*right value* or temporary)
 
 - Doesn't have a name (temporary)
 - About to be destroyed
