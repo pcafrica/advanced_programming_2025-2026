@@ -401,6 +401,19 @@ std::vector<int> v = create_large_vector();
 
 ---
 
+# Return Value Optimization (RVO)
+
+**Good news**: Modern compilers can already optimize away many copies automatically!
+
+- **RVO** (Return Value Optimization): When a function returns a newly-created object, the compiler can construct it directly in the caller's memory location, avoiding any copy or move.
+- **NRVO** (Named Return Value Optimization): Similar to RVO, but for named local variables that are returned.
+
+Modern compilers use **RVO/NRVO** to construct the returned object directly at the destination - no copy or move at all! This is even mandatory since C++17 for cases like above.
+
+**So why do we need move semantics?** Move semantics is essential for cases where RVO doesn't apply: swaps, container operations (`push_back`, `insert`), conditional returns, and explicit ownership transfers between existing objects.
+
+---
+
 # A concrete example: the costly swap
 
 Let's see a real performance problem:
@@ -895,16 +908,16 @@ These standard exceptions are designed to be used or derived from when creating 
 
 # An overview of standard exceptions
 
-- **std::exception**: The base class for all standard exceptions. It provides a `what()` method to retrieve an error message.
-- **std::runtime_error**: Represents runtime errors.
-- **std::logic_error**: Represents logical errors in the program. It includes exceptions like `std::invalid_argument` and `std::domain_error`.
-- **std::overflow_error**: Indicates arithmetic overflow errors.
-- **std::underflow_error**: Indicates arithmetic underflow errors.
-- **std::range_error**: Indicates errors related to out-of-range values.
-- **std::bad_alloc**: Used to indicate memory allocation errors.
-- **std::bad_cast**: Indicates casting errors during runtime type identification (RTTI).
-- **std::bad_typeid**: Used for errors related to the type identification of objects.
-- **std::bad_exception**: A placeholder for all unhandled exceptions.
+- `std::exception`: The base class for all standard exceptions. It provides a `what()` method to retrieve an error message.
+- `std::runtime_error`: Represents runtime errors.
+- `std::logic_error`: Represents logical errors in the program. It includes exceptions like `std::invalid_argument` and `std::domain_error`.
+- `std::overflow_error`: Indicates arithmetic overflow errors.
+- `std::underflow_error`: Indicates arithmetic underflow errors.
+- `std::range_error`: Indicates errors related to out-of-range values.
+- `std::bad_alloc`: Used to indicate memory allocation errors.
+- `std::bad_cast`: Indicates casting errors during runtime type identification (RTTI).
+- `std::bad_typeid`: Used for errors related to the type identification of objects.
+- `std::bad_exception`: A placeholder for all unhandled exceptions.
 
 ---
 
@@ -1115,7 +1128,6 @@ The `std::ios_base` namespace defines the following options to deal with files.
 
 ```cpp
 #include <iomanip>
-
 const double pi = 3.14159265359;
 std::cout << "Default: " << pi << std::endl;
 std::cout << "Fixed with 2 decimal places: " << std::fixed << std::setprecision(2) << pi << std::endl;
@@ -1183,13 +1195,12 @@ std::default_random_engine rd1;          // With a default-provided seed.
 std::default_random_engine rd2{1566770}; // With a user-provided seed.
 ```
 
-## How to use the `random_device`
-
+**How to use the `random_device`**
 The `random_device` provides non-deterministic random numbers based on hardware data. However, it is slower than other engines and is often used to generate the seed for another random engine. Here's how to use it:
 
 ```cpp
 std::random_device rd;
-std::default_random_engine rd3{rd()}; // With a randomly generated seed.
+std::default_random_engine rd3{rd{}}; // With a randomly generated seed.
 ```
 
 ---
@@ -1211,7 +1222,7 @@ Distributions are template classes that implement a call operator `()` to transf
 
 ```cpp
 std::random_device rd;
-std::default_random_engine gen{rd()};
+std::default_random_engine gen{rd{}};
 std::uniform_int_distribution<> dice{1, 6};
 
 for (unsigned int n = 0; n < 10; ++n)
@@ -1250,7 +1261,7 @@ In C++, you can shuffle a range of elements using the `std::shuffle` utility fro
 ```cpp
 std::vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 std::random_device rd;
-std::default_random_engine g{rd()};
+std::default_random_engine g{rd{}};
 std::shuffle(v.begin(), v.end(), g);
 ```
 
@@ -1287,9 +1298,9 @@ _class: titlepage
 
 C++ provides three common clocks:
 
-- **`std::chrono::system_clock`**: Represents the system-wide real-time clock. It's suitable for measuring absolute time (can change if the user changes the time on the host machine).
-- **`std::chrono::steady_clock`**: Represents a steady clock that never goes backward. It's suitable for measuring time intervals and performance measurements.
-- **`std::chrono::high_resolution_clock`**: May provide the highest resolution available, but is often just an alias for `steady_clock`. Prefer `steady_clock` for portability.
+- `std::chrono::system_clock`: Represents the system-wide real-time clock. It's suitable for measuring absolute time (can change if the user changes the time on the host machine).
+- `std::chrono::steady_clock`: Represents a steady clock that never goes backward. It's suitable for measuring time intervals and performance measurements.
+- `std::chrono::high_resolution_clock`: May provide the highest resolution available, but is often just an alias for `steady_clock`. Prefer `steady_clock` for portability.
 
 ---
 
