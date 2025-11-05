@@ -12,7 +12,7 @@ _class: titlepage
 # Lecture 07
 <br>
 
-## Smart pointers, move semantics, STL utilities.
+## Smart pointers, move semantics, exceptions, STL utilities.
 <br>
 
 #### Advanced Programming - SISSA, UniTS, 2025-2026
