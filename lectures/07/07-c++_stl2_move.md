@@ -1199,8 +1199,8 @@ std::default_random_engine rd2{1566770}; // With a user-provided seed.
 The `random_device` provides non-deterministic random numbers based on hardware data. However, it is slower than other engines and is often used to generate the seed for another random engine. Here's how to use it:
 
 ```cpp
-std::random_device rd;
-std::default_random_engine rd3{rd{}}; // With a randomly generated seed.
+std::random_device rd{};
+std::default_random_engine rd3{rd()}; // With a randomly generated seed.
 ```
 
 ---
@@ -1221,8 +1221,8 @@ std::default_random_engine rd3{rd{}}; // With a randomly generated seed.
 Distributions are template classes that implement a call operator `()` to transform a random sequence into a specific distribution. You need to pass a random engine to the distribution to generate numbers according to the desired distribution. For example:
 
 ```cpp
-std::random_device rd;
-std::default_random_engine gen{rd{}};
+std::random_device rd{};
+std::default_random_engine gen{rd()};
 std::uniform_int_distribution<> dice{1, 6};
 
 for (unsigned int n = 0; n < 10; ++n)
@@ -1260,8 +1260,8 @@ In C++, you can shuffle a range of elements using the `std::shuffle` utility fro
 
 ```cpp
 std::vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-std::random_device rd;
-std::default_random_engine g{rd{}};
+std::random_device rd{};
+std::default_random_engine g{rd()};
 std::shuffle(v.begin(), v.end(), g);
 ```
 
