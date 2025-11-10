@@ -1,6 +1,4 @@
 allowLocalFiles: true
-html: true
 bespoke:
   progress: true
-themeSet:
-  - style/custom.css
+theme: style/custom.css
