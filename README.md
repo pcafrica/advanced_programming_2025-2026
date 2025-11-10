@@ -52,7 +52,7 @@ Unless otherwise specified, all content here is licensed under a
 
 # Homeworks
 
-- Homework 01 [[Markdown](homeworks/homework_01.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODE4MTkzMTkyNDgx/details)]. **Due date: 09 November 2025**.
+- Homework 01 [[Markdown](homeworks/homework_01.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODE4MTkzMTkyNDgx/details)]. **Due date: 09 November 2025 (expired)**.
 
 ---
 
@@ -71,8 +71,8 @@ Unless otherwise specified, all content here is licensed under a
 | Wed 29 Oct 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/05/05-c++_functions_templates.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/05/05-c++_functions_templates.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/05/05-c++_functions_templates.pdf)] |
 | Tue 04 Nov 2025 | 14:00 - 16:00 | 005     | The Standard Template Library. [[Markdown](lectures/06/06-c++_stl.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/06/06-c++_stl.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/06/06-c++_stl.pdf)] |
 | Wed 05 Nov 2025 | 11:00 - 13:00 | 005     | Smart pointers, move semantics, exceptions, STL utilities. [[Markdown](lectures/07/07-c++_stl2_move.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/07/07-c++_stl2_move.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/07/07-c++_stl2_move.pdf)] |
-| Tue 11 Nov 2025 | 14:00 - 16:00 | 005     | Exercise session. |
-| Wed 12 Nov 2025 | 11:00 - 13:00 | 005     | Libraries: principles, building, and use. |
+| Tue 11 Nov 2025 | 14:00 - 16:00 | 005     | Exercise session. [[Markdown](exercises/06/06-c++_stl_move.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/06/06-c++_stl_move.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/06/06-c++_stl_move.pdf)] |
+| Wed 12 Nov 2025 | 11:00 - 13:00 | 005     | Libraries: principles, building, and use. [[Markdown](lectures/08/08-c++_libraries.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/08/08-c++_libraries.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/08/08-c++_libraries.pdf)] |
 | Tue 18 Nov 2025 | 14:00 - 16:00 | 005     | Exercise session: Introduction to GNU Make. |
 | Wed 19 Nov 2025 | 11:00 - 13:00 | 005     | Exercise session: Introduction to CMake. |
 | Tue 25 Nov 2025 | 14:00 - 16:00 | 128-129 | Optimization, debugging, profiling, testing. Exercise session. |
