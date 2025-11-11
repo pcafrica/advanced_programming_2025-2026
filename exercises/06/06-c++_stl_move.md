@@ -27,22 +27,22 @@ _class: titlepage
 
 In this exercise, you will perform a Monte Carlo simulation to estimate $\pi$.
 
-1. Consider the square $[0, 1]^2$ and the quarter-circle centered at $(0, 0)$ with radius $1$.
+1. Consider the square $[0, 1]^2$ and the quarter-circle centered at $(0, 0)$ with radius $1$ ($x^2 + y^2 \leq 1$).
 2. Generate random points within the square.
-3. Count how many of these random points fall within the quarter-circle ($x^2 + y^2 \leq 1$).
+3. Count how many of these random points fall within the quarter-circle.
 4. After generating a sufficient number of random points, you can estimate
 
 $$
 \pi \approx \frac{4 \cdot \text{Number of points inside the quarter-circle}}{\text{Total number of generated points}}.
 $$
 
-To improve estimation accuracy, try to increase the number of random points in your simulation.
+To improve estimation accuracy, try increasing the number of random points in your simulation.
 
 ---
 
 # Exercise 2: `std::pair`
 
-Create a `MyPair` template class that mimics `std::pair`, holding two elements of any type. Implement member variables `first` and `second`, with constructors for default and custom initialization. Overload `operator==`, `operator!=`, and `operator<` for equality and lexicographical comparison. Test your implementation using various data types such as `int`, `double`, and `std::string`.
+Create a `MyPair` class template that mimics `std::pair`, holding two elements of any type. Implement member variables `first` and `second`, with constructors for default and custom initialization. Overload `operator==`, `operator!=`, and `operator<` for equality and lexicographical comparison. Test your implementation using various data types such as `int`, `double`, and `std::string`.
 
 **Note**: Lexicographical comparison means comparing first elements first; if equal, then compare second elements.
 
@@ -50,7 +50,7 @@ Create a `MyPair` template class that mimics `std::pair`, holding two elements o
 
 # Exercise 3: `std::set` (1/2)
 
-In a building security system, door locks are opened by entering a four-digit access code into a keypad. The access code's validation process is handled through an Access object with the following interface:
+In a building security system, door locks are opened by entering a four-digit access code into a keypad. The access code's validation process is handled through an `Access` object with the following interface:
 
 ```cpp
 class Access
@@ -115,10 +115,10 @@ Now, update the main program to perform the following tasks:
 
 # Exercise 5: STL containers and algorithms
 
-1. **Generate a vector**: Create a vector named `random_numbers` that contains 100 random integers between 0 and 9.
-2. **Sort the vector**: Create a new vector named `sorted_numbers` by sorting the `random_numbers` vector in ascending order (keep duplicates).
-3. **Remove duplicates while sorting**: Create a new vector named `sorted_unique_numbers` by sorting the `random_numbers` vector (remove duplicates).
-4. **Remove duplicates without sorting**: Create a new vector named `unsorted_unique_numbers` by printing unique entries from the `random_numbers` in the same order they appear, without repetitions.
+1. Create a vector named `random_numbers` that contains 100 random integers between 0 and 9.
+2. Create a new vector named `sorted_numbers` by sorting the `random_numbers` vector in ascending order (keep duplicates).
+3. Create a new vector named `sorted_unique_numbers` by sorting the `random_numbers` vector (remove duplicates).
+4. Create a new vector named `unsorted_unique_numbers` by printing unique entries from the `random_numbers` in the same order they appear, without repetitions.
 
 **Hints**: Use `std::sort()` for sorting. Use `std::unique()` combined with `erase()` for removing consecutive duplicates. For task 4, consider using `std::unordered_set` to track seen elements.
 
@@ -130,9 +130,9 @@ The file `input.txt` contains a list of random complete sentences in English. De
 
 Write a C++ program to process the input text file by splitting it into words and counting the occurrences of each unique word. Spaces and punctuation should be discarded. Convert words to lowercase for case-insensitive counting.
 
-The program should generate a new file (named `output.txt`) containing the word-frequency pairs in a dictionary format. Each line in the output file should consist of a word followed by its frequency, separated by a colon or any other suitable delimiter.
+The program should generate a new file (named `output.txt`) containing the word-frequency pairs in a dictionary format. Each line in the output file should consist of a list of entries of the form `word: frequency`.
  
-**(Bonus)**: sort the output by frequency, in descending order. If two words have the same frequency, then sort them alphabetically.
+**Bonus**: sort the output by frequency, in descending order. If two words have the same frequency, then sort them alphabetically.
 
 ---
 
