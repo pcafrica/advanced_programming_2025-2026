@@ -62,8 +62,6 @@ _class: titlepage
 
 # What is a library?
 
-# What is a library?
-
 A **library** is a collection of pre-written, reusable code that provides:
 
 - **Functions, classes, and procedures** for common programming tasks.
@@ -95,15 +93,19 @@ As an exception, there are libraries whose implementation is only contained in h
 
 These are called *header-only* libraries, and are the easiest to use.
 
-An example of such is [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page), a powerful library for linear algebra.
+An example of such is [Eigen](https://libeigen.gitlab.io/), a powerful library for linear algebra.
 
 ---
 
 # Components of a C++ library (2/2)
 
-**Header files** are only used in the development phase. In production, only **library files** and the compiled executables are needed to **run** the software.
+**Header files** are only used in the development phase. In production, only **library files** and the executables are needed to **run** the software.
 
 **Note:** If you need to compile code that uses a library in production (e.g., deploying source code), you will still need the header files.
+
+---
+
+# Precompiled executables with shared libraries
 
 Precompiled executables that just use **shared libraries** do not need header files to work. This is why certain software packages are divided into standard and *development* versions; only the latter contains the full set of header files.
 
@@ -111,10 +113,13 @@ For example:
 ```bash
 sudo apt install python3
 ```
+
 will install the `python3` executable and the shared libraries it requires to be run, whereas
+
 ```bash
 sudo apt install libpython3-dev
 ```
+
 will download header files, libraries and tools required for building applications **based on** Python3's C API. The reference implementation of Python is called [`CPython`](https://github.com/python/cpython) because it's written in C.
 
 ---
@@ -146,12 +151,11 @@ _class: titlepage
 
 # Header-only libraries
 
-A library formed only by class templates and function templates contains only header files. One example is [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page), but many others are available.
+A library formed only by class templates and function templates contains only header files. One example is [Eigen](https://libeigen.gitlab.io/), but many others are available.
 
 Using a header-only library is very simple: you have to store the header files in a directory later searched by the preprocessor.
 
-So either you store them in a system include directory, like `/usr/include` or `/usr/local/include` (you must have administrator privileges), 
-or in a directory of your choice that you will then indicate using the `-I` option of the compiler (actually, of the **preprocessor**).
+So either you store them in a system include directory, like `/usr/include` or `/usr/local/include` (you must have administrator privileges), or in a directory of your choice that you will then indicate using the `-I` compiler (actually, **preprocessor**) flag.
 
 ```bash
 g++ -I/path/to/library/include/ ...
@@ -163,13 +167,13 @@ g++ -I/path/to/library/include/ ...
 
 ```bash
 # Download Eigen 3.4.0.
-wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+wget https://gitlab.com/libeigen/eigen/-/archive/5.0.0/eigen-5.0.0.tar.gz
 
 # Extract the archive to your Desktop.
-tar xzvf eigen-3.4.0.tar.gz -C ${HOME}/Desktop
+tar xzvf eigen-5.0.0.tar.gz -C ${HOME}/Desktop
 
-# Compile and run 'example/eigen.cpp'.
-g++ -I${HOME}/Desktop/eigen-3.4.0 eigen.cpp -o main_eigen && ./main_eigen
+# Compile and run 'examples/example_eigen.cpp'.
+g++ -I${HOME}/Desktop/eigen-5.0.0 example_eigen.cpp -o main_eigen && ./main_eigen
 ```
 
 As simple as that.
@@ -191,32 +195,20 @@ From now on, however, we will deal with libraries that contain machine code, not
 Consider an application using a math library:
 
 ## Static linking
-```bash
-# Executable size: 2.5 MB (includes library code)
-# Updating library requires recompilation
-```
+- Executable size: 2.5 MB (includes library code)
+- Updating library requires recompilation
 
 ## Shared linking
-```bash
-# Executable size: 50 KB (references library)
-# Library file: libmath.so (2.0 MB)
-# Updating library: replace .so file, no recompilation needed
-# Multiple programs share the same library in memory
-```
+- Executable size: 50 KB (references library)
+- Library file: libmath.so (2.0 MB)
+- Updating library: replace .so file, no recompilation needed
+- Multiple programs share the same library in memory
 
 **Trade-off:** Static = self-contained but larger. Shared = smaller but dependent.
 
 ---
 
 # A guided example
-
-## `main.cpp` (developed by me)
-```cpp
-#include "mylib.hpp"
-...
-myfun();
-...
-```
 
 ## `mylib` (developed by somebody else)
 ```cpp
@@ -227,6 +219,14 @@ void myfun();
 #include "mylib.hpp"
 
 void myfun() {}
+```
+
+## `main.cpp` (developed by me)
+```cpp
+#include "mylib.hpp"
+// ...
+myfun();
+// ...
 ```
 
 ---
@@ -318,21 +318,19 @@ g++ main.o -L/path/to/mylib -lmylib -o main
 
 # :warning: Order matters
 
-When linking, the order matters. Libraries should be listed in reverse order of dependency. Libraries that depend on symbols from other libraries should come first in the list.
+When linking with static libraries, the order matters due to how the linker processes symbols. **Rule:** Libraries should be listed **after** the object files/libraries that use them. The linker resolves symbols from **left to right**.
 
-So, for example, if `myprogram` depends on `mylibrary1` which on turn depends on `mylibrary2`, then `mylibrary2` should come first:
+If `myprogram` uses symbols from `mylibrary1`, which in turn uses symbols from `mylibrary2`:
 ```bash
 g++ myprogram.o -lmylibrary1 -lmylibrary2 -o myprogram
 ```
 
-Other permutations are wrong:
+**Why this works:**
+1. Linker processes `myprogram.o` → finds undefined symbols from `mylibrary1`.
+2. Linker processes `-lmylibrary1` → resolves those symbols, finds undefined symbols from `mylibrary2`.
+3. Linker processes `-lmylibrary2` → resolves remaining symbols.
 
-```bash
-g++ myprogram.o -lmylibrary2 -lmylibrary1 -o myprogram
-g++ -lmylibrary1 -lmylibrary2 myprogram.o -o myprogram
-```
-
-Undefined symbols in `main.o` are not searched in the given libraries.
+**Note:** Modern linkers may be more forgiving, but the left-to-right rule is the safe approach.
 
 ---
 
@@ -465,17 +463,17 @@ If there's a new release, placing the corresponding file in the `/lib/x86_64-lin
 
 ```bash
 $ ls -l /lib/x86_64-linux-gnu/libfftw3.so
-... /lib/x86_64-linux-gnu/libfftw3.so -> libfftw3.so.3.5.8
+... /lib/x86_64-linux-gnu/libfftw3.so -> libfftw3.so.3.6.10
 ```
 
-This means that `libfftw3.so.3` is a symbolic link to `libfftw3.so.3.5.8`. Hence, we are actually using version 3.5.8 of `libfftw3`.
+This means that `libfftw3.so.3` is a symbolic link to `libfftw3.so.3.6.10`. Hence, we are actually using version 3.6.10 of `libfftw3`.
 
 Another nice thing about shared libraries is that they may depend on another shared library. This information can be encoded when creating the library. For instance:
 
 ```bash
-ldd /usr/x86_64-linux-gnu/libumfpack.so
+ldd /usr/lib/x86_64-linux-gnu/libumfpack.so
 ...
-libblas.so.3 => /usr/lib/libblas.so.3
+libblas.so.3 => /usr/lib/x86_64-linux-gnu/libblas.so.3 (...)
 ```
 
 The UMFPACK library is linked against version 3 of the BLAS library (the `.3` suffix denotes the major version). This soname mechanism helps ensure that applications use compatible library versions, preventing crashes from API/ABI incompatibilities.
@@ -496,8 +494,8 @@ The linker looks for `libmylib.so` in system and/or in the specified directories
 For example, `libumfpack.so` provides a `soname` (of course, this has been taken care of by the library developers). If you wish, you can check it:
 
 ```bash
-$ objdump -p /lib/x86_64-linux-gnu/libumfpack.so | grep SONAME
-  SONAME               libumfpack.so.5
+$ objdump -p /usr/lib/x86_64-linux-gnu/libumfpack.so | grep SONAME
+  SONAME               libumfpack.so.6
 ```
 
 ---
@@ -511,7 +509,7 @@ ldd main
 libmylib.so.2 => /path/to/libmylib.so.2 (...)
 ```
 
-In conclusion, linking a shared library is not more complicated than linking a static one. However, knowing what happens "under the hood" may be useful to tackle unexpected situations.
+In conclusion, linking a shared library is not more complicated than linking a static one. However, knowing what happens *under the hood* may be useful to tackle unexpected situations.
 
 #### :warning: Even if the linker has found the library, it does not mean that the loader will find it as well!
 
@@ -533,7 +531,7 @@ If you want to permanently add a directory in the search path of the loader, you
 
 Launching the command `sudo ldconfig -n directory` has the same effect, but in this case modifications will remain valid until the next restart of the computer.
 
-:warning: All these operations require you to act as an administrator, for instance using the `sudo` command. Safer alternatives are in the next slide.
+:warning: **Note:** All these operations require you to act as an administrator, for instance using the `sudo` command. Safer alternatives are in the next slide.
 
 ---
 
@@ -541,11 +539,11 @@ Launching the command `sudo ldconfig -n directory` has the same effect, but in t
 
 1. **Setting the environment variable `LD_LIBRARY_PATH`:** It contains a colon-separated list of directory names where the loader will first look for libraries.
    ```bash
-   # Permanently, for the current terminal session:
+   # Permanently, for the current terminal session.
    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:dir1:dir2"
    ./main
    
-   # Or, temporarily valid for a single command:
+   # Or, temporarily valid for a single command.
    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:dir1" ./main
    ```
 
@@ -577,7 +575,6 @@ _class: titlepage
    ```bash
    g++ -shared mylib.o -Wl,-soname,libmylib.so.1 -o libmylib.so.1.0
    ```
-   *Note:* The library's real name is `libmylib.so.1.0`.
 
 3. **Create symbolic links for version control:**
    ```bash
@@ -631,13 +628,13 @@ For smaller projects without versioning, you can use the same name for link name
 
 # Common issues and troubleshooting
 
-## Problem: *cannot open shared object file*
-**Cause:** Loader cannot find the shared library.
-**Solution:** Use `ldd ./main` to check dependencies, then set `LD_LIBRARY_PATH` or use `-rpath`.
-
 ## Problem: *undefined reference to...* at link time
 **Cause:** Linker cannot find the library or symbol.
 **Solution:** Check `-L` path and `-l` library name. Use `nm -D libname.so` to verify symbols.
+
+## Problem: *cannot open shared object file*
+**Cause:** Loader cannot find the shared library.
+**Solution:** Use `ldd ./main` to check dependencies, then set `LD_LIBRARY_PATH` or use `-rpath`.
 
 ## Problem: *version mismatch* errors
 **Cause:** Incompatible library versions.
@@ -693,8 +690,6 @@ Dynamic loading is a fundamental aspect of a plugin architecture, allowing an ap
 
 ---
 
----
-
 <!--
 _class: titlepage
 -->
@@ -708,27 +703,11 @@ _class: titlepage
 1. **API stability:** Maintain backward compatibility when updating libraries
 2. **Versioning:** Use semantic versioning (MAJOR.MINOR.PATCH)
 3. **Documentation:** Provide clear API documentation and examples
-4. **Symbol visibility:** Use `-fvisibility=hidden` and explicitly export public symbols
-5. **Testing:** Write comprehensive tests for your library
-6. **Installation:** Provide standard installation mechanisms (`pkg-config` files, CMake configs)
-7. **Licensing:** Clearly specify the license (GPL, LGPL, MIT, etc.)
+4. **Testing:** Write comprehensive tests for your library
+5. **Installation:** Provide standard installation mechanisms (`pkg-config` files, CMake configs)
+6. **Licensing:** Clearly specify the license ([GPL](https://www.gnu.org/licenses/gpl-3.0.en.html), [LGPL](https://www.gnu.org/licenses/lgpl-3.0.en.html), [MIT](https://opensource.org/license/mit), etc.)
 
 **Remember:** A library is only as good as its documentation and ease of use!
-
----
-
-# Platform-specific notes: Windows
-
-On Windows, the process differs slightly:
-
-- **Static libraries:** `.lib` files
-- **Shared libraries:** `.dll` (Dynamic Link Library) files, plus `.lib` import libraries
-- **Compilers:** MSVC, MinGW, or Clang for Windows
-- **Path management:** Use `PATH` environment variable instead of `LD_LIBRARY_PATH`
-
-**Cross-platform development:** Consider using CMake or similar tools that abstract platform differences.
-
-**Note:** This course focuses primarily on Unix-like systems (Linux, macOS).
 
 ---
 
@@ -738,15 +717,15 @@ Many libraries provide `.pc` (pkg-config) files that contain compilation and lin
 
 ## Example: Using GTK library
 ```bash
-# Get compilation flags:
+# Get compilation flags.
 pkg-config --cflags gtk+-3.0
 # Output: -pthread -I/usr/include/gtk-3.0 -I/usr/include/glib-2.0 ...
 
-# Get linking flags:
+# Get linking flags.
 pkg-config --libs gtk+-3.0
 # Output: -lgtk-3 -lgdk-3 -lpangocairo-1.0 ...
 
-# Use in compilation:
+# Use in compilation.
 g++ main.cpp $(pkg-config --cflags --libs gtk+-3.0) -o main
 ```
 
