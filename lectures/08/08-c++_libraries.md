@@ -166,7 +166,7 @@ g++ -I/path/to/library/include/ ...
 # Header-only libraries: example
 
 ```bash
-# Download Eigen 3.4.0.
+# Download Eigen 5.0.0.
 wget https://gitlab.com/libeigen/eigen/-/archive/5.0.0/eigen-5.0.0.tar.gz
 
 # Extract the archive to your Desktop.
@@ -544,7 +544,7 @@ Launching the command `sudo ldconfig -n directory` has the same effect, but in t
    ./main
    
    # Or, temporarily valid for a single command.
-   LD_LIBRARY_PATH="$LD_LIBRARY_PATH:dir1" ./main
+   LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:dir1" ./main
    ```
 
 2. **With the special linker option, `-Wl,-rpath,directory`:** During the compilation (linking stage) of the executable, for instance
@@ -622,7 +622,7 @@ Now, running the executable uses the updated library without recompilation or re
 
 ## Note
 
-For smaller projects without versioning, you can use the same name for link name, `soname`, and real name (e.g., `libmylib.so`). In this case, the `-Wl,soname` option can be omitted and the symbolic links are not needed.
+For smaller projects without versioning, you can use the same name for link name, `soname`, and real name (e.g., `libmylib.so`). In this case, the `-Wl,-soname` option can be omitted and the symbolic links are not needed.
 
 ---
 
@@ -682,10 +682,10 @@ Dynamic loading is a fundamental aspect of a plugin architecture, allowing an ap
 ## Pros
 1. Updating a library has an immediate effect on all codes linking against it. No recompilation or relinking is needed.
 2. Executable is smaller since the code in the library is not duplicated.
-3. We can load libraries and symbols runtime (*plugins*).
+3. We can load libraries and symbols at runtime (*plugins*).
 
 ## Cons
-1. Executables depend on the library. If you delete the library, all codes using it won't run anymore.
+1. Executables depend on the library. If you delete the library, all programs using it won't run anymore.
 2. Both the linking phase and **the loading phase** need careful management, especially when dealing with different library versions installed.
 
 ---
