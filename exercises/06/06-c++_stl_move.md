@@ -27,9 +27,9 @@ _class: titlepage
 
 In this exercise, you will perform a Monte Carlo simulation to estimate $\pi$.
 
-1. Consider the square $[0, 1]^2$ and the quarter-circle centered at $(0, 0)$ with radius $1$ ($x^2 + y^2 \leq 1$).
+1. Consider the square $[0, 1]^2$ and the quarter-circle centered at $(0, 0)$ with radius $1$.
 2. Generate random points within the square.
-3. Count how many of these random points fall within the quarter-circle.
+3. Count how many of these random points fall within the quarter-circle ($x^2 + y^2 \leq 1$).
 4. After generating a sufficient number of random points, you can estimate
 
 $$
@@ -50,7 +50,7 @@ Create a `MyPair` class template that mimics `std::pair`, holding two elements o
 
 # Exercise 3: `std::set` (1/2)
 
-In a building security system, door locks are opened by entering a four-digit access code into a keypad. The access code's validation process is handled through an `Access` object with the following interface:
+In a building security system, door locks are opened by entering an access code into a keypad. The access code's validation process is handled through an `Access` object with the following interface:
 
 ```cpp
 class Access
@@ -157,4 +157,4 @@ Create a C++ program demonstrating smart pointers with polymorphism:
    2. Creating `std::shared_ptr<Base>` pointing to `Derived` objects;
    3. Transferring ownership of `std::unique_ptr` (using `std::move`);
    4. Sharing ownership with `std::shared_ptr` (observe reference counting);
-   5. Polymorphic behavior through virtual dispatch, *i.e.*, by calling `display()` through the smart pointers.
+   5. Polymorphic behavior through virtual dispatch, i.e., by calling `display()` through the smart pointers.
