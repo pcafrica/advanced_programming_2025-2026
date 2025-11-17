@@ -69,25 +69,23 @@ They are used to:
 
 Install dependencies, then compile and install.
 
-[**Doxygen**](https://github.com/doxygen/doxygen) (CMake)
+- [**Doxygen**](https://github.com/doxygen/doxygen) (CMake)
+  ```bash
+  cd /path/to/doxygen/src/
+  mkdir build && cd build
+  cmake -DCMAKE_INSTALL_PREFIX=/opt/doxygen ../
+  make -j<N>          # Replace <N> with the number of parallel jobs (e.g., -j4),
+                      # or use -j$(nproc) to automatically use all available cores.
+  (sudo) make install
+  ```
 
-```bash
-cd /path/to/doxygen/src/
-mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/opt/doxygen ../
-make -j<N>          # Replace <N> with the number of parallel jobs (e.g., -j4),
-                    # or use -j$(nproc) to automatically use all available cores.
-(sudo) make install
-```
-
-[**GNU Scientific Library**](https://www.gnu.org/software/gsl/) (autotools)
-
-```bash
-cd /path/to/gsl/src/
-./configure --prefix=/opt/gsl --enable-shared --disable-static
-make -j<N>
-(sudo) make install
-```
+- [**GNU Scientific Library**](https://www.gnu.org/software/gsl/) (autotools)
+  ```bash
+  cd /path/to/gsl/src/
+  ./configure --prefix=/opt/gsl --enable-shared --disable-static
+  make -j<N>
+  (sudo) make install
+  ```
 
 ---
 
@@ -138,18 +136,15 @@ Command names are **case insensitive**.
   # Modern approach (CMake ≥ 3.13):
   cmake -S /path/to/src/ -B /path/to/build/ [options...]
   ```
-
 - **Compile**
   ```bash
-   cd /path/to/build/
-   make -j<N>
-   # Or, in a single command: cmake --build /path/to/build/ -j<N>
+   cd /path/to/build/; make -j<N>
+   # Modern approach (CMake ≥ 3.13):
+   cmake --build /path/to/build/ -j<N>
    ```
-
 - **List variable values**
   ```bash
-  cd /path/to/build/
-  cmake /path/to/src/ -L
+  cmake -S /path/to/src/ -B /path/to/build -L
   ```
 
 ---
@@ -177,18 +172,20 @@ Targets can be associated with various [properties](https://cmake.org/cmake/help
 ```cmake
 add_library(my_lib STATIC my_class.cpp my_class.hpp)
 target_include_directories(my_lib PUBLIC include_dir)
-# "PUBLIC" propagates the property to
-# other targets depending on "my_lib".
 target_link_libraries(my_lib PUBLIC another_lib)
 
 add_executable(my_exec my_main.cpp my_header.hpp)
 target_link_libraries(my_exec my_lib)
 target_compile_features(my_exec cxx_std_20)
-# Last command is equivalent to:
-# set_target_properties(my_exec PROPERTIES CXX_STANDARD 20)
+# Or: set_target_properties(my_exec PROPERTIES CXX_STANDARD 20)
 
 target_compile_options(my_exec PUBLIC -Wall -Wpedantic)
 ```
+
+**Visibility keywords:**
+- `PRIVATE`: Used only by this target.
+- `PUBLIC`: Used by this target and propagated to dependents.
+- `INTERFACE`: Not used by this target, only propagated to dependents.
 
 ---
 
@@ -297,11 +294,6 @@ if(WITH_ARRAY)
 endif()
 ```
 
-**Visibility keywords:**
-- **PRIVATE**: Used only by this target.
-- **PUBLIC**: Used by this target and propagated to dependents.
-- **INTERFACE**: Not used by this target, only propagated to dependents.
-
 ---
 
 # Modify files depending on variables
@@ -360,8 +352,7 @@ If the project is organized in sub-folders:
 - **CMAKE_CURRENT_BINARY_DIR**: current build directory
 
 ```cmake
-# Options are "Release", "Debug",
-# "RelWithDebInfo", "MinSizeRel"
+# Options are "Release", "Debug", "RelWithDebInfo", "MinSizeRel"
 set(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_CXX_COMPILER "/path/to/c++")
@@ -373,7 +364,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 
 # Looking for third-party libraries
 
-CMake looks for **module files** `FindPackage.cmake` in the directories specified in `CMAKE_PREFIX_PATH`.
+CMake looks for **module files** `FindPackageName.cmake` in the directories specified in `CMAKE_PREFIX_PATH`.
 
 ```cmake
 set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH} /path/to/modules/")
@@ -381,12 +372,10 @@ set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH} /path/to/modules/")
 # Modern CMake (≥ 3.12) uses imported targets.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem graph)
 
-if(Boost_FOUND)
-    target_link_libraries(my_lib PUBLIC Boost::filesystem Boost::graph)
-endif()
+target_link_libraries(my_lib PUBLIC Boost::filesystem Boost::graph)
 ```
 
-If the library is not located in a system folder, often a hint can be provided:
+If the library is not located in a system folder, typically a hint can be provided:
 
 ```bash
 cmake /path/to/src/ -DBOOST_ROOT=/path/to/boost/installation/
@@ -399,22 +388,28 @@ cmake /path/to/src/ -DBOOST_ROOT=/path/to/boost/installation/
 Once the library is found, proper variables are populated.
 
 ```cmake
-if(${Boost_FOUND})
-    target_include_directories(my_lib PUBLIC
-                               ${Boost_INCLUDE_DIRS})
+if(Boost_FOUND)
+    # Link directly against imported targets.
+    target_link_libraries(my_lib PUBLIC 
+                          Boost::filesystem 
+                          Boost::graph)
+    
+    # Include directories and compiler flags are handled automatically!
+endif()
+```
 
-    target_link_directories(my_lib PUBLIC
-                            ${Boost_LIBRARY_DIRS})
-    # Old CMake versions:
-    # link_directories(${Boost_LIBRARY_DIRS})
-
-    target_link_libraries(my_lib ${Boost_LIBRARIES})
+Legacy approach:
+```cmake
+if(Boost_FOUND)
+    target_include_directories(my_lib PUBLIC ${Boost_INCLUDE_DIRS})
+    target_link_directories(my_lib PUBLIC ${Boost_LIBRARY_DIRS})
+    target_link_libraries(my_lib PUBLIC ${Boost_LIBRARIES})
 endif()
 ```
 
 ---
 
-# Compilation test
+# Compilation and execution tests
 
 CMake can try to compile a source and save the exit status in a local variable.
 
@@ -431,11 +426,7 @@ try_compile(
 
 See also: [`try_run`](https://cmake.org/cmake/help/latest/command/try_run.html).
 
----
-
-# Execution test
-
-CMake can run specific executables and check their exit status to determine (un)successful runs.
+[CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html) can run executables and check their exit status to determine (un)successful runs.
 
 ```cmake
 include(CTest)
@@ -445,7 +436,7 @@ add_test(NAME MyTest COMMAND my_test_executable)
 
 ---
 
-# Organize a large project
+# Organizing a large project
 
 ```cmake
 cmake_minimum_required(VERSION 3.12)
@@ -480,7 +471,7 @@ add_subdirectory(tests)
 │   └── 📝 do_something.sh
 ├── 📂 src/
 │   ├── 📝 CMakeLists.txt
-│   └── 📄 my_lib.{hpp,cpp}
+│   └── 📄 my_lib.{hpp,tpl.hpp,cpp}
 ├── 📂 tests/
 │   ├── 📝 CMakeLists.txt
 │   └── 📄 my_test.cpp
@@ -496,7 +487,6 @@ add_subdirectory(tests)
 
 - [Official documentation](https://cmake.org/cmake/help/latest/)
 - [Modern CMake](https://cliutils.gitlab.io/modern-cmake/)
-- [It's time to do CMake right](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/)
 - [Effective modern CMake](https://gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1)
 - [More modern CMake](https://www.youtube.com/watch?v=y7ndUhdQuU8&feature=youtu.be)
 
