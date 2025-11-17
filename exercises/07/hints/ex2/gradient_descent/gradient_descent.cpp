@@ -15,13 +15,11 @@ void GradientDescent::fit(const std::vector<double> &x,
       const double prediction = weight * x[j] + bias;
 
       const double error = prediction - y[j];
-      loss += error * error;
+      loss += error * error / x.size();
 
-      weight += learning_rate * error * x[j];
-      bias += learning_rate * error;
+      weight += 2.0 / x.size() * learning_rate * error * x[j];
+      bias += 2.0 / x.size() * learning_rate * error;
     }
-
-    loss /= x.size();
 
     if (loss < tolerance) {
       break;

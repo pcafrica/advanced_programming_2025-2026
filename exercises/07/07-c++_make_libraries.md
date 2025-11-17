@@ -85,8 +85,8 @@ main: main.cpp math.cpp
 
 To build the target, simply run:
 ```bash
-make        # Builds the 'main' target
-make main   # Explicitly builds 'main'
+make        # Builds the 'main' target.
+make main   # Explicitly builds 'main'.
 ```
 
 ---
@@ -181,7 +181,7 @@ CXX=g++
 CPPFLAGS=-I.
 CXXFLAGS=-std=c++17 -Wall -Wpedantic -Werror
 DEPS=math.hpp
-SRC=$(wildcard *.cpp) # Find all mathing files.
+SRC=$(wildcard *.cpp) # Find all matching files.
 OBJ=$(SRC:.cpp=.o)    # Pattern substitution.
 
 .PHONY: all clean
@@ -201,8 +201,6 @@ clean:
 ---
 
 # Debugging Makefiles
-
-Useful techniques for troubleshooting:
 
 **1. Print variable values:**
 ```make
@@ -312,34 +310,32 @@ clean:
 
 # Summary (1/2)
 
-`make` efficiently determines the need to regenerate a target by checking its existence and the up-to-dateness of prerequisite files. This feature enables it to avoid unnecessary target regeneration.
-
 **How Make determines what to rebuild:**
 1. Check if the target exists.
 2. Compare timestamps of the target and its prerequisites.
 3. Rebuild if any prerequisite is newer than the target.
 4. Recursively check prerequisites of prerequisites.
 
-Make simplifies the installation of numerous libraries through a concise set of commands. A typical sequence for installing an open-source library involves using the following commands:
+A typical sequence for building and installing a library involves using the following commands:
 
 ```bash
 make 
 make install
 ```
 
-Typically, the `make` command builds the library, while `make install` copies the library's headers, the libraries and the binaries to a user-specified folder, which defaults to the `/usr` or `/usr/local` directory. This streamlined process facilitates the integration of the installed library into your source code.
+Typically, the `make` command builds the library, while `make install` copies the library's headers, the libraries and possible binaries to a user-specified folder, which defaults to the `/usr` or `/usr/local` directory.
 
 ---
 
 # Summary (2/2)
  
-In some circumstances, the build process can be optimized by employing the `make -j<N>` command, where `N` represents the number of parallel jobs or commands executed concurrently.
+In some circumstances, the build process can be optimized by employing the `make -j<N>` command, where `N` represents the number of parallel jobs or commands executed concurrently (use `-j$(nproc)` for automatically using all the available cores).
 
 Despite its advantages, Makefiles are platform-dependent, necessitating adaptation to different operating systems. To address this issue, we will explore [CMake](https://cmake.org/) as a potential solution, providing a platform-independent alternative for managing and generating build systems.
 
 ## Further readings
 
-- [A simple makefile tutorial](https://cs.colby.edu/maxwell/courses/tutorials/maketutor/): Essential tutorial on `make` and Makefile.
+- [A simple Makefile tutorial](https://cs.colby.edu/maxwell/courses/tutorials/maketutor/): Essential tutorial on `make` and Makefile.
 - [Makefile tutorial](https://github.com/vampy/Makefile): A GitHub repository with numerous makefile examples.
 - [GNU make](https://www.gnu.org/software/make/manual/make.html): Official documentation for `make` and Makefile.
 
@@ -350,6 +346,7 @@ Despite its advantages, Makefiles are platform-dependent, necessitating adaptati
 - Download and extract [`muParserX`](https://beltoforion.de/en/muparserx/):
   ```bash
   wget https://github.com/beltoforion/muparserx/archive/refs/tags/v4.0.12.tar.gz
+  tar xzvf v4.0.12.tar.gz
   ```
 - The source files of `muParserX` are located inside the `muparserx-4.0.12/parser/` folder.
 - In that folder, write a Makefile to compile `muParserX` into a shared library `libmuparserx.so`.
@@ -359,7 +356,7 @@ Despite its advantages, Makefiles are platform-dependent, necessitating adaptati
 
 # Exercise 2: shared libraries
 
-The `hints/ex2/` directory contains a library that implements a [gradient descent algorithm for linear regression](https://www.geeksforgeeks.org/gradient-descent-in-linear-regression/), accompanied by a source file `ex2.cpp` utilizing this library.
+The `hints/ex2/` directory contains a library that implements a [gradient descent algorithm for linear regression](https://www.geeksforgeeks.org/machine-learning/gradient-descent-algorithm-and-its-variants/), accompanied by a source file `ex2.cpp` utilizing this library.
 
 Unfortunately, the gradient descent code within the library contains a bug.
 
@@ -389,13 +386,11 @@ Would the same considerations apply if dynamic linking (shared libraries) were u
 
 # (:warning: Advanced) Exercise 4: dynamic loading
 
-**Background:** Dynamic loading uses `dlopen()`, `dlsym()`, and `dlclose()` to load shared libraries at runtime. This differs from regular dynamic linking, where dependencies are resolved at program startup.
-
-The `hints/ex4/` contains a module `functions` containing the definition of three mathematical functions. The source file `functions.cpp` gets compiled into a shared library `libfunctions.so`, using *C linkage* to prevent [*name mangling*](https://en.wikipedia.org/wiki/Name_mangling#C++).
+The `hints/ex4/` directory contains a module `functions` containing the definition of three mathematical functions. The source file `functions.cpp` gets compiled into a shared library `libfunctions.so`, using *C linkage* to prevent [*name mangling*](https://en.wikipedia.org/wiki/Name_mangling#C++).
 
 Notably, when compiling the source file `ex4.cpp` into an executable, there is no need to link against `libfunctions.so`.
 
 1. Fill in the missing parts in `ex4.cpp` to dynamically load the library.
-2. Prompt the user for the function name to evaluate at a given point, selecting from the ones available in the library.
+2. Prompt the user for the name of the function to evaluate at a given point, selecting from the ones available in the library.
 3. Perform the evaluation and print the result.
 4. Release the library.

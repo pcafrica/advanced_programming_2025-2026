@@ -671,7 +671,7 @@ Shared libraries offer two intriguing features:
 
 These features form the foundation for implementing *plugins* (and are also employed in Python modules).
 
-Dynamic loading is a fundamental aspect of a plugin architecture, allowing an application to load parts of its implementation dynamically based on user requests.
+Dynamic loading is a fundamental aspect of a plugin architecture, allowing an application to load parts of its implementation dynamically based on user requests. It uses functions like `dlopen()`, `dlsym()`, and `dlclose()` (from `<dlfcn.h>`) to load shared libraries at runtime. This differs from regular dynamic linking, where dependencies are resolved at program startup.
 
 **:warning: This is a very advanced topic. For more information, have a look at [this interesting post](https://blog.theopnv.com/posts/cpp-dynamic-loading/) (source code [here](https://github.com/theo-pnv/Dynamic-Loading)).**
 
