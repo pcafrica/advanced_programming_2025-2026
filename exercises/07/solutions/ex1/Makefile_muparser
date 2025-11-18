@@ -1,0 +1,31 @@
+CXX=g++
+CPPFLAGS=-I.
+CXXFLAGS=-std=c++17 -Wall -Wpedantic -Werror
+
+# Installation directory (can be overridden: make install PREFIX=/custom/path).
+PREFIX=/usr/local
+
+SRC=$(wildcard *.cpp)
+OBJ=$(SRC:.cpp=.o)
+DEPS=$(wildcard *.h)
+
+LIB_NAME=libmuparserx.so
+
+.PHONY=all install clean
+
+all: $(LIB_NAME)
+
+$(LIB_NAME): $(OBJ)
+	$(CXX) $(CXXFLAGS) -shared $^ -o $@
+
+%.o: %.cpp $(DEPS)
+	$(CXX) -c -fPIC $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+
+install: $(LIB_NAME)
+	install -d $(PREFIX)/lib
+	install -d $(PREFIX)/include
+	install -m 0755 $(LIB_NAME) $(PREFIX)/lib/
+	install -m 0644 $(DEPS) $(PREFIX)/include/
+
+clean:
+	rm -f *.o $(LIB_NAME)

@@ -174,7 +174,7 @@ For truly automatic dependency generation, modern Makefiles use compiler flags l
 
 ```make
 DEPFLAGS=-MMD -MP
-DEPS=$(OBJ:.o=.d)
+DEPS=$(OBJ:.o=.d) # Pattern substitution.
 
 %.o: %.cpp
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(DEPFLAGS) $< -o $@
@@ -183,7 +183,7 @@ DEPS=$(OBJ:.o=.d)
 ```
 
 **Explanation:**
-- `-MMD`: Generate dependency files (.d) during compilation.
+- `-MMD`: Generate dependency files (`.d`) during compilation.
 - `-MP`: Add phony targets for each dependency to avoid errors if headers are deleted.
 
 ---
@@ -390,8 +390,8 @@ Despite its advantages, Makefiles are platform-dependent, necessitating adaptati
   tar xzvf v4.0.12.tar.gz
   ```
 - The source files of `muParserX` are located inside the `muparserx-4.0.12/parser/` folder.
-- In that folder, write a Makefile to compile `muParserX` into a shared library `libmuparserx.so`.
-- Write a Makefile that compiles and links the program in `hints/ex1.cpp` with `muParserX`.
+- In that folder, write a Makefile to compile `muParserX` into a shared library `libmuparserx.so`. **Bonus**: add a target `install` that copies header files and the shared library into a user-specified folder.
+- Write a Makefile that compiles and links the program in `hints/ex1.cpp` against `muParserX`.
 
 ---
 
