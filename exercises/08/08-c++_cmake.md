@@ -65,30 +65,6 @@ They are used to:
 
 ---
 
-# Let's try
-
-Install dependencies, then compile and install.
-
-- [**Doxygen**](https://github.com/doxygen/doxygen) (CMake)
-  ```bash
-  cd /path/to/doxygen/src/
-  mkdir build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=/opt/doxygen ../
-  make -j<N>          # Replace <N> with the number of parallel jobs (e.g., -j4),
-                      # or use -j$(nproc) to automatically use all available cores.
-  (sudo) make install
-  ```
-
-- [**GNU Scientific Library**](https://www.gnu.org/software/gsl/) (autotools)
-  ```bash
-  cd /path/to/gsl/src/
-  ./configure --prefix=/opt/gsl --enable-shared --disable-static
-  make -j<N>
-  (sudo) make install
-  ```
-
----
-
 # Why CMake?
 
 - More packages use CMake than any other system
@@ -104,6 +80,30 @@ Install dependencies, then compile and install.
 - deal.II, Gmsh (FEM analysis)
 - KDE, Qt, ReactOS (user interfaces and operating systems)
 - ...
+
+---
+
+# Let's try
+
+Install dependencies, then compile and install.
+
+- [**Doxygen**](https://github.com/doxygen/doxygen) (CMake)
+```bash
+cd /path/to/doxygen/src/
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/opt/doxygen ../
+make -j<N>          # Replace <N> with the number of parallel jobs (e.g., -j4),
+                    # or use -j$(nproc) to automatically use all available cores.
+(sudo) make install
+```
+
+- [**GNU Scientific Library**](https://www.gnu.org/software/gsl/) (autotools)
+```bash
+cd /path/to/gsl/src/
+./configure --prefix=/opt/gsl --enable-shared --disable-static
+make -j<N>
+(sudo) make install
+```
 
 ---
 
@@ -136,11 +136,12 @@ Command names are **case insensitive**.
   # Modern approach (CMake ≥ 3.13):
   cmake -S /path/to/src/ -B /path/to/build/ [options...]
   ```
-- **Compile**
+- **Compile (and install)**
   ```bash
-   cd /path/to/build/; make -j<N>
+   cd /path/to/build/; make -j<N>; (sudo) make install
    # Modern approach (CMake ≥ 3.13):
    cmake --build /path/to/build/ -j<N>
+   cmake --install /path/to/build/
    ```
 - **List variable values**
   ```bash
@@ -154,7 +155,7 @@ Command names are **case insensitive**.
 CMake is all about targets and properties. An executable is a target, a library is a target. Your application is built as a collection of targets depending on each other.
 
 ```cmake
-# Header files are optional.
+# Header files are optional, as they are automatically detected.
 add_executable(my_exec my_main.cpp my_header.hpp)
 
 # STATIC: Archive linked at compile time (.a, .lib).
@@ -189,7 +190,7 @@ target_compile_options(my_exec PUBLIC -Wall -Wpedantic)
 
 ---
 
-# Interacting with the outside world: local variables
+# Local variables
 
 ```cmake
 set(LIB_NAME "my_lib")
@@ -207,9 +208,9 @@ target_link_libraries(my_exec ${LIB_NAME})
 
 ---
 
-# Interacting with the outside world: cache variables
+# Cache variables
 
-Cache variables are used to interact with the command line:
+Cache variables are used to interact with the outside world through the command line:
 
 ```cmake
 # "VALUE" is just the default value.
@@ -222,14 +223,14 @@ option(MY_OPTION "This is settable from the command line" OFF)
 Then:
 
 ```bash
-cmake /path/to/src/ \
-  -DMY_CACHE_VARIABLE="SOME_CUSTOM_VALUE" \
-  -DMY_OPTION=OFF
+cmake -S /path/to/src/ \
+    -DMY_CACHE_VARIABLE="SOME_CUSTOM_VALUE" \
+    -DMY_OPTION=OFF
 ```
 
 ----
 
-# Interacting with the outside world: environment variables
+# Interacting with environment variables
 
 ```cmake
 # Read.
@@ -244,6 +245,8 @@ set(ENV{variable_name} value)
 ----
 
 # Control flow
+
+You can evaluates the condition argument of the `if` clause according to the condition syntax described below. If the result is true, then the commands in the if block are executed. Otherwise, optional `elseif` blocks are processed in the same way. Finally, if no condition is true, commands in the optional `else` block are executed.
 
 ```cmake
 if("${variable}") # Or if("condition").
@@ -266,6 +269,7 @@ Parentheses can be used to group.
 
 Useful for switching among different implementations or versions of any third-party library.
 
+**Example**: Choose between `std::array` and `std::vector` at compile time.
 ```cpp
 #ifdef USE_ARRAY
     std::array<double, 100> my_array;
@@ -274,7 +278,9 @@ Useful for switching among different implementations or versions of any third-pa
 #endif
 ```
 
-How to select the correct branch?
+**Question**: How to select the correct branch?
+
+**Answer**: Use preprocessor flags (see next slide).
 
 ----
 
@@ -325,18 +331,18 @@ configure_file(
 
 Content of variables is printed with:
 ```cmake
-message("MY_VAR is: ${MY_VAR}")
-```
-
-Error messages can be printed with:
-```cmake
-message(FATAL_ERROR "MY_VAR has the wrong value: ${MY_VAR}")
+message(STATUS "MY_VAR is: ${MY_VAR}")  # Informational message.
+message(WARNING "MY_VAR might be incorrect: ${MY_VAR}")  # Warning.
+message(FATAL_ERROR "MY_VAR has the wrong value: ${MY_VAR}")  # Error, stops configuration.
 ```
 
 Commands being executed are printed with:
 ```bash
-cmake /path/to/src/ -B build --trace-source=CMakeLists.txt
+cmake -S /path/to/src/ -B build --trace-source=CMakeLists.txt
 make VERBOSE=1
+
+# Or, with modern CMake:
+cmake --build build --verbose
 ```
 
 ---
@@ -362,12 +368,47 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 
 ---
 
+# Installation prefix (1/2)
+
+Control where your project gets installed using `CMAKE_INSTALL_PREFIX`:
+```cmake
+# In CMakeLists.txt (set default if not specified by user):
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "/opt/myproject" CACHE PATH "Install prefix" FORCE)
+endif()
+
+# Install targets:
+install(TARGETS my_exec my_lib
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+
+# Install headers:
+install(DIRECTORY include/ DESTINATION include)
+```
+
+---
+
+# Installation prefix (2/2)
+Command line usage:
+```bash
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/custom/path
+cmake --build build
+cmake --install build  # Or: cd build && (sudo) make install
+```
+
+**Default prefix**: `/usr/local` (Unix), `C:/Program Files/${PROJECT_NAME}` (Windows).
+
+---
+
 # Looking for third-party libraries
 
-CMake looks for **module files** `FindPackageName.cmake` in the directories specified in `CMAKE_PREFIX_PATH`.
-
+CMake looks for packages in two ways:
+1. **Find modules**: `FindPackageName.cmake` files in `CMAKE_MODULE_PATH`
+2. **Config files**: `PackageNameConfig.cmake` provided by the package itself
 ```cmake
-set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH} /path/to/modules/")
+# Add custom module path:
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Modern CMake (≥ 3.12) uses imported targets.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem graph)
@@ -375,10 +416,11 @@ find_package(Boost 1.50 REQUIRED COMPONENTS filesystem graph)
 target_link_libraries(my_lib PUBLIC Boost::filesystem Boost::graph)
 ```
 
-If the library is not located in a system folder, typically a hint can be provided:
-
+If the library is not in a system folder, provide a hint:
 ```bash
-cmake /path/to/src/ -DBOOST_ROOT=/path/to/boost/installation/
+cmake -S /path/to/src/ -DBOOST_ROOT=/path/to/boost/installation/
+# Or set CMAKE_PREFIX_PATH:
+cmake -S /path/to/src/ -DCMAKE_PREFIX_PATH="/path/to/boost;/path/to/other"
 ```
 
 ---
@@ -436,26 +478,6 @@ add_test(NAME MyTest COMMAND my_test_executable)
 
 ---
 
-# Organizing a large project
-
-```cmake
-cmake_minimum_required(VERSION 3.12)
-project(ExampleProject VERSION 1.0 LANGUAGES CXX)
-
-# Set C++ standard.
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(...)
-find_package(...)
-
-add_subdirectory(src)
-add_subdirectory(apps)
-add_subdirectory(tests)
-```
-
----
-
 # Tip: how to organize a large project
 
 ```
@@ -483,7 +505,23 @@ add_subdirectory(tests)
 
 ---
 
-# Further readings
+# Organizing a large project
+
+```cmake
+cmake_minimum_required(VERSION 3.12)
+project(ExampleProject VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17) # Set C++ standard.
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(...)
+
+add_subdirectory(src)
+add_subdirectory(apps)
+add_subdirectory(tests)
+```
+
+### Further readings
 
 - [Official documentation](https://cmake.org/cmake/help/latest/)
 - [Modern CMake](https://cliutils.gitlab.io/modern-cmake/)
