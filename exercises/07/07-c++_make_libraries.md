@@ -429,9 +429,9 @@ Would the same considerations apply if dynamic linking (shared libraries) were u
 
 The `hints/ex4/` directory contains a module `functions` containing the definition of three mathematical functions. The source file `functions.cpp` gets compiled into a shared library `libfunctions.so`, using *C linkage* to prevent [*name mangling*](https://en.wikipedia.org/wiki/Name_mangling#C++).
 
-Notably, when compiling the source file `ex4.cpp` into an executable, there is no need to link against `libfunctions.so`.
-
-1. Fill in the missing parts in `ex4.cpp` to dynamically load the library.
+1. Fill in the missing parts in `ex4.cpp` to dynamically load the library, using the functions `dlopen()`, `dlsym()`, and `dlclose()`.
 2. Prompt the user for the name of the function to evaluate at a given point, selecting from the ones available in the library.
 3. Perform the evaluation and print the result.
 4. Release the library.
+
+**Note**: when compiling the source file `ex4.cpp` into an executable, there is no need to link against `libfunctions.so`.
