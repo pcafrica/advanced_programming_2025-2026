@@ -115,8 +115,8 @@ main: main.cpp math.cpp
 
 To build the target, simply run:
 ```bash
-make        # Builds the first target in the Makefile ('main', in this case).
-make main   # Explicitly builds 'main'.
+make      # Builds the first target in the Makefile ('main', in this case).
+make main # Explicitly builds 'main'.
 ```
 
 ---

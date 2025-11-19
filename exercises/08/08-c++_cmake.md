@@ -31,11 +31,28 @@ _class: titlepage
 
 ---
 
+# Traditional approach: Makefiles
+
+## Pros
+- Direct control over build process
+- Universal on Unix-like systems
+- Simple syntax for small projects
+- No additional tools required
+
+## Cons
+- Platform-dependent (Unix vs Windows)
+- Manual dependency tracking
+- Tab/space syntax issues
+- Difficult to scale for large projects
+- No automatic detection of third-party libraries
+
+---
+
 # Build systems
 
 ## Purposes
 
-Build systems are a way to deploy software.
+**Modern build systems** (CMake, Meson, etc.) **generate** Makefiles automatically while providing cross-platform portability and automatic dependency management.
 
 They are used to:
 
@@ -116,8 +133,8 @@ cmake_minimum_required(VERSION 3.12)
 
 # This is a comment.
 project(MyProject VERSION 1.0
-  DESCRIPTION "A very nice project"
-  LANGUAGES CXX)
+        DESCRIPTION "A very nice project"
+        LANGUAGES CXX)
 ```
 
 Please use a CMake version more recent than your compiler (at least ≥3.0).
@@ -147,6 +164,29 @@ Command names are **case insensitive**.
   ```bash
   cmake -S /path/to/src/ -B /path/to/build -L
   ```
+
+---
+
+# (:warning: Advanced) Build generators: Make vs Ninja
+
+CMake doesn't build your project directly: it **generates build files** for other tools.
+
+## GNU Make (default on Unix)
+```bash
+cmake -S . -B build     # Generates Makefiles.
+cmake --build build -j4 # Runs: make -j4.
+```
+
+## [Ninja](https://ninja-build.org/) (faster alternative)
+```bash
+cmake -S . -B build -G Ninja # Generates build.ninja.
+cmake --build build          # Runs: ninja (auto-detects cores).
+```
+
+**Why Ninja?**
+- Faster parallel builds, especially for large projects (better dependency tracking).
+- Cleaner output.
+- Designed to be generated (not hand-written).
 
 ---
 
@@ -246,7 +286,7 @@ set(ENV{variable_name} value)
 
 # Control flow
 
-You can evaluates the condition argument of the `if` clause according to the condition syntax described below. If the result is true, then the commands in the if block are executed. Otherwise, optional `elseif` blocks are processed in the same way. Finally, if no condition is true, commands in the optional `else` block are executed.
+You can evaluates the condition argument of the [`if`](https://cmake.org/cmake/help/latest/command/if.html) clause according to the condition syntax described below. If the result is true, then the commands in the if block are executed. Otherwise, optional `elseif` blocks are processed in the same way. Finally, if no condition is true, commands in the optional `else` block are executed.
 
 ```cmake
 if("${variable}") # Or if("condition").
