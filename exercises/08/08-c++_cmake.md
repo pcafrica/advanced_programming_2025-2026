@@ -264,8 +264,8 @@ Then:
 
 ```bash
 cmake -S /path/to/src/ \
-    -DMY_CACHE_VARIABLE="SOME_CUSTOM_VALUE" \
-    -DMY_OPTION=OFF
+      -DMY_CACHE_VARIABLE="SOME_CUSTOM_VALUE" \
+      -DMY_OPTION=OFF
 ```
 
 ----
@@ -398,7 +398,7 @@ If the project is organized in sub-folders:
 - **CMAKE_CURRENT_BINARY_DIR**: current build directory
 
 ```cmake
-# Options are "Release", "Debug", "RelWithDebInfo", "MinSizeRel"
+# Options are "Release", "Debug", "RelWithDebInfo", "MinSizeRel".
 set(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_CXX_COMPILER "/path/to/c++")
@@ -444,8 +444,9 @@ cmake --install build  # Or: cd build && (sudo) make install
 # Looking for third-party libraries
 
 CMake looks for packages in two ways:
-1. **Find modules**: `FindPackageName.cmake` files in `CMAKE_MODULE_PATH`
-2. **Config files**: `PackageNameConfig.cmake` provided by the package itself
+1. **Find modules**: `FindPackageName.cmake` files in `CMAKE_MODULE_PATH`.
+2. **Config files**: `PackageNameConfig.cmake` provided by the package itself.
+
 ```cmake
 # Add custom module path:
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -456,10 +457,9 @@ find_package(Boost 1.50 REQUIRED COMPONENTS filesystem graph)
 target_link_libraries(my_lib PUBLIC Boost::filesystem Boost::graph)
 ```
 
-If the library is not in a system folder, provide a hint:
+If the library is not in a system folder, you can provide a hint:
 ```bash
-cmake -S /path/to/src/ -DBOOST_ROOT=/path/to/boost/installation/
-# Or set CMAKE_PREFIX_PATH:
+cmake -S /path/to/src/ -DBOOST_ROOT=/path/to/boost/installation/ # Or:
 cmake -S /path/to/src/ -DCMAKE_PREFIX_PATH="/path/to/boost;/path/to/other"
 ```
 
@@ -470,7 +470,7 @@ cmake -S /path/to/src/ -DCMAKE_PREFIX_PATH="/path/to/boost;/path/to/other"
 Once the library is found, proper variables are populated.
 
 ```cmake
-if(Boost_FOUND)
+if(Boost_FOUND) # Always TRUE, as the library is marked as REQUIRED.
     # Link directly against imported targets.
     target_link_libraries(my_lib PUBLIC 
                           Boost::filesystem 
@@ -572,8 +572,8 @@ add_subdirectory(tests)
 
 # Exercise 1
 
-1. Following `exercises/07/solutions/ex1`, configure and install `muParserX` on your system using the builtin `CMake` configurator.
-2. Write a `CMake` script to compile and link the test code `ex1.cpp` against it.
+1. Following `exercises/07/solutions/ex1`, configure and install `muParserX` on your system using the builtin CMake configurator.
+2. Write a CMake script to compile and link the test code `ex1.cpp` against it.
 
 ---
 
