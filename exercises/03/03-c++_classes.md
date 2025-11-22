@@ -5,7 +5,7 @@ marp: true
 <!--
 title: Exercise session 03
 paginate: true
-theme: custom
+
 _class: titlepage
 -->
 
