@@ -32,6 +32,25 @@ _class: titlepage
 
 ---
 
+# The *Three versions* principle - Joe Armstrong
+
+> **Every non-trivial program needs to be written three times.**
+> First make it work, then make it beautiful, then if you really, really have to, make it fast
+
+1. **Make it work**
+   - Focus on correctness and understanding the problem, no optimization
+   - Implement straightforward, readable solutions
+2. **Make it right and beautiful**
+   - Refactor for clarity and maintainability, write tests to ensure correctness
+   - Fix bugs, add proper error handling
+3. **Make it fast**
+   - Profile to find actual bottlenecks
+   - Apply optimizations where needed, maintaining correctness through testing
+
+**Premature optimization wastes time on code that may be rewritten anyway!**
+
+---
+
 <!--
 _class: titlepage
 -->
@@ -76,11 +95,9 @@ The compiler enhances performance by optimizing CPU register usage, expression r
 It is beneficial to unroll small loops. For example, transform:
 
 ```cpp
-for (int i = 0; i < n; ++i) {
-  for(int k = 0; k < 3; ++k) {
+for (int i = 0; i < n; ++i)
+  for(int k = 0; k < 3; ++k)
     a[k] += b[k] * c[i];
-  }
-}
 ```
 
 to:
@@ -108,9 +125,9 @@ double multiply(const std::vector<double> &data) {
 }
 
 double multiply_with_unrolling(const std::vector<double> &data) {
-  double result = 1;
-  double a0, a1, a2, a3, a4;
+  double result = 1; double a0, a1, a2, a3, a4;
   size_t i;
+
   for (i = 0; i + 4 < data.size(); i += 5) {
     a0 = data[i];
     a1 = data[i + 1];
@@ -120,9 +137,8 @@ double multiply_with_unrolling(const std::vector<double> &data) {
 
     result *= a0 * a1 * a2 * a3 * a4;
   }
-  for (; i < data.size(); ++i) {
+  for (; i < data.size(); ++i)
     result *= data[i];
-  }
   return result;
 }
 ```
@@ -139,7 +155,7 @@ On my laptop (Intel(R) Core(TM) Ultra 7 155H CPU @ 4.80GHz), <alert>`multiply_wi
 
 Why? The Streaming SIMD Extensions (SSE2) instruction set of the CPU allows for parallelization at the microcode level. It's a super-scalar architecture with multiple instruction pipelines to execute several instructions concurrently during a clock cycle. The unrolled code better exploits this capability.
 
-**Note:** Modern compilers with `-O3 -march=native` may automatically perform similar optimizations (sometimes, giving it a hand is beneficial). Counting operations doesn't necessarily reflect performance.
+**Note:** Modern compilers with `-O3 -march=native` may automatically perform similar optimizations (sometimes, giving it a hand is beneficial). **Counting operations doesn't necessarily reflect performance.**
 
 ---
 
@@ -510,7 +526,7 @@ Then `file.txt` will contain valuable information about the program execution.
 - `--graph[=symspec]`: Prints the call graph analysis.
 - `--demangle`: Demangles mangled names (essential for C++ programs).
 - `--display-unused-functions`: As the name says.
-- `--line`: Line-by-line profiling (but maybe better use gcov).
+- `--line`: Line-by-line profiling (but maybe better use `gcov`).
 
 **For production profiling:** Consider `perf` (Linux) which uses hardware counters without code modification.
 
@@ -538,9 +554,9 @@ It opens a graphical interface.
 
 # Profiling tools
 
-**When to use `callgrind` vs. `gprof`:**
-- `callgrind`: More accurate, cache simulation, call graphs.
+**When to use `gprof` vs. `callgrind`:**
 - `gprof`: Faster, good for quick profiling.
+- `callgrind`: More accurate, cache simulation, call graphs.
 
 There are alternative profilers, some useful in a parallel environment:
 
@@ -559,7 +575,7 @@ There are alternative profilers, some useful in a parallel environment:
 - Include debug symbols (`-g`) for readable output.
 
 **Analysis:**
-- Focus on *hot spots* (80/20 rule: 80% of time in 20% of code). Optimizing cold code wastes time.
+- Focus on *hot spots* (80/20 rule: 80% of time in 20% of code). Optimizing *cold code* wastes time.
 - Profile both CPU time and memory usage.
 
 **Iterative process:**
@@ -583,7 +599,7 @@ _class: titlepage
 Conducted during development, tests **individual components** separately. Specific tests demonstrate correct functionality, covering the code and checking for memory leaks.
 
 ## **Validation:** Confirming desired behavior
-Performed on the **final code**. Assesses if the code produces the intended outcome - convergence, reasonable results, and expected computational complexity.
+Performed on the **final code**. Assesses if the code produces the intended outcome, such as convergence, reasonable results, and expected computational complexity.
 
 ---
 
@@ -641,7 +657,7 @@ In this example, we test the `add` function from the `mylibrary` module.
 
 **Floating-point comparison:**
 ```cpp
-EXPECT_EQ(compute_value(), 3.14159); // ❌ Exact comparisons are bad practice.
+EXPECT_EQ(compute_value(), 3.14159);         // ❌ Exact comparisons are bad practice.
 EXPECT_NEAR(compute_value(), 3.14159, 1e-5); // ✅ Use tolerance-based comparison.
 
 // Or compute relative error:
@@ -677,14 +693,20 @@ TDD encourages modular and testable code, ensuring all parts of the codebase are
 
 # TDD example
 1. Write test:
-```cpp
-TEST(VectorOps, DotProduct) {
-  std::vector<double> a{1.0, 2.0, 3.0}, b{4.0, 5.0, 6.0};
-  EXPECT_DOUBLE_EQ(dot_product(a, b), 32.0);
-}
-```
+   ```cpp
+   TEST(VectorOps, DotProduct) {
+     std::vector<double> a{1.0, 2.0, 3.0}, b{4.0, 5.0, 6.0};
+     EXPECT_DOUBLE_EQ(dot_product(a, b), 32.0);
+   }
+   ```
 2. Run test → ❌ Fails (function doesn't exist).
-3. Implement `double dot_product(const std::vector<double>& a, const std::vector<double>& b) { ... }`.
+3. Implement
+   ```cpp
+   double dot_product(const std::vector<double>& a,
+                      const std::vector<double>& b) {
+     //...
+   }
+   ```
 4. Run test → ✅ Passes.
 5. Refactor (e.g., use `std::inner_product` for better performance),
 
@@ -703,7 +725,7 @@ TEST(VectorOps, DotProduct) {
   - [Jenkins](https://www.jenkins.io/)
   - [Travis CI](https://www.travis-ci.com/)
   - [GitHub Actions](https://github.com/features/actions)
-  - [GitLab CI](https://docs.gitlab.com/ee/ci/)
+  - [GitLab CI/CD](https://docs.gitlab.com/ee/ci/)
 
 ---
 
@@ -720,7 +742,7 @@ Code coverage is a metric used in software testing to measure the extent to whic
 
 # Coverage with gcov
 
-`GCC` supports program coverage with `gcov`. Compile with `-g -fprofile-arcs -ftest-coverage` and no optimization. For shared objects with `dlopen`, add the option `-Wl,--dynamic-list-data`.
+`GCC` supports program coverage with `gcov`. Compile with `-g -fprofile-arcs -ftest-coverage` and **no optimization**. For shared objects with `dlopen`, add the option `-Wl,--dynamic-list-data`.
 
 Run the code, producing `gcda` and `gcno` files. Use `gcov` utility:
 
