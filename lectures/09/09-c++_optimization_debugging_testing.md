@@ -125,17 +125,16 @@ double multiply(const std::vector<double> &data) {
 }
 
 double multiply_with_unrolling(const std::vector<double> &data) {
-  double result = 1; double a0, a1, a2, a3, a4;
+  double result = 1; double a0, a1, a2, a3;
   size_t i;
 
-  for (i = 0; i + 4 < data.size(); i += 5) {
+  for (i = 0; i + 3 < data.size(); i += 4) {
     a0 = data[i];
     a1 = data[i + 1];
     a2 = data[i + 2];
     a3 = data[i + 3];
-    a4 = data[i + 4];
 
-    result *= a0 * a1 * a2 * a3 * a4;
+    result *= a0 * a1 * a2 * a3;
   }
   for (; i < data.size(); ++i)
     result *= data[i];
@@ -151,7 +150,7 @@ The number of floating point operations is the same in both cases!
 
 The answer is not straightforward: it depends on the computer's architecture.
 
-On my laptop (Intel(R) Core(TM) Ultra 7 155H CPU @ 4.80GHz), <alert>`multiply_with_unrolling` is approximately 3 times faster than `multiply`</alert> with `size = 1e6`! (see `examples/optimization/loop_unrolling.cpp`).
+On my laptop (Intel(R) Core(TM) Ultra 7 155H CPU @ 4.80GHz), <alert>`multiply_with_unrolling` is approximately 3-4 times faster than `multiply`</alert> with `size = 1e6`! (see `examples/optimization/loop_unrolling.cpp`).
 
 Why? The Streaming SIMD Extensions (SSE2) instruction set of the CPU allows for parallelization at the microcode level. It's a super-scalar architecture with multiple instruction pipelines to execute several instructions concurrently during a clock cycle. The unrolled code better exploits this capability.
 

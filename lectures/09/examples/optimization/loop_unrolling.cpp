@@ -14,17 +14,16 @@ double multiply(const std::vector<double> &data) {
 double multiply_with_unrolling(const std::vector<double> &data) {
   double result = 1;
 
-  double a0, a1, a2, a3, a4;
+  double a0, a1, a2, a3;
 
   size_t i;
-  for (i = 0; i + 4 < data.size(); i += 5) {
+  for (i = 0; i + 3 < data.size(); i += 4) {
     a0 = data[i];
     a1 = data[i + 1];
     a2 = data[i + 2];
     a3 = data[i + 3];
-    a4 = data[i + 4];
 
-    result *= a0 * a1 * a2 * a3 * a4;
+    result *= a0 * a1 * a2 * a3;
   }
 
   // Handle remaining elements.
@@ -39,7 +38,7 @@ int main(int argc, char **argv) {
   using timer = std::chrono::high_resolution_clock;
 
   // Generate an arbitrary dataset.
-  const std::vector<double> data(1e6, 1.0);
+  const std::vector<double> data(1e6, 1.00001);
 
   {
     auto start = timer::now();
