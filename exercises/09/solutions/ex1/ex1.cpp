@@ -3,7 +3,7 @@
 #include "matrix.hpp"
 
 int main(int argc, char **argv) {
-  const size_t size = 200;
+  const size_t size = 2000;
 
   Matrix A(size);
   Matrix B(size);
