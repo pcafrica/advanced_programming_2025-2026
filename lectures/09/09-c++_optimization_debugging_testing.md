@@ -35,7 +35,7 @@ _class: titlepage
 # The *Three versions* principle - Joe Armstrong
 
 > **Every non-trivial program needs to be written three times.**
-> First make it work, then make it beautiful, then if you really, really have to, make it fast
+> First make it work, then make it beautiful, then if you really, really have to, make it fast.
 
 1. **Make it work**
    - Focus on correctness and understanding the problem, no optimization
