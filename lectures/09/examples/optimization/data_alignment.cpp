@@ -14,7 +14,7 @@ private:
 
 // Layout:
 // | i | i | i |    i    |
-// | c | s | s | padding |
+// | s | s | c | padding |
 class Class2 {
 private:
   int i;       // 4 bytes.

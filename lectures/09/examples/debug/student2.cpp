@@ -27,7 +27,7 @@ public:
   }
 
   ~Student() {
-    // delete name; // Missing!
+    // delete name; // Missing: that's a memory leak!
   }
 
   int get_id() const { return id; }
