@@ -694,7 +694,7 @@ TDD encourages modular and testable code, ensuring all parts of the codebase are
 1. Write test:
    ```cpp
    TEST(VectorOps, DotProduct) {
-     std::vector<double> a{1.0, 2.0, 3.0}, b{4.0, 5.0, 6.0};
+     const std::vector<double> a{1.0, 2.0, 3.0}, b{4.0, 5.0, 6.0};
      EXPECT_DOUBLE_EQ(dot_product(a, b), 32.0);
    }
    ```
