@@ -559,7 +559,7 @@ It opens a graphical interface.
 
 There are alternative profilers, some useful in a parallel environment:
 
-- [perf](https://perf.wiki.kernel.org/index.php/Main_Page): Lightweight CPU profiling. Best for production systems, minimal overhead
+- [perf](https://perf.wiki.kernel.org/index.php/Main_Page): Lightweight CPU profiling. Best for production systems, minimal overhead.
 - [gperftools](https://github.com/gperftools/gperftools): Formerly Google Performance Tools.
 - [TAU (Tuning and Analysis Utilities)](http://www.cs.uoregon.edu/Research/tau/home.php): Profiling and tracing toolkit for parallel programs.
 - [Scalasca](http://icl.cs.utk.edu/scalasca): Performance analysis for parallel applications on distributed memory systems.
