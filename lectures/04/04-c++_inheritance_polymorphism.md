@@ -414,7 +414,7 @@ public:
 };
 ```
 
-Multiple inheritance can lead to the[*diamond problem*](https://en.wikipedia.org/wiki/Virtual_inheritance), where a class indirectly inherits from the same base class through multiple paths. C++ provides ways to mitigate these issues through `virtual` inheritance, ensuring that only one instance of a shared base class is created.
+Multiple inheritance can lead to the [*diamond problem*](https://en.wikipedia.org/wiki/Virtual_inheritance), where a class indirectly inherits from the same base class through multiple paths. C++ provides ways to mitigate these issues through `virtual` inheritance, ensuring that only one instance of a shared base class is created.
 
 ---
 
