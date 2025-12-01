@@ -12,7 +12,7 @@ _class: titlepage
 # Exercise session 11
 <br>
 
-## Object-oriented programming. Classes, inheritance and polymorphism. Modules and packages.
+## Object-oriented programming in Python. Classes, inheritance and polymorphism. Modules and packages.
 <br>
 
 #### Advanced Programming - SISSA, UniTS, 2025-2026
