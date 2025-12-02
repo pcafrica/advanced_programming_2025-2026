@@ -163,7 +163,7 @@ class AdvProgMember:
         self.last = last
         self.email = first.lower() + "." + last.lower() + "@sissa.it"
 
-AdvProgMember.campus = "UniTS" # :warning: This affects all instances!
+AdvProgMember.campus = "UniTS" # WARNING: This affects all instances!
 advprog1 = AdvProgMember('Pasquale', 'Africa')
 print(f"{advprog1.first} is at campus {advprog1.campus}.")
 print(f"{advprog1.first} is at campus {AdvProgMember.campus}.")
@@ -529,8 +529,8 @@ Python (since v2.3) uses the [**C3 linearization** algorithm](https://www.geeksf
 Python doesn't require explicit inheritance for polymorphism. If an object has the required method, it can be used:
 
 ```python
-def make_it_speak(some_object):
-    print(some_object.speak())
+def make_it_speak(animal):
+    print(animal.speak())
 
 class Dog:
     def speak(self):
@@ -1145,7 +1145,7 @@ Here are some common examples of using `__init__.py` files.
 # Initialization code to be executed when the package is imported.
 print("Initializing my_package...")
 
-# Define package-level variables and configuration.
+# Define package-level variables and configurations.
 package_variable = 42
 
 # Import specific modules when the package is imported.
@@ -1165,7 +1165,7 @@ In this example, the `__init__.py` file initializes the package, sets a package-
 # __init__.py in a package.
 
 # Define what should be accessible when a user writes 'from package import *'.
-__all__ = ['module1', 'module2']
+__all__ = ['module1']
 
 # Import modules within the package.
 from . import module1
@@ -1199,11 +1199,11 @@ In this example, the module is initialized only when the `lazy_function` is call
 # How Python loads modules
 
 When running `import mymodule`, Python searches in this order:
-1. Built-in modules
-2. Current directory
-3. Directories in the `PYTHONPATH` environment variable
-4. System directories
-5. Site-packages (`pip` installed packages)
+1. Built-in modules.
+2. Current directory.
+3. Directories in the `PYTHONPATH` environment variable.
+4. System directories.
+5. Site-packages (`pip` installed packages).
 
 ---
 
@@ -1238,7 +1238,7 @@ The use of pre-compiled modules is about optimizing performance and protecting s
 |---------------------|---------------------------------------|---------------------------------------|-------------------------------------------------|
 | **Python script**   | `.py`                                 | Human-readable source code            | Development, teaching, open-source distribution |
 | **Python bytecode** | `.pyc`                                | Compiled bytecode (in `__pycache__/`) | Automatic optimization, faster loading          |
-| **C extension**     | `.so` (Linux/Mac)<br>`.pyd` (Windows) | Compiled binary from C/C++/Cython     | Performance-critical code, system interfaces    |
+| **C/C++ extension** | `.so` (Linux/Mac)<br>`.pyd` (Windows) | Compiled binary from C/C++/Cython     | Performance-critical code, system interfaces    |
 | **Wheel package**   | `.whl`                                | Distribution format (zip archive)     | Package distribution via PyPI                   |
 
 ---
@@ -1247,13 +1247,13 @@ The use of pre-compiled modules is about optimizing performance and protecting s
 
 ```bash
 numpy/
-├── __init__.py # Python code
+├── __init__.py # Python code.
 ├── core/
-│   ├── _multiarray_umath.cpython-311-x86_64-linux-gnu.so # C extension
-│   └── multiarray.py # Python wrapper
+│   ├── _multiarray_umath.cpython-311-x86_64-linux-gnu.so # C extension.
+│   └── multiarray.py # Python wrapper.
 └── linalg/
-    ├── linalg.py # Python interface
-    └── _umath_linalg.cpython-311-x86_64-linux-gnu.so # C extension
+    ├── linalg.py # Python interface.
+    └── _umath_linalg.cpython-311-x86_64-linux-gnu.so # C extension.
 ```
 
 **Key point:** Most scientific Python packages (NumPy, SciPy, pandas) combine Python scripts for ease of use with C extensions for performance. The `.so`/`.pyd` files contain optimized C/C++ code that Python can call directly.
