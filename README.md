@@ -30,9 +30,11 @@ Unless otherwise specified, all content here is licensed under a
 
 # :calendar: Exam dates
 
-:warning: TBD.
+:warning: **Thu 15 Jan 2026, 09:00**. Room TBD @ SISSA. (written + computer-based exam)
 
-:information_source: Students from UniTS: please register on Esse3.<br>
+:warning: **Thu 12 Feb 2026, 09:00**. Room TBD @ SISSA. (written + computer-based exam)
+
+:information_source: Students from UniTS: please register on Esse3.
 
 :information_source: Students from SISSA: please register by sending me an email.
 

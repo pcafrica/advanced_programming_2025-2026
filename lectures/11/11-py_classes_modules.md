@@ -198,10 +198,10 @@ Static methods, marked with `@staticmethod` (another decorator), operate indepen
 class AdvProgMember:
     @staticmethod
     def is_exam_date(date):
-        return True if date in ["Jan 17th", "Feb 13th"] else False
+        return True if date in ["Jan 15th", "Feb 12th"] else False
 
-print(f"Is Dec 5th an exam date? {AdvProgMember.is_exam_date('Dec 5th')}")
-print(f"Is Feb 13th an exam date? {AdvProgMember.is_exam_date('Feb 13th')}")
+print(f"Is Dec 2nd an exam date? {AdvProgMember.is_exam_date('Dec 2nd')}")
+print(f"Is Feb 12th an exam date? {AdvProgMember.is_exam_date('Feb 12th')}")
 ```
 
 ---
