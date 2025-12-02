@@ -524,15 +524,68 @@ Python (since v2.3) uses the [**C3 linearization** algorithm](https://www.geeksf
 
 ---
 
+# Polymorphism
+
+Python doesn't require explicit inheritance for polymorphism. If an object has the required method, it can be used:
+
+```python
+def make_it_speak(some_object):
+    print(some_object.speak())
+
+class Dog:
+    def speak(self):
+        return "Woof!"
+class Robot:
+    def speak(self):
+        return "Beep boop!"
+
+# Both work, even though they're unrelated classes.
+make_it_speak(Dog())
+make_it_speak(Robot())
+```
+
+Python checks for method existence at runtime, not class hierarchy at compile time.
+**Duck typing philosophy:** *"If it walks like a duck and quacks like a duck, it's a duck."*
+
+---
+
+# Abstract Base Classes (ABC)
+
+For more formal polymorphism, Python provides Abstract Base Classes:
+
+```python
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        """Must be implemented by subclasses."""
+        pass
+    
+class Rectangle(Shape):
+    # ...
+    
+    def area(self):
+        return self.width * self.height
+
+shape = Shape() # TypeError: Can't instantiate abstract class
+
+# In order to be instantiable, a class must implement all abstract methods.
+rect = Rectangle(5, 3)
+```
+
+---
+
 # OOP: C++ vs. Python
 
 | Aspect                   | C++                                                     | Python                                                                |
 |--------------------------|---------------------------------------------------------|-----------------------------------------------------------------------|
 | **Access control**       | `public`, `private`, `protected` (enforced by compiler) | Convention-based: `__private`, (not enforced)                         |
 | **Constructors**         | Multiple constructors via overloading                   | Single `__init__` with default args + `@classmethod` for alternatives |
-| **Destructors**          | `~ClassName()` called deterministically (RAII)          | `__del__()` called by Garbage Collector (unreliable timing)                          |
-| **Inheritance**          | Explicit access specifier required + virtual methods    | All methods virtual by default + MRO                                  |
+| **Destructors**          | `~ClassName()` called deterministically (RAII)          | `__del__()` called by Garbage Collector (unreliable timing)           |
 | **Operator overloading** | `operator+`, `operator<<`, etc.                         | `__add__`, `__str__`, `__repr__`, etc. (magic methods)                |
+| **Inheritance**          | Explicit access specifier required + virtual methods    | All methods virtual by default + MRO                                  |
+| **Polymorphism**         | Compile-time class hierarchy checking                   | Runtime method existence checking (duck typing)                       |
 
 **Key philosophical difference:** C++ enforces encapsulation and type safety at compile time; Python trusts developers to follow conventions (*"we're all consenting adults here"*).
 
