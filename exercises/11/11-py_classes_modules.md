@@ -42,7 +42,7 @@ $$
 
 Starting from `hints/ex2.py`, implement a `Polynomial` class with the following features:
 
-1. **Constructor & string representation**:
+1. **Constructor and string representation**:
    - Accept variable coefficients: `Polynomial(1, 2, 3)` represents $1 + 2x + 3x^2$.
    - Implement `__repr__` to print: `"1 + 2x + 3x^2"`.
 
@@ -51,7 +51,7 @@ Starting from `hints/ex2.py`, implement a `Polynomial` class with the following 
    - Test: `Polynomial(1, 2) + Polynomial(3, 4)` → `"4 + 6x"`.
 
 3. **Inheritance and polymorphism**:
-   - Create abstract method `evaluate(self, x)` in base class (use ABC).
+   - Create abstract method `evaluate(self, x)` (`x` can be a single point or a list).
    - Subclass `StandardPolynomialEvaluator`: implements standard evaluation.
    - Subclass `HornerPolynomialEvaluator`: implements Horner's rule.
 
@@ -61,9 +61,8 @@ Starting from `hints/ex2.py`, implement a `Polynomial` class with the following 
 
 4. **Decorator and performance**:
    - Implement a `@measure_time` decorator.
-   - Create a function that evaluates at a list of $x$ values.
    - Compare performance on 10000 points between standard and Horner methods.
-   - Verify results match using assertions.
+   - Verify that results match.
 
 **Hints**:
 - Use `time.time()` or `time.perf_counter()` in the decorator.
