@@ -62,7 +62,7 @@ Starting from `hints/ex2.py`, implement a `Polynomial` class with the following 
 4. **Decorator and performance**:
    - Implement a `@measure_time` decorator.
    - Create a function that evaluates at a list of $x$ values.
-   - Compare performance on 1000 points between standard and Horner methods.
+   - Compare performance on 10000 points between standard and Horner methods.
    - Verify results match using assertions.
 
 **Hints**:

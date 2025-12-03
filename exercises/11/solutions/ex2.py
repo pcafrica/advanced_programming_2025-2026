@@ -64,7 +64,20 @@ class Polynomial(ABC):
         pass
 
 
+def measure_time(func):
+    def wrapper(*args, **kwargs):
+        start_time = perf_counter()
+        result = func(*args, **kwargs)
+        end_time = perf_counter()
+        elapsed = end_time - start_time
+        
+        print(f"   Function '{func.__name__}' took {elapsed:.6f} seconds.")
+        return result
+    return wrapper
+
+
 class StandardPolynomialEvaluator(Polynomial):
+    @measure_time
     def evaluate(self, x):
         try:
             iter(x)
@@ -84,6 +97,7 @@ class StandardPolynomialEvaluator(Polynomial):
 
 
 class HornerPolynomialEvaluator(Polynomial):
+    @measure_time
     def evaluate(self, x):
         try:
             iter(x)
@@ -100,23 +114,6 @@ class HornerPolynomialEvaluator(Polynomial):
             results.append(result)
         
         return results if is_iterable else results[0]
-
-
-def measure_time(func):
-    def wrapper(*args, **kwargs):
-        start_time = perf_counter()
-        result = func(*args, **kwargs)
-        end_time = perf_counter()
-        elapsed = end_time - start_time
-        
-        print(f"    Function '{func.__name__}' took {elapsed:.6f} seconds.")
-        return result
-    return wrapper
-
-
-@measure_time
-def evaluate_polynomial(poly_evaluator, x_list):
-    return poly_evaluator.evaluate(x_list)
 
 
 if __name__ == "__main__":
@@ -153,25 +150,25 @@ if __name__ == "__main__":
     print(f"   Standard at x={test_point}: {result_std}")
     print(f"   Horner   at x={test_point}: {result_horner}")
 
-    print("\n5. Performance comparison on 1000 points:")
+    print("\n5. Performance comparison on 10000 points:")
     
     coeffs = list(range(1, 21))
     poly_standard = StandardPolynomialEvaluator(*coeffs)
     poly_horner = HornerPolynomialEvaluator(*coeffs)
     
-    x_values = np.linspace(0, 10, 1000).tolist()
+    x_values = np.linspace(0, 10, 10000).tolist()
     
     print(f"   Polynomial: {poly_standard}")
-    print(f"   Evaluating at 1000 points in [0, 10]...")
+    print(f"   Evaluating at {len(x_values)} points in [0, 10]...")
     
-    print("\n    Standard method:")
-    results_standard = evaluate_polynomial(poly_standard, x_values)
+    print("\n   Standard method:")
+    results_standard = poly_standard.evaluate(x_values)
     
-    print("    Horner's method:")
-    results_horner = evaluate_polynomial(poly_horner, x_values)
+    print("   Horner's method:")
+    results_horner = poly_horner.evaluate(x_values)
     
     max_abs_diff = max(abs(a - b) for a, b in zip(results_standard, results_horner))
     max_val = max(max(abs(x) for x in results_standard), max(abs(x) for x in results_horner))
     relative_error = max_abs_diff / max_val if max_val > 0 else max_abs_diff
     
-    print(f"    Relative error: {relative_error:.2e}")
+    print(f"   Relative error: {relative_error:.2e}")
