@@ -83,7 +83,7 @@ dataprocessor/
 └── data_analysis.py # DataAnalyzer class.
 ```
 
-- **`__init__.py`**: Import and export necessary functions and classes. Define `__all__` to control what gets imported with `from dataprocessor import *`.
+- **`__init__.py`**: Import and export necessary functions and classes. Define `__all__` to control what the package exports with `from dataprocessor import *`. In particular, it should export `process_data`, `additional_operation`, `DataAnalyzer`, `pd`.
 
 ---
 
@@ -93,10 +93,8 @@ dataprocessor/
   - `process_data(df, column1, column2, result_column)`: Adds values from two columns.
   - `additional_operation(df, column1, column2, additional_column1, other_column2)`: Performs multiplication and division operations.
 
-- **`data_analysis.py`**: Contains a class `DataAnalyzer` that encapsulates data analysis functionality:
+- **`data_analysis.py`**: Contains a class `DataAnalyzer`, replacing `DataProcessor`, that encapsulates data analysis functionality:
   - Constructor accepts the name of the column to analyze.
   - Method `analyze_data(df)` returns mean and max values.
 
-Your `__init__.py` should export `process_data`, `additional_operation`, `DataAnalyzer`, `pd`
-
-#### 2. Create a `main.py` script that demonstrates the package usage.
+#### 2. In a separate folder, create a `main_dataprocess.py` script that demonstrates the package usage.
