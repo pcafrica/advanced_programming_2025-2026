@@ -5,13 +5,12 @@ from math import sin
 def step_counter(generator_func):
     def wrapper(*args, **kwargs):
         gen = generator_func(*args, **kwargs)
-        steps = 0
+        step = 0
 
         while True:
-            steps += 1
-            print(f"Step number: {steps}")
+            step += 1
+            print(f"Step number: {step}")
             yield next(gen)
-            print()
 
     return wrapper
 
@@ -24,4 +23,4 @@ def explicit_euler(u0, h):
 
 gen = explicit_euler(u0=1.0, h=0.1)
 for _ in range(10):
-    print(next(gen))
+    print(f"    u = {next(gen)}")
