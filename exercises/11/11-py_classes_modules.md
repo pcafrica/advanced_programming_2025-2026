@@ -31,7 +31,7 @@ $$
 u_{n+1} = u_n - h \sin\left(u_n\right).
 $$
 
-1. Implement a decorator `step_counter` that counts how many values are yielded from the generator, i.e., how many steps the method performs.
+1. Implement a decorator `step_counter` that counts how many values are yielded from the generator, i.e., how many steps the method has performed.
 2. Apply the decorator to the `explicit_euler` function.
 3. Create a generator with $u_0 = 1$ and $h = 0.1$.
 4. Consume exactly 10 steps from the generator and print each value.
