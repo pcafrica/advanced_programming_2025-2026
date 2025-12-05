@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 project(Ex08_1 VERSION 1.0
   DESCRIPTION "Exercise 1 from session 08"
