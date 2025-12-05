@@ -1,7 +1,3 @@
----
-marp: true
----
-
 <!--
 title: Lecture 09
 paginate: true
