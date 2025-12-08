@@ -55,7 +55,8 @@ Unless otherwise specified, all content here is licensed under a
 # Homeworks
 
 - Homework 01 [[Markdown](homeworks/homework_01.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODE4MTkzMTkyNDgx/details)]. **Due date: 09 November 2025 (expired)**.
-- Homework 02 [[Markdown](homeworks/homework_02.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_02.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_02.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODI5MzIxODI1NDkw/details)]. **Due date: 07 December 2025**.
+- Homework 02 [[Markdown](homeworks/homework_02.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_02.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_02.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODI5MzIxODI1NDkw/details)]. **Due date: 07 December 2025 (expired)**.
+- Homework 03 [[Markdown](homeworks/homework_02.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_03.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_03.pdf)] [[Google Classroom]()]. **Due date: 11 January 2026**.
 
 ---
 
@@ -82,7 +83,7 @@ Unless otherwise specified, all content here is licensed under a
 | Wed 26 Nov 2025 | 11:00 - 13:00 | 128-129 | Introduction to Python. [[Markdown](lectures/10/10-py_intro.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/10/10-py_intro.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/10/10-py_intro.pdf)]<br>Exercise session. [[Markdown](exercises/10/10-py_intro.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/10/10-py_intro.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/10/10-py_intro.pdf)] |
 | Tue 02 Dec 2025 | 14:00 - 16:00 | 133     | Object-oriented programming in Python. Classes, inheritance and polymorphism. Modules and packages. [[Markdown](lectures/11/11-py_classes_modules.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/11/11-py_classes_modules.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/11/11-py_classes_modules.pdf)] |
 | Wed 03 Dec 2025 | 11:00 - 13:00 | 004     | Exercise session. [[Markdown](exercises/11/11-py_classes_modules.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/11/11-py_classes_modules.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/11/11-py_classes_modules.pdf)] |
-| Tue 09 Dec 2025 | 14:00 - 16:00 | 005     | Integrating C++ and Python codes. |
-| Wed 10 Dec 2025 | 11:00 - 13:00 | 005     | Exercise session. |
+| Tue 09 Dec 2025 | 14:00 - 16:00 | 005     | Integrating C++ and Python codes. [[Markdown](lectures/12/12-py_c++.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/12/12-py_c++.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/lectures/12/12-py_c++.pdf)] |
+| Wed 10 Dec 2025 | 11:00 - 13:00 | 005     | Exercise session. [[Markdown](exercises/12/12-py_c++.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/12/12-py_c++.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/exercises/12/12-py_c++.pdf)] |
 | Tue 16 Dec 2025 | 14:00 - 16:00 | 133     | Python for scientific computing. |
 | Wed 17 Dec 2025 | 11:00 - 13:00 | 004     | Exercise session. |
