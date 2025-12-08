@@ -82,7 +82,7 @@ Your task is to enhance the C++ scientific computing toolbox with Python binding
 
 # Evaluation grid (2/3)
 
-3. **Integration and interoperability** (up to **1.0 points**):
+3. **Integration and interoperability** (up to **1.0 point**):
    - Working Python scripts or Jupyter notebooks demonstrating correctness of C++-Python integration (0.5 points).
    - Demonstrate bidirectional interaction (e.g., Python callbacks in C++, C++ objects manipulated in Python) with efficient data exchange (0.25 points).
    - Analysis of performance balance between C++ and Python (0.25 points).
