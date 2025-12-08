@@ -1,0 +1,20 @@
+[build-system]
+requires = [
+    "setuptools>=64",
+    "wheel",
+    "pybind11>=2.10.0",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eigen_ops"
+version = "1.0.0"
+description = "High-performance matrix operations using Eigen and pybind11"
+requires-python = ">=3.8"
+authors = [
+    {name = "Pasquale Claudio Africa", email = "pafrica@sissa.it"}
+]
+
+dependencies = [
+    "numpy>=1.20.0",
+]
