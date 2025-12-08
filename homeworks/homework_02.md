@@ -22,7 +22,7 @@ _class: titlepage
 # Objective
 
 Develop a toolbox in C++ covering various data science and scientific computing areas.
-Implement **module A)** (mandatory) and **exactly one module among B), C), D)**, of your choice.
+Implement **module A)** (mandatory) and **exactly one module among B), C), D)** of your choice.
 
 ## Components
 
@@ -64,7 +64,7 @@ Implement a module to support [**composite** linear and polynomial interpolation
 Implement a module for approximating integrals using **composite** numerical integration formulas of the form
 
 $$
-\int_a^b f(x) dx \approx \sum_{i=1}^N w_i f(x_i),
+\int_a^b f(x)\,\mathrm{d}x \approx \sum_{i=1}^N w_i f(x_i),
 $$
 
 where $\lbrace w_i \rbrace$ and $\lbrace x_i \rbrace$ are the weights and nodes of the quadrature formula, respectively.
@@ -93,7 +93,7 @@ where $\mathbf{y}\in \mathbb{R}^N, \mathbf{f} : \mathbb{R} \times \mathbb{R}^N \
 # General guidelines
 
 1. Emphasize the use of **modern C++** features, including STL containers, algorithms, iterators, smart pointers, and other utilities.
-2. Utilize either *run-time* (class abstraction and inheritance) or *compile-time* (templates and policies) polymorphism, **providing motivation for your choice**.
+2. Utilize *run-time* (class abstraction and inheritance) and/or *compile-time* (templates and policies) polymorphism, **providing motivation for your choice**.
 3. Write error-safe code and **handle exceptions properly**.
 4. Provide **clear documentation** of code design, algorithms, and decisions made.
 5. Promote **code readability**, **modular design**, and adherence to **coding standards**.
@@ -118,7 +118,7 @@ where $\mathbf{y}\in \mathbb{R}^N, \mathbf{f} : \mathbb{R} \times \mathbb{R}^N \
 
 - Organize your implementation into subfolders and files with meaningful names.
 - Ensure a clear separation between function declarations and definitions by placing them in different files whenever possible.
-- The **2** modules implemented should be part of the same framework, e.g., by sharing namespaces, styling, and common utilities. However, each of them should be **compilable as a standalone shared library**, allowing independent use.
+- The **two** modules implemented should be part of the same framework, e.g., by sharing namespaces, styling, and common utilities. However, each of them should be **compilable as a standalone shared library**, allowing independent use.
 - Before submission, ensure your code's compatibility (e.g., with various compilers by testing it on platforms such as [GodBolt](https://godbolt.org/)) using the following [compilation flags](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html):
   
   ```bash
