@@ -32,7 +32,7 @@ Unless otherwise specified, all content here is licensed under a
 
 :warning: **Fri 16 Jan 2026, 09:00**. Room TBD @ SISSA. (written + computer-based exam)
 
-:warning: **Thu 12 Feb 2026, 09:00**. Room TBD @ SISSA. (written + computer-based exam)
+:warning: **Fri 13 Feb 2026, 09:00**. Room TBD @ SISSA. (written + computer-based exam)
 
 :information_source: Students from UniTS: please register on Esse3.
 
