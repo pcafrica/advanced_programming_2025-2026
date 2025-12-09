@@ -891,7 +891,7 @@ py::class_<Pet::Attributes>(pet, "Attributes")
 
 ---
 
-# Scoping
+# Nesting and scoping
 
 To ensure that the nested types `Kind` and `Attributes` are created within the scope of `Pet`, the `pet` `class_` instance must be supplied to the `enum_` and `class_` constructor. The `enum_::export_values` function exports the enum entries into the parent scope, which should be skipped for newer C++11-style enum classes.
 
@@ -907,7 +907,7 @@ The entries defined by the enumeration type are exposed in the `__members__` pro
 Pet.Kind.__members__ # Output: {'Dog': Kind.Dog, 'Cat': Kind.Cat}
 ```
 
-The `name` property returns the name of the enum value as a unicode string. Contrary to Python customs, enum values from the wrappers should not be compared using `is`, but with `==`.
+The `__name__` property returns the name of the enum value as a string. Contrary to Python customs, enum values from the wrappers should not be compared using `is`, but with `==`.
 
 ---
 
@@ -1127,28 +1127,24 @@ setup(cmdclass={"build_ext": build_ext},
 
 ---
 
-# Common pitfalls
+# Two recommendations
 
-**1. Memory management**
+#### Memory management
 ```cpp
 // ❌ Python won't manage this memory.
 m.def("get_array", []() { return new int[100]; });
-m.def("get_array", []() { return std::make_shared<std::vector<int>>(100); }); // ✅
+
+// ✅ Use smart pointers, instead!
+m.def("get_array", []() { return std::make_shared<std::vector<int>>(100); });
 ```
 
-**2. Exception handling**
+#### Exception handling
 ```cpp
 // ❌ C++ exceptions don't propagate to Python.
 void risky_function() { throw std::runtime_error("Error!"); }
-py::register_exception<MyException>(m, "PyMyException"); // ✅
-```
 
-**3. Const correctness**
-```cpp
-// Non-const overload.
-.def("get_name", &Person::getName);
-// Const overload.
-.def("get_name", static_cast<const std::string& (Person::*)() const>(&Person::getName));
+// ✅ But you can wrap them!
+py::register_exception<MyException>(m, "PyMyException");
 ```
 
 ---
