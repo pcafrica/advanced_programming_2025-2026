@@ -1,5 +1,5 @@
-#ifndef PYBIND_MATRIX_HPP
-#define PYBIND_MATRIX_HPP
+#ifndef PYBIND_MATRIX_HPP__
+#define PYBIND_MATRIX_HPP__
 
 #include "matrix.hpp"
 
@@ -52,4 +52,4 @@ public:
 } // namespace detail
 } // namespace pybind11
 
-#endif /* PYBIND_MATRIX_HPP */
+#endif /* PYBIND_MATRIX_HPP__ */

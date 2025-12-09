@@ -1,5 +1,5 @@
-#ifndef MATRIX_HPP
-#define MATRIX_HPP
+#ifndef MATRIX_HPP__
+#define MATRIX_HPP__
 
 #include <cstdlib>
 #include <iostream>
@@ -67,7 +67,7 @@ public:
   auto end() const { return m_data.end(); }
 
   // Return pointer to data.
-  const T *data(void) const { return m_data.data(); };
+  const T *data() const { return m_data.data(); };
 
   // Return shape array.
   std::vector<size_t> shape(size_t ndim = 0) const {
@@ -98,10 +98,10 @@ public:
   };
 
   // Return size.
-  size_t size(void) const { return m_data.size(); };
+  size_t size() const { return m_data.size(); };
 
   // Return number of dimensions.
-  size_t ndim(void) const {
+  size_t ndim() const {
     size_t i;
 
     for (i = 2; i > 0; --i)
@@ -118,4 +118,4 @@ private:
 
 }; // class Matrix
 
-#endif /* MATRIX_HPP */
+#endif /* MATRIX_HPP__ */
