@@ -56,7 +56,7 @@ Unless otherwise specified, all content here is licensed under a
 
 - Homework 01 [[Markdown](homeworks/homework_01.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_01.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODE4MTkzMTkyNDgx/details)]. **Due date: 09 November 2025 (expired)**.
 - Homework 02 [[Markdown](homeworks/homework_02.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_02.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_02.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODI5MzIxODI1NDkw/details)]. **Due date: 07 December 2025 (expired)**.
-- Homework 03 [[Markdown](homeworks/homework_02.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_03.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_03.pdf)] [[Google Classroom]()]. **Due date: 11 January 2026**.
+- Homework 03 [[Markdown](homeworks/homework_02.md)] [[HTML](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_03.html)] [[PDF](https://pcafrica.github.io/advanced_programming_2025-2026/homeworks/homework_03.pdf)] [[Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw/a/ODM1MjYxNjk3MjMx/details)]. **Due date: 11 January 2026**.
 
 ---
 
