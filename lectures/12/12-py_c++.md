@@ -124,7 +124,7 @@ Several libraries are available for integrating C++ and Python codes, each with 
    - Pros:
      - Modern, lightweight, easy to use.
      - Header-only library.
-     - More pythonic bindings.
+     - More *Pythonic* bindings.
      - Good documentation, community support.
    - Cons:
      - Less advanced features than Boost.Python.
