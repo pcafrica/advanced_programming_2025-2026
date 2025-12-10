@@ -20,7 +20,7 @@ int main() {
       const double root = solver.solve();
       std::cout << "Approximate root: " << root << std::endl;
     } catch (const std::runtime_error &e) {
-      std::cout << e.what() << std::endl;
+      std::cout << "Error: " << e.what() << std::endl;
     }
   }
 
@@ -38,7 +38,7 @@ int main() {
       const std::complex<double> root = solver.solve();
       std::cout << "Approximate root: " << root << std::endl;
     } catch (const std::runtime_error &e) {
-      std::cout << e.what() << std::endl;
+      std::cout << "Error: " << e.what() << std::endl;
     }
   }
 

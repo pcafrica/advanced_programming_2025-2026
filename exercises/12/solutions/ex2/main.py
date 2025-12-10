@@ -1,5 +1,4 @@
 import newton_solver
-import cmath
 
 # Function f(x) = x^2 - 1 = 0 and its derivative.
 def function(x):
@@ -9,6 +8,7 @@ def derivative(x):
     return 2 * x
 
 # Create a NewtonSolver instance for real functions and find the root.
+# Try with tolerance=0 to verify that exceptions are captured.
 x0 = 0.5
 solver_real = newton_solver.NewtonSolverDouble(function, derivative, x0, 0, 10)
 
