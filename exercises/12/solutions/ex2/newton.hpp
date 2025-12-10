@@ -3,7 +3,7 @@
 
 #include <functional>
 
-template <typename T> class NewtonSolver {
+template <class T> class NewtonSolver {
 public:
   NewtonSolver(const std::function<T(const T &)> &f,
                const std::function<T(const T &)> &df, const T &x0,

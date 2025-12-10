@@ -1,7 +1,9 @@
 #include "newton.hpp"
+
 #include <complex>
 #include <functional>
 #include <iostream>
+#include <stdexcept>
 
 int main() {
   // Function with real root: f(x) = x^2 - 1 = 0.
@@ -14,12 +16,11 @@ int main() {
     const double x0 = 0.5;
     NewtonSolver<double> solver(f, df, x0);
 
-    const double root = solver.solve();
-
-    if (root != std::numeric_limits<double>::quiet_NaN()) {
+    try {
+      const double root = solver.solve();
       std::cout << "Approximate root: " << root << std::endl;
-    } else {
-      std::cout << "Failed to converge to a root." << std::endl;
+    } catch (const std::runtime_error &e) {
+      std::cout << e.what() << std::endl;
     }
   }
 
@@ -33,12 +34,11 @@ int main() {
     const std::complex<double> x0{0.5, 0.5};
     NewtonSolver<std::complex<double>> solver(f, df, x0);
 
-    const std::complex<double> root = solver.solve();
-
-    if (root != std::numeric_limits<std::complex<double>>::quiet_NaN()) {
+    try {
+      const std::complex<double> root = solver.solve();
       std::cout << "Approximate root: " << root << std::endl;
-    } else {
-      std::cout << "Failed to converge to a root." << std::endl;
+    } catch (const std::runtime_error &e) {
+      std::cout << e.what() << std::endl;
     }
   }
 

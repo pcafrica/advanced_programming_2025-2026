@@ -1,4 +1,5 @@
 #include "newton.hpp"
+
 #include <complex>
 #include <functional>
 #include <iostream>

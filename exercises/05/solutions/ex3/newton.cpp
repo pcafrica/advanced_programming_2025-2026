@@ -1,8 +1,9 @@
 #include "newton.hpp"
+
 #include <cmath>
 #include <complex>
 
-template <typename T>
+template <class T>
 NewtonSolver<T>::NewtonSolver(const std::function<T(const T &)> &f,
                               const std::function<T(const T &)> &df,
                               const T &x0, const double &tolerance,
@@ -30,5 +31,6 @@ template <typename T> T NewtonSolver<T>::solve() {
   return std::numeric_limits<T>::quiet_NaN();
 }
 
+// Explicit instantiation.
 template class NewtonSolver<double>;
 template class NewtonSolver<std::complex<double>>;

@@ -1,4 +1,5 @@
 #include "data_processor.hpp"
+
 #include <cmath>
 
 unsigned int DataProcessor::n_instances = 0;

@@ -2,8 +2,9 @@
 
 #include <cmath>
 #include <complex>
+#include <stdexcept>
 
-template <typename T>
+template <class T>
 NewtonSolver<T>::NewtonSolver(const std::function<T(const T &)> &f,
                               const std::function<T(const T &)> &df,
                               const T &x0, const double &tolerance,
@@ -11,7 +12,7 @@ NewtonSolver<T>::NewtonSolver(const std::function<T(const T &)> &f,
     : f(f), df(df), x0(x0), tolerance(tolerance),
       max_iterations(max_iterations) {}
 
-template <typename T> T NewtonSolver<T>::solve() {
+template <class T> T NewtonSolver<T>::solve() {
   T x = x0;
 
   unsigned int it = 0;
@@ -32,5 +33,6 @@ template <typename T> T NewtonSolver<T>::solve() {
       "Failed to converge within the maximum number of iterations.");
 }
 
+// Explicit instantiation.
 template class NewtonSolver<double>;
 template class NewtonSolver<std::complex<double>>;
