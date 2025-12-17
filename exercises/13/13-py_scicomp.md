@@ -11,11 +11,11 @@ _class: titlepage
 ## Python's ecosystem for scientific computing.
 <br>
 
-#### Advanced Programming - SISSA, UniTS, 2024-2025
+#### Advanced Programming - SISSA, UniTS, 2025-2026
 
 ###### Giuseppe Alessio D'Inverno
 
-###### 17 Dec 2024
+###### 17 Dec 2025
 
 ---
 
