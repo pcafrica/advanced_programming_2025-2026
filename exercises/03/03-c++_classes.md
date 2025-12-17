@@ -8,7 +8,7 @@ _class: titlepage
 # Exercise session 03
 <br>
 
-## Object oriented programming. Classes and access control in C++.
+## Object-oriented programming. Classes and access control in C++.
 <br>
 
 #### Advanced Programming - SISSA, UniTS, 2025-2026

@@ -38,7 +38,7 @@ _class: titlepage
 
 1. **Solving a linear system of equations**
    1. Define a $100 \times 100$ *sparse* tridiagonal matrix $A$, with $2$ over the main diagonal, and $-1$ over the first lower and upper diagonals.
-   2. Let $b = Ax_\mathrm{ex}$ where $x_\mathrm{ex} = [1, 1, \dots, 1]^T \in \mathbb{R}^{100}$
+   2. Let $b = Ax_\mathrm{ex}$ where $x_\mathrm{ex} = [1, 1, \dots, 1]^T \in \mathbb{R}^{100}$.
    3. Solve the linear system $Ax = b$ and compute the residual $\|b - Ax\|$ and the error $\|x - x_\mathrm{ex}\|$ in norm 1, 2 and infinity.
 
 2. **Function optimization**

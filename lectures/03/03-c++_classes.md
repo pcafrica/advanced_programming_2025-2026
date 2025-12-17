@@ -8,7 +8,7 @@ _class: titlepage
 # Lecture 03
 <br>
 
-## Object oriented programming. Classes and access control in C++. Operators.
+## Object-oriented programming. Classes and access control in C++. Operators.
 <br>
 
 #### Advanced Programming - SISSA, UniTS, 2025-2026
