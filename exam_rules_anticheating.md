@@ -1,4 +1,4 @@
-# Exam rules
+# Exam rules - Anti-cheating
 ## Advanced Programming 2025/2026
 
 ### Instructor
@@ -87,4 +87,5 @@ Students are responsible for verifying **before the exam** that their chosen too
 ## At the end of the exam
 - [ ] Submit the exam solution.
 - [ ] Stop the recording **only after submission**.
-- [ ] Keep the recording unchanged until the evaluation process is complete.
+- [ ] Store a **backup copy** of your recording to prevent loss.
+- [ ] Keep the recording unchanged until the evaluation process is completed.

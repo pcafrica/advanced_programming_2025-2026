@@ -86,7 +86,7 @@ The exam submissions will be conducted through the Google Classroom platform. Pl
 For part 2, students may refer to textbooks, notes, and other resources. This policy is designed to encourage reasoning and the application of knowledge rather than rote memorization.
 
 ## Restrictions
-The use of AI tools, online forums, social media, and communication with others during the exam is strictly prohibited. Violations will result in severe penalties. For more information, see the [anti-cheating rules](exam_rules_anticheating.md)
+The use of AI tools, online forums, social media, and communication with others during the exam is strictly prohibited. Violations will result in severe penalties. For more information, see the [anti-cheating rules](exam_rules_anticheating.md).
 
 ## Honesty and plagiarism
 All the answers and code must be original and written by the student.
