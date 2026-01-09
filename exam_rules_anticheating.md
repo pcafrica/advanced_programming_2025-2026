@@ -24,7 +24,7 @@ The recording:
 - **must not be uploaded or submitted automatically**;
 - must be **kept until the evaluation process is completed**.
 
-The instructor may **request the screen recording only in the presence of justified doubts** regarding the regularity of the exam (i.e., concerning the use of AI tools or communication media) or the coherence between the submitted solution and the expected competences.
+The instructor may **request the screen recording only in the presence of justified doubts** regarding the regularity of the exam (i.e., concerning the use of AI tools or communication channels) or the coherence between the submitted solution and the expected competences.
 
 In case of a request, the student must provide the recording according to the instructions and deadlines communicated by the instructor.
 
