@@ -56,7 +56,7 @@ The exam will encompass all the topics and material outlined in the [course syll
 
 # Time allocation
 
-- The exam will be 3 hours long (1 hour for part 1 + 2 hours for part 2)
+- The exam will be **three** hours long (**one** hour for part 1 + **two** hours for part 2, with a short break in between).
 - Submissions after the deadline will not be accepted.
 
 ---
@@ -69,7 +69,7 @@ The exam submissions will be conducted through the Google Classroom platform. Pl
 **Maintain backups of your work to prevent data loss.**
 
 ## Part 1: Open-ended questions
-- Answers to open-ended questions must be handwritten on paper and delivered to the instructor. The use of computers and other electronic devices is forbidden for part 1.
+- Answers to open-ended questions must be handwritten on paper and delivered to the instructor. The use of computers, electronic devices, textbooks, notes, or other resources is forbidden for part 1.
 
 ## Part 2: Programming exercise
 - Solutions to the programming exercise must be submitted as a single `.zip` or `.tar` archive containing only source code files, documentation and any other relevant information.
@@ -111,7 +111,7 @@ If you have questions or experience technical issues during the exam, please inf
 - Proper use of programming constructs and data structures covered during the course.
 - Code documentation and comments, explaining your design choices, how to build and run the program, its logic and flow.
 - Successful compilation and execution, fulfilling the given problem statement.
-- (Bonus) Use of programming constructs and data structures beyond the course content.
+- (**Bonus**) Use of programming constructs and data structures beyond the course content.
 
 Unless otherwise specified, you are encouraged to incorporate any third-party open-source library into your project.
 
@@ -123,16 +123,16 @@ The average of students' scores for homework assignment will be added to the exa
 - Depth of understanding of the theoretical concepts.
 - Application and analysis of knowledge.
 
-## The maximum achievable grade in the main exam is 27.
+## The maximum achievable grade in the main exam (part 1 + part 2) is 27.
 The final grade will be calculated by adding the grades from the main exam, homework assignments, and (if applicable, with its respective sign) the oral exam.
 Honors may be granted in exceptional cases, provided the final grade exceeds 30.
 
 ---
 
-# Special instructions
-- Ensure your computer is charged or plugged into a power socket.
-- Ensure your internet connection is stable.
-- Keep track of time and manage it effectively.
-- Read each question carefully before answering.
-- Double-check all submissions before the final upload.
-- **Maintain backups of your work to prevent data loss.**
+# TODO checklist
+- [ ] Ensure your computer is charged or plugged into a power socket.
+- [ ] Ensure your internet connection is stable.
+- [ ] Keep track of time and manage it effectively.
+- [ ] Read each question carefully before answering.
+- [ ] Double-check all submissions before the final upload.
+- [ ] **Maintain backups of your work to prevent data loss.**

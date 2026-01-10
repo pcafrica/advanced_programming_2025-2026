@@ -29,7 +29,7 @@ The instructor may **request the screen recording only in the presence of justif
 In case of a request, the student must provide the recording according to the instructions and deadlines communicated by the instructor.
 
 **Failure to provide the recording upon a justified request**, in the absence of documented technical issues, may result in:
-- annulment of the exam attempt, **or**
+- annulment of the exam attempt, or
 - a mandatory oral verification.
 
 Any recordings that are requested will be used **exclusively for evaluation purposes**, accessed only by the instructor, and **deleted after the evaluation is finalized**, in compliance with applicable data protection regulations.
@@ -42,26 +42,24 @@ Students may use **any reliable screen recording software**, provided that the r
 - is **continuous** for the full duration of the exam;
 - does **not include audio or webcam**.
 
-## Preferred option (all operating systems)
-**OBS Studio** (Windows, macOS, Linux)
-- Official documentation: https://obsproject.com/kb/quick-start-guide
+The preferred option, working on all operating systems, is **OBS Studio** (Windows, macOS, Linux) ([official documentation](https://obsproject.com/kb/quick-start-guide)).
 
-## Simpler OS-native alternatives (also acceptable)
-- **Windows**: Xbox Game Bar (`Win + Alt + R`)
-- **macOS**: Built-in Screen Recording (`Cmd + Shift + 5`) (https://support.apple.com/en-us/HT208721)
+Simpler OS-native alernatives are also acceptable, such as:
+- **Windows**: [Xbox Game Bar](https://support.microsoft.com/en-gb/windows/use-a-screen-reader-to-record-your-screen-with-xbox-game-bar-5328cd25-9046-4472-8a14-c485f138802c) (`Win + Alt + R`)
+- **macOS**: [Built-in Screen Recording](https://support.apple.com/en-us/HT208721) (`Cmd + Shift + 5`)
 - **Linux**:
-  - GNOME Screen Recorder (`Ctrl + Alt + Shift + R`), or
-  - SimpleScreenRecorder: https://www.maartenbaert.be/simplescreenrecorder/
+  - [GNOME Screen Recorder](https://itsfoss.com/gnome-screen-recorder/) (`Ctrl + Alt + Shift + R`), or
+  - [SimpleScreenRecorder](https://www.maartenbaert.be/simplescreenrecorder/)
 
 Students are responsible for verifying **before the exam** that their chosen tool works correctly and that sufficient disk space is available.
 
 ---
 
 # Student responsibilities
-- Start the screen recording **before beginning to code**.
+- Start the screen recording **before the exam starts**.
 - Do **not pause, stop, edit, or modify** the recording during the exam.
 - Stop the recording only **after submitting** the exam.
-- Keep the recording unchanged until final grades are published.
+- Keep the recording unchanged and maintain a backup until final grades are published.
 - Immediately notify the instructor in case of technical issues during the exam.
 
 ---
