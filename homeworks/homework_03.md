@@ -8,7 +8,7 @@ _class: titlepage
 # Homework 03
 <br>
 
-## Implementation of a Scientific Computing Toolbox
+## Implementation of a Scientific Computing toolbox
 <br>
 
 #### Advanced Programming - SISSA, UniTS, 2025-2026
