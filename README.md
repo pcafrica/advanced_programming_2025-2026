@@ -24,15 +24,15 @@ Unless otherwise specified, all content here is licensed under a
 
 # :warning: Exam rules
 
-:warning: Detailed exam rules are available [here](exam_rules.md).
+:warning: Detailed exam rules are available [here](exam_rules.md) and [here](exam_rules_anticheating.md).
 
 ---
 
 # :calendar: Exam dates
 
-:warning: **Fri 16 Jan 2026, 09:00**. Room 005 @ SISSA. (written + computer-based exam)
+:warning: **Fri 16 Jan 2026, 09:00** (written + computer-based exam). Room 005 @ SISSA.
 
-:warning: **Fri 13 Feb 2026, 09:00**. Room 005 @ SISSA. (written + computer-based exam)
+:warning: **Fri 13 Feb 2026, 09:00** (written + computer-based exam). Room 005 @ SISSA.
 
 :information_source: Students from UniTS: please register on Esse3.
 
@@ -44,6 +44,7 @@ Unless otherwise specified, all content here is licensed under a
 - [Syllabus](syllabus.md).
 - [Homework assignment rules](homework_rules.md).
 - [Exam rules](exam_rules.md).
+- [Exam rules - Anti-cheating](exam_rules_anticheating.md)
 
 # Links and resources
 - [Google Classroom](https://classroom.google.com/c/ODA4NDQ4MzcwMTQw?cjc=xjhuxupx). **You are required to join. Please use your full name (no nicknames allowed)**.
