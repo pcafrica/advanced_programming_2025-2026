@@ -32,7 +32,7 @@ Unless otherwise specified, all content here is licensed under a
 
 :warning: **Thu 27 Aug 2026, 09:00** (written + computer-based exam). Room 005 @ SISSA.
 
-:warning: **Thu 17 Sep 2026, 09:00** (written + computer-based exam). Room 005 @ SISSA.
+:warning: **Thu 17 Sep 2026, 09:00** (written + computer-based exam). Room 133 @ SISSA.
 
 :information_source: Students from UniTS: please register on Esse3.
 
